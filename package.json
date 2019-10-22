@@ -1,0 +1,229 @@
+{
+    "name": "vscode-azurevirtualmachines",
+    "displayName": "Azure Virtual Machines",
+    "description": "%extension.description%",
+    "version": "0.1.0-alpha",
+    "publisher": "ms-azuretools",
+    "icon": "resources/azure-vm.png",
+    "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+    "engines": {
+        "vscode": "^1.31.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft/vscode-azurevirtualmachines"
+    },
+    "galleryBanner": {
+        "color": "#0072c6",
+        "theme": "dark"
+    },
+    "homepage": "https://github.com/Microsoft/vscode-azurevirtualmachines/blob/master/README.md",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "categories": [
+        "Azure"
+    ],
+    "keywords": [
+        "Azure",
+        "Virtual Machines",
+        "Remote",
+        "multi-root ready"
+    ],
+    "preview": true,
+    "activationEvents": [
+        "onCommand:azureVirtualMachines.refresh",
+        "onCommand:azureVirtualMachines.loadMore",
+        "onCommand:azureVirtualMachines.openInPortal",
+        "onView:azVmTree",
+        "onDebugInitialConfigurations"
+    ],
+    "main": "./main.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "azureVirtualMachines.selectSubscriptions",
+                "title": "Select Subscriptions...",
+                "icon": {
+                    "light": "resources/light/filter.svg",
+                    "dark": "resources/dark/filter.svg"
+                }
+            },
+            {
+                "command": "azureVirtualMachines.refresh",
+                "title": "%azVms.refresh%",
+                "category": "Azure Virtual Machines",
+                "icon": {
+                    "light": "resources/light/Refresh.svg",
+                    "dark": "resources/dark/Refresh.svg"
+                }
+            },
+            {
+                "command": "azureVirtualMachines.loadMore",
+                "title": "%azVms.loadMore%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.createVirtualMachine",
+                "title": "Create Virtual Machine",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.openInPortal",
+                "title": "Open in Portal",
+                "category": "Azure Virtual machines"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "azure",
+                    "title": "Azure",
+                    "icon": "resources/azure.svg"
+                }
+            ]
+        },
+        "views": {
+            "azure": [
+                {
+                    "id": "azVmTree",
+                    "name": "Virtual Machines",
+                    "when": "config.azureVirtualMachines.showExplorer == true"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "azureVirtualMachines.refresh",
+                    "when": "view == azVmTree",
+                    "group": "navigation@3"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "azureVirtualMachines.selectSubscriptions",
+                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
+                    "group": "inline"
+                },
+                {
+                    "command": "azureVirtualMachines.createVirtualMachine",
+                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
+                    "group": "1@1"
+                },
+                {
+                    "command": "azureVirtualMachines.openInPortal",
+                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
+                    "group": "2@1"
+                },
+                {
+                    "command": "azureVirtualMachines.refresh",
+                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
+                    "group": "3@1"
+                },
+                {
+                    "command": "azureVirtualMachines.openInPortal",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "1@1"
+                }
+            ],
+            "explorer/context": [],
+            "commandPalette": [
+                {
+                    "command": "azureVirtualMachines.selectSubscriptions",
+                    "when": "never"
+                },
+                {
+                    "command": "azureVirtualMachines.refresh",
+                    "when": "never"
+                },
+                {
+                    "command": "azureVirtualMachines.loadMore",
+                    "when": "never"
+                }
+            ],
+            "editor/context": []
+        },
+        "jsonValidation": [],
+        "taskDefinitions": [],
+        "problemPatterns": [],
+        "problemMatchers": [],
+        "keybindings": [
+            {
+                "command": "workbench.view.extension.azure",
+                "key": "ctrl+shift+a",
+                "mac": "cmd+shift+a"
+            }
+        ],
+        "configuration": [
+            {
+                "title": "Azure Virtual Machines",
+                "properties": {
+                    "azureVirtualMachines.showExplorer": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "%azVms.showExplorerDescription%"
+                    },
+                    "azureVirtualMachines.templateFilter": {
+                        "scope": "resource",
+                        "type": "string",
+                        "default": "Verified",
+                        "enum": [
+                            "Verified",
+                            "Core",
+                            "All"
+                        ],
+                        "description": "%azVms.templateFilterDescription%"
+                    }
+                }
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run webpack-prod",
+        "build": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "package": "vsce package",
+        "lint": "tslint --project tsconfig.json -e src/*.d.ts -t verbose",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "pretest": "npm run webpack-prod",
+        "test": "gulp test",
+        "webpack": "npm run build && gulp webpack-dev",
+        "webpack-prod": "npm run build && gulp webpack-prod",
+        "webpack-profile": "webpack --profile --json --mode production > webpack-stats.json && echo Use http://webpack.github.io/analyse to analyze the stats"
+    },
+    "devDependencies": {
+        "@types/gulp": "^4.0.6",
+        "@types/gulp-filter": "^3.0.33",
+        "@types/mocha": "^5.2.6",
+        "@types/node": "^8.10.45",
+        "@types/request": "2.0.7",
+        "azure-arm-resource": "^3.0.0-preview",
+        "copy-webpack-plugin": "^4.6.0",
+        "gulp": "^4.0.0",
+        "gulp-chmod": "^2.0.0",
+        "gulp-decompress": "^2.0.1",
+        "gulp-download": "^0.0.1",
+        "gulp-filter": "^5.1.0",
+        "mocha": "^5.2.0",
+        "mocha-junit-reporter": "^1.18.0",
+        "mocha-multi-reporters": "^1.1.7",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.14.0",
+        "tslint-microsoft-contrib": "^5.2.1",
+        "typescript": "^3.3.4000",
+        "vsce": "^1.59.0",
+        "vscode": "^1.1.33",
+        "vscode-azureextensiondev": "0.2.3",
+        "webpack": "^4.29.6",
+        "webpack-cli": "^3.3.0"
+    },
+    "dependencies": {
+        "azure-arm-compute": "^10.0.0",
+        "azure-arm-network": "^13.0.0",
+        "semver": "^5.7.0",
+        "vscode-azureextensionui": "^0.28.2",
+        "vscode-nls": "^4.1.0"
+    },
+    "extensionDependencies": [
+        "ms-vscode.azure-account"
+    ]
+}
