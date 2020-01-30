@@ -9,7 +9,7 @@ import { IParsedError, parseError } from "vscode-azureextensionui";
 import { cpUtils } from "../utils/cpUtils";
 
 export async function getSshKey(vmName: string): Promise<string> {
-    const sshKeyName: string = `Azure_${vmName}_rsa`;
+    const sshKeyName: string = `azure_${vmName}_rsa`;
     const sshKeyPath: string = join(os.homedir(), '.ssh', sshKeyName);
     const doesntExistError: string = 'No such file or directory';
 
