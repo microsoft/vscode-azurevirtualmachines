@@ -5,6 +5,7 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
 import { NetworkManagementModels } from 'azure-arm-network';
+import { posix } from 'path';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
 import { localize } from '../../localize';
@@ -36,9 +37,9 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
             disablePasswordAuthentication: true, ssh: {
                 publicKeys: [{
-                    keyData: await getSshKey(),
+                    keyData: await getSshKey(vmName),
                     // because this is a Linux VM, use '/' as path separator rather than using path.join()
-                    path: `/home/${context.adminUsername}/.ssh/authorized_keys`
+                    path: posix.join('home', context.adminUsername, '.ssh', 'authorized_keys')
                 }]
             }
         };

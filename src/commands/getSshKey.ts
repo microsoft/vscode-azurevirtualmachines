@@ -4,33 +4,24 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as os from "os";
-import { Terminal, window } from "vscode";
+import { join } from 'path';
 import { IParsedError, parseError } from "vscode-azureextensionui";
 import { cpUtils } from "../utils/cpUtils";
-import { delay } from "../utils/delay";
 
-export async function getSshKey(): Promise<string> {
+export async function getSshKey(vmName: string): Promise<string> {
+    const sshKeyName: string = `Azure_${vmName}_rsa`;
+    const sshKeyPath: string = join(os.homedir(), '.ssh', sshKeyName);
+    const doesntExistError: string = 'No such file or directory';
+
     try {
-        return await cpUtils.executeCommand(undefined, undefined, 'cat ~/.ssh/id_rsa.pub');
+        return await cpUtils.executeCommand(undefined, undefined, `cat ${sshKeyPath}.pub`);
     } catch (error) {
         const pError: IParsedError = parseError(error);
-        if (pError.message.includes('No such file or directory')) {
-            const sshKeygenTerminal: string = 'ssh-keygen';
-            const sshKeygenCmd: string = 'ssh-keygen -t rsa -b 2048';
-            // tslint:disable-next-line: strict-boolean-expressions
-            const terminal: Terminal = window.terminals.find((activeTerminal: Terminal) => { return activeTerminal.name === sshKeygenTerminal; }) || window.createTerminal(sshKeygenTerminal);
-            terminal.sendText(sshKeygenCmd, true);
-            await delay(1000);
-            // Enter file in which to save the key
-            terminal.sendText(os.EOL, true);
-            await delay(1000);
-            //Enter passphrase (empty for no passphrase):
-            terminal.sendText(os.EOL, true);
-            await delay(1000);
-            // Enter same passphrase again:
-            terminal.sendText(os.EOL, true);
-
-            return await cpUtils.executeCommand(undefined, undefined, 'cat ~/.ssh/id_rsa.pub');
+        // if the SSH key doesn't exist, create it
+        if (pError.message.includes(doesntExistError)) {
+            const sshKeygenCmd: string = `ssh-keygen -t rsa -b 2048 -f ${sshKeyPath} -N ""`;
+            await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
+            return await cpUtils.executeCommand(undefined, undefined, `cat ${sshKeyPath}.pub`);
         }
 
         throw error;
