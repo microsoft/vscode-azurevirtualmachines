@@ -10,10 +10,12 @@ import { AzExtTreeDataProvider, AzureTreeItem, AzureUserInput, callWithTelemetry
 // tslint:disable-next-line:no-submodule-imports
 import { AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
 import { createVirtualMachine } from './commands/createVirtualMachine/createVirtualMachine';
+import { deleteNode } from './commands/deleteNode';
 import { openInPortal } from './commands/openInPortal';
 import { ext } from './extensionVariables';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
 import { SubscriptionTreeItem } from './tree/SubscriptionTreeItem';
+import { VirtualMachineTreeItem } from './tree/VirtualMachineTreeItem';
 
 export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }): Promise<AzureExtensionApiProvider> {
     ext.context = context;
@@ -38,6 +40,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.loadMore', async (actionContext: IActionContext, node: AzureTreeItem) => await ext.tree.loadMore(node, actionContext));
         registerCommand('azureVirtualMachines.openInPortal', openInPortal);
         registerCommand('azureVirtualMachines.createVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await createVirtualMachine(actionContext, node));
+        registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.contextValue, node));
     });
 
     return createApiProvider([]);
