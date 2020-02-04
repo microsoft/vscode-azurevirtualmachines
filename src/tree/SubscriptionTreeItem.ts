@@ -15,6 +15,7 @@ import { VirtualMachineNameStep } from '../commands/createVirtualMachine/Virtual
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
 import { ext } from '../extensionVariables';
 import { nonNullProp } from '../utils/nonNull';
+import { configureSshConfig } from '../utils/sshUtils';
 import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
@@ -100,6 +101,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const createNewVmMsg: string = `Created new virtual machine "${virtualMachine.name}".`;
         ext.outputChannel.appendLine(createNewVmMsg);
 
-        return new VirtualMachineTreeItem(this, virtualMachine);
+        const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine);
+        await configureSshConfig(newVm);
+
+        return newVm;
     }
 }

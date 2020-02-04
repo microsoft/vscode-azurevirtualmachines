@@ -5,12 +5,11 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
 import { NetworkManagementModels } from 'azure-arm-network';
-import { posix } from 'path';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
 import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
-import { getSshKey } from "../getSshKey";
+import { getSshKey } from "../../utils/sshUtils";
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
@@ -39,7 +38,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
                 publicKeys: [{
                     keyData: await getSshKey(vmName),
                     // because this is a Linux VM, use '/' as path separator rather than using path.join()
-                    path: posix.join('home', context.adminUsername, '.ssh', 'authorized_keys')
+                    path: `/home/${context.adminUsername}/.ssh/authorized_keys`
                 }]
             }
         };
@@ -54,6 +53,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         progress.report({ message: creatingVm });
         context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
     }
+
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.virtualMachine && !!context.newVirtualMachineName && !!context.networkInterface && !!context.location && !!context.resourceGroup;
     }
