@@ -3,9 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementModels } from 'azure-arm-compute';
+import ComputeManagementClient, { ComputeManagementModels } from 'azure-arm-compute';
 import NetworkManagementClient, { NetworkManagementModels } from 'azure-arm-network';
-import { AzureParentTreeItem, AzureTreeItem, createAzureClient } from 'vscode-azureextensionui';
+import * as vscode from 'vscode';
+import { AzureParentTreeItem, AzureTreeItem, createAzureClient, DialogResponses } from 'vscode-azureextensionui';
+import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
@@ -13,7 +15,7 @@ import { treeUtils } from '../utils/treeUtils';
 
 export class VirtualMachineTreeItem extends AzureTreeItem {
     public get label(): string {
-        return `${getResourceGroupFromId(this.id).toLocaleLowerCase()}/${this.name}`;
+        return `${this.resourceGroup}/${this.name}`;
     }
 
     public get iconPath(): treeUtils.IThemedIconPath {
@@ -26,6 +28,10 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
     public get name(): string {
         return nonNullProp(this.virtualMachine, 'name');
+    }
+
+    public get resourceGroup(): string {
+        return `${getResourceGroupFromId(this.id).toLocaleLowerCase()}`;
     }
 
     public static contextValue: string = 'azVmVirtualMachine';
@@ -61,5 +67,21 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         const publicIPAddressName: string = getNameFromId(nonNullValueAndProp(networkInterface.ipConfigurations[0].publicIPAddress, 'id'));
         const ip: NetworkManagementModels.PublicIPAddress = await networkClient.publicIPAddresses.get(rgName, publicIPAddressName);
         return nonNullProp(ip, 'ipAddress');
+    }
+
+    public async deleteTreeItemImpl(): Promise<void> {
+        const confirmMessage: string = localize('deleteConfirmation', 'Are you sure you want to delete "{0}"?', this.name);
+        await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
+
+        const deleting: string = localize('Deleting', 'Deleting "{0}"...', this.name);
+        const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted "{0}".', this.name);
+        const computeClient: ComputeManagementClient = createAzureClient(this.root, ComputeManagementClient);
+
+        await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
+            ext.outputChannel.appendLog(deleting);
+            await computeClient.virtualMachines.deleteMethod(this.resourceGroup, this.name);
+            vscode.window.showInformationMessage(deleteSucceeded);
+            ext.outputChannel.appendLog(deleteSucceeded);
+        });
     }
 }

@@ -63,12 +63,17 @@
             },
             {
                 "command": "azureVirtualMachines.createVirtualMachine",
-                "title": "Create Virtual Machine",
+                "title": "%azVms.createVirtualMachine%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.deleteVirtualMachine",
+                "title": "%azVms.deleteVirtualMachine%",
                 "category": "Azure Virtual Machines"
             },
             {
                 "command": "azureVirtualMachines.openInPortal",
-                "title": "Open in Portal",
+                "title": "%azVms.openInPortal%",
                 "category": "Azure Virtual machines"
             }
         ],
@@ -123,6 +128,11 @@
                     "command": "azureVirtualMachines.openInPortal",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "1@1"
+                },
+                {
+                    "command": "azureVirtualMachines.deleteVirtualMachine",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "1@2"
                 }
             ],
             "explorer/context": [],

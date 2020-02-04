@@ -3,14 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureTreeItem, IActionContext } from 'vscode-azureextensionui';
+import { AzExtTreeItem, IActionContext } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
-import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
-export async function openInPortal(context: IActionContext, node?: AzureTreeItem): Promise<void> {
+export async function deleteNode(context: IActionContext, expectedContextValue: string | RegExp, node?: AzExtTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<AzureTreeItem>(VirtualMachineTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker(expectedContextValue, { ...context, suppressCreatePick: true });
     }
 
-    await node.openInPortal();
+    await node.deleteTreeItem(context);
 }
