@@ -132,7 +132,7 @@
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
-                    "group": "1@2"
+                    "group": "2@1"
                 }
             ],
             "explorer/context": [],
