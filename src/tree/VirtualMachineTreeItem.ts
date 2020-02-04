@@ -19,7 +19,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     public get iconPath(): treeUtils.IThemedIconPath {
-        return treeUtils.getThemedIconPath('AzureVm');
+        return treeUtils.getThemedIconPath('Virtual-Machine');
     }
 
     public get id(): string {

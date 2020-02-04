@@ -14,12 +14,13 @@ import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/Virtu
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
 import { ext } from '../extensionVariables';
+import { localize } from '../localize';
 import { nonNullProp } from '../utils/nonNull';
 import { configureSshConfig } from '../utils/sshUtils';
 import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
-    public readonly childTypeLabel: string = 'azVmVirtualMachine';
+    public readonly childTypeLabel: string = localize('VirtualMachine', 'Virtual Machine in Azure');
 
     private _nextLink: string | undefined;
 
