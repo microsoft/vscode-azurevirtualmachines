@@ -6,6 +6,7 @@
 import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
+import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
@@ -30,14 +31,17 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
             networkInterfaces: [networkInterface]
         };
 
-        const creatingNsg: string = localize('creatingNsg', 'Creating network security group...');
+        const creatingNsg: string = localize('creatingNsg', `Creating new network security group "${nsgName}"...`);
+        const createdNsg: string = localize('createdNsg', `Created new network security group "${nsgName}".`);
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
+        ext.outputChannel.appendLog(creatingNsg);
         progress.report({ message: creatingNsg });
 
         context.networkSecurityGroup = await networkClient.networkSecurityGroups.createOrUpdate(rgName, nsgName, networkSecurityGroupProps);
+        ext.outputChannel.appendLog(createdNsg);
     }
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
-        return !context.networkSecurityGroup && !!context.location && !!context.newVirtualMachineName && !!context.networkInterface && !!context.resourceGroup;
+        return !context.networkSecurityGroup;
     }
 
 }

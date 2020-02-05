@@ -6,6 +6,8 @@
 import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
+import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
@@ -19,10 +21,16 @@ export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWiza
         const vnetName: string = nonNullValueAndProp(context.virtualNetwork, 'name');
         // this is the name the portal uses
         const subnetName: string = 'default';
+
+        const creatingSubnet: string = localize('creatingSubnet', `Creating new subnet "${subnetName}"...`);
+        const createdSubnet: string = localize('createdSubnet', `Created new subnet "${subnetName}"`);
+
         const subnetProps: NetworkManagementModels.Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName };
-        progress.report({ message: 'Creating subnet...' });
+        progress.report({ message: creatingSubnet });
+        ext.outputChannel.appendLog(creatingSubnet);
 
         context.subnet = await networkClient.subnets.createOrUpdate(rgName, vnetName, subnetName, subnetProps);
+        ext.outputChannel.appendLog(createdSubnet);
     }
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.subnet;

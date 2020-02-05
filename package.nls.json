@@ -1,13 +1,14 @@
 {
     "extension.description": "An Azure Virtual Machines extension for Visual Studio Code.",
-    "azVms.refresh": "Refresh",
-    "azVms.loadMore": "Load More",
-    "azVms.createNewProject": "Create New Project...",
-    "azVms.initProjectForVSCode": "Initialize Project for Use with VS Code...",
-    "azVms.createVirtualMachine": "Create Virtual Machine...",
-    "azVms.openInPortal": "Open in Portal",
-    "azVms.startFunctionApp": "Start",
-    "azVms.stopFunctionApp": "Stop",
-    "azVms.restartFunctionApp": "Restart",
-    "azVms.deleteVirtualMachine": "Delete Virtual Machine..."
+    "azureVirtualMachines.refresh": "Refresh",
+    "azureVirtualMachines.loadMore": "Load More",
+    "azureVirtualMachines.createNewProject": "Create New Project...",
+    "azureVirtualMachines.initProjectForVSCode": "Initialize Project for Use with VS Code...",
+    "azureVirtualMachines.createVirtualMachine": "Create Virtual Machine...",
+    "azureVirtualMachines.openInPortal": "Open in Portal",
+    "azureVirtualMachines.startFunctionApp": "Start",
+    "azureVirtualMachines.stopFunctionApp": "Stop",
+    "azureVirtualMachines.restartFunctionApp": "Restart",
+    "azureVirtualMachines.deleteVirtualMachine": "Delete Virtual Machine...",
+    "azureVirtualMachines.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp."
 }
