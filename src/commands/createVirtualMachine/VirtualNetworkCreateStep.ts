@@ -6,6 +6,8 @@
 import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
+import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
@@ -20,8 +22,14 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const vnName: string = nonNullProp(context, 'newVirtualMachineName') + '-vnet';
 
-        progress.report({ message: 'Creating virtual network...' });
+        const creatingVn: string = localize('creatingVn', `Creating virtual network "${vnName}"...`);
+        const createdVn: string = localize('creatingVn', `Created virtual network "${vnName}"...`);
+
+        ext.outputChannel.appendLog(creatingVn);
+        progress.report({ message: creatingVn });
+
         context.virtualNetwork = await networkClient.virtualNetworks.createOrUpdate(rgName, vnName, virtualNetworkProps);
+        ext.outputChannel.appendLog(createdVn);
     }
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.virtualNetwork;

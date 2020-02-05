@@ -7,6 +7,7 @@ import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-comp
 import { NetworkManagementModels } from 'azure-arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
+import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { getSshKey } from "../../utils/sshUtils";
@@ -49,13 +50,17 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 
-        const creatingVm: string = localize('creatingVm', 'Creating virtual machine...');
+        const creatingVm: string = localize('creatingVm', `Creating virtual machine "${vmName}"...`);
+        const createdVm: string = localize('creatingVm', `Created virtual machine "${vmName}".`);
+
+        ext.outputChannel.appendLog(creatingVm);
         progress.report({ message: creatingVm });
         context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
+        ext.outputChannel.appendLog(createdVm);
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
-        return !context.virtualMachine && !!context.newVirtualMachineName && !!context.networkInterface && !!context.location && !!context.resourceGroup;
+        return !context.virtualMachine && !!context.newVirtualMachineName;
     }
 
 }

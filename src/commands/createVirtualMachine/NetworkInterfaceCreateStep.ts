@@ -6,12 +6,13 @@
 import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
+import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
-    public priority: number = 250;
+    public priority: number = 240;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = createAzureClient(context, NetworkManagementClient);
@@ -28,10 +29,14 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
             location, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
         };
 
-        const creatingNi: string = localize('creatingNi', 'Creating network interface...');
+        const creatingNi: string = localize('creatingNi', `Creating network interface "${context.newNetworkInterfaceName}"...`);
+        const createdNi: string = localize('createdNi', `Created network interface "${context.newNetworkInterfaceName}".`);
         progress.report({ message: creatingNi });
+        ext.outputChannel.appendLog(creatingNi);
+
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         context.networkInterface = await networkClient.networkInterfaces.createOrUpdate(rgName, context.newNetworkInterfaceName, networkInterfaceProps);
+        ext.outputChannel.appendLog(createdNi);
     }
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.networkInterface;

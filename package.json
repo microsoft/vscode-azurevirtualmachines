@@ -49,7 +49,7 @@
             },
             {
                 "command": "azureVirtualMachines.refresh",
-                "title": "%azVms.refresh%",
+                "title": "%azureVirtualMachines.refresh%",
                 "category": "Azure Virtual Machines",
                 "icon": {
                     "light": "resources/light/Refresh.svg",
@@ -58,22 +58,22 @@
             },
             {
                 "command": "azureVirtualMachines.loadMore",
-                "title": "%azVms.loadMore%",
+                "title": "%azureVirtualMachines.loadMore%",
                 "category": "Azure Virtual Machines"
             },
             {
                 "command": "azureVirtualMachines.createVirtualMachine",
-                "title": "%azVms.createVirtualMachine%",
+                "title": "%azureVirtualMachines.createVirtualMachine%",
                 "category": "Azure Virtual Machines"
             },
             {
                 "command": "azureVirtualMachines.deleteVirtualMachine",
-                "title": "%azVms.deleteVirtualMachine%",
+                "title": "%azureVirtualMachines.deleteVirtualMachine%",
                 "category": "Azure Virtual Machines"
             },
             {
                 "command": "azureVirtualMachines.openInPortal",
-                "title": "%azVms.openInPortal%",
+                "title": "%azureVirtualMachines.openInPortal%",
                 "category": "Azure Virtual machines"
             }
         ],
@@ -170,18 +170,12 @@
                     "azureVirtualMachines.showExplorer": {
                         "type": "boolean",
                         "default": true,
-                        "description": "%azVms.showExplorerDescription%"
+                        "description": "%azureVirtualMachines.showExplorerDescription%"
                     },
-                    "azureVirtualMachines.templateFilter": {
-                        "scope": "resource",
-                        "type": "string",
-                        "default": "Verified",
-                        "enum": [
-                            "Verified",
-                            "Core",
-                            "All"
-                        ],
-                        "description": "%azVms.templateFilterDescription%"
+                    "azureVirtualMachines.enableOutputTimestamps": {
+                        "type": "boolean",
+                        "description": "%azureVirtualMachines.enableOutputTimestamps%",
+                        "default": true
                     }
                 }
             }

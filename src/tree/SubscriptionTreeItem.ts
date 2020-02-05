@@ -13,7 +13,6 @@ import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateS
 import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/VirtualMachineCreateStep';
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
-import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { nonNullProp } from '../utils/nonNull';
 import { configureSshConfig } from '../utils/sshUtils';
@@ -98,9 +97,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         const virtualMachine: ComputeManagementModels.VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
         // context.telemetry.properties.vm = virtualMachine.name;
-
-        const createNewVmMsg: string = `Created new virtual machine "${virtualMachine.name}".`;
-        ext.outputChannel.appendLine(createNewVmMsg);
 
         const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine);
         await configureSshConfig(newVm);
