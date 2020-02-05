@@ -22,8 +22,8 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const vnName: string = nonNullProp(context, 'newVirtualMachineName') + '-vnet';
 
-        const creatingVn: string = localize('creatingVn', `Creating virtual network "${vnName}"...`);
-        const createdVn: string = localize('creatingVn', `Created virtual network "${vnName}"...`);
+        const creatingVn: string = localize('creatingVn', `Creating new virtual network "${vnName}"...`);
+        const createdVn: string = localize('creatingVn', `Created new virtual network "${vnName}"...`);
 
         ext.outputChannel.appendLog(creatingVn);
         progress.report({ message: creatingVn });
