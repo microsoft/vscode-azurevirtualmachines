@@ -31,8 +31,8 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
             networkInterfaces: [networkInterface]
         };
 
-        const creatingNsg: string = localize('creatingNsg', `Creating network security group "${nsgName}"...`);
-        const createdNsg: string = localize('createdNsg', `Created network security group "${nsgName}".`);
+        const creatingNsg: string = localize('creatingNsg', `Creating new network security group "${nsgName}"...`);
+        const createdNsg: string = localize('createdNsg', `Created new network security group "${nsgName}".`);
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         ext.outputChannel.appendLog(creatingNsg);
         progress.report({ message: creatingNsg });

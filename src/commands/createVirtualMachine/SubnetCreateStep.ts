@@ -22,8 +22,8 @@ export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWiza
         // this is the name the portal uses
         const subnetName: string = 'default';
 
-        const creatingSubnet: string = localize('creatingSubnet', `Creating subnet "${subnetName}"...`);
-        const createdSubnet: string = localize('createdSubnet', `Created subnet "${subnetName}"`);
+        const creatingSubnet: string = localize('creatingSubnet', `Creating new subnet "${subnetName}"...`);
+        const createdSubnet: string = localize('createdSubnet', `Created new subnet "${subnetName}"`);
 
         const subnetProps: NetworkManagementModels.Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName };
         progress.report({ message: creatingSubnet });

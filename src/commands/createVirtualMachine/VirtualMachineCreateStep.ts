@@ -50,8 +50,8 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 
-        const creatingVm: string = localize('creatingVm', `Creating virtual machine "${vmName}"...`);
-        const createdVm: string = localize('creatingVm', `Created virtual machine "${vmName}".`);
+        const creatingVm: string = localize('creatingVm', `Creating new virtual machine "${vmName}"...`);
+        const createdVm: string = localize('creatingVm', `Created new virtual machine "${vmName}".`);
 
         ext.outputChannel.appendLog(creatingVm);
         progress.report({ message: creatingVm });

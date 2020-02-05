@@ -29,8 +29,8 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
             location, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
         };
 
-        const creatingNi: string = localize('creatingNi', `Creating network interface "${context.newNetworkInterfaceName}"...`);
-        const createdNi: string = localize('createdNi', `Created network interface "${context.newNetworkInterfaceName}".`);
+        const creatingNi: string = localize('creatingNi', `Creating new network interface "${context.newNetworkInterfaceName}"...`);
+        const createdNi: string = localize('createdNi', `Created new network interface "${context.newNetworkInterfaceName}".`);
         progress.report({ message: creatingNi });
         ext.outputChannel.appendLog(creatingNi);
 

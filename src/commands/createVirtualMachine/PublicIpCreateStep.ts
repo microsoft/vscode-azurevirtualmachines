@@ -25,8 +25,8 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         // when creating a VM on the portal, this is the suffix that is added to the public IP address
         const ipName: string = nonNullProp(context, 'newVirtualMachineName') + '-ip';
 
-        const creatingIp: string = localize('creatingIp', `Creating public IP addresss "${ipName}"...`);
-        const createdIp: string = localize('creatingIp', `Created public IP addresss "${ipName}".`);
+        const creatingIp: string = localize('creatingIp', `Creating new public IP addresss "${ipName}"...`);
+        const createdIp: string = localize('creatingIp', `Created new public IP addresss "${ipName}".`);
         progress.report({ message: creatingIp });
         ext.outputChannel.appendLog(creatingIp);
 
