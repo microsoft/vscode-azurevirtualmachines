@@ -17,16 +17,19 @@ export async function getSshKey(vmName: string): Promise<string> {
     const sshKeyName: string = `azure_${vmName}_rsa`;
     const sshKeyPath: string = join(sshFsPath, sshKeyName);
     const doesntExistError: string = 'No such file or directory';
+    const getContentCmd: string = os.platform() === 'win32' ? 'type' : 'cat';
+
+    os.type();
 
     try {
-        return await cpUtils.executeCommand(undefined, undefined, `cat ${sshKeyPath}.pub`);
+        return await cpUtils.executeCommand(undefined, undefined, `${getContentCmd} ${sshKeyPath}.pub`);
     } catch (error) {
         const pError: IParsedError = parseError(error);
         // if the SSH key doesn't exist, create it
         if (pError.message.includes(doesntExistError)) {
             const sshKeygenCmd: string = `ssh-keygen -t rsa -b 2048 -f ${sshKeyPath} -N ""`;
             await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
-            return await cpUtils.executeCommand(undefined, undefined, `cat ${sshKeyPath}.pub`);
+            return await cpUtils.executeCommand(undefined, undefined, `${getContentCmd} ${sshKeyPath}.pub`);
         }
 
         throw error;
