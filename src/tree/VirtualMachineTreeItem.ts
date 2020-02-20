@@ -37,7 +37,6 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     public static contextValue: string = 'azVmVirtualMachine';
     public readonly contextValue: string = VirtualMachineTreeItem.contextValue;
     public virtualMachine: ComputeManagementModels.VirtualMachine;
-    public vmName: string;
 
     public constructor(parent: AzureParentTreeItem, vm: ComputeManagementModels.VirtualMachine) {
         super(parent);

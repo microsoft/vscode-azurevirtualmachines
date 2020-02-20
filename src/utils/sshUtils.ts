@@ -11,7 +11,7 @@ import { ext } from '../extensionVariables';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { cpUtils } from "./cpUtils";
 
-const sshFsPath: string = join(os.homedir(), '.ssh');
+export const sshFsPath: string = join(os.homedir(), '.ssh');
 
 export async function getSshKey(vmName: string): Promise<string> {
     const sshKeyName: string = `azure_${vmName}_rsa`;
@@ -33,7 +33,7 @@ export async function getSshKey(vmName: string): Promise<string> {
     }
 }
 
-export async function configureSshConfig(vmti: VirtualMachineTreeItem): Promise<void> {
+export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath?: string): Promise<void> {
     const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.ensureFile(sshConfigPath);
     let configFile: string = (await fse.readFile(sshConfigPath)).toString();
@@ -64,7 +64,7 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem): Promise<
     }
 
     const sshKeyName: string = `azure_${vmti.name}_rsa`;
-    const sshKeyPath: string = join('~', '.ssh', sshKeyName);
+    sshKeyPath = sshKeyPath || join('~', '.ssh', sshKeyName);
 
     configFile = configFile +
         `\nHost ${host}

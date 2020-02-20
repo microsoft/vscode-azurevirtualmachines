@@ -30,6 +30,7 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         context.virtualNetwork = await networkClient.virtualNetworks.createOrUpdate(rgName, vnName, virtualNetworkProps);
         ext.outputChannel.appendLog(createdVn);
+        progress.report({ message: createdVn });
     }
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.virtualNetwork;

@@ -67,6 +67,11 @@
                 "category": "Azure Virtual Machines"
             },
             {
+                "command": "azureVirtualMachines.configureSshKey",
+                "title": "%azureVirtualMachines.configureSshKey%",
+                "category": "Azure Virtual Machines"
+            },
+            {
                 "command": "azureVirtualMachines.deleteVirtualMachine",
                 "title": "%azureVirtualMachines.deleteVirtualMachine%",
                 "category": "Azure Virtual Machines"
@@ -130,9 +135,14 @@
                     "group": "1@1"
                 },
                 {
-                    "command": "azureVirtualMachines.deleteVirtualMachine",
+                    "command": "azureVirtualMachines.configureSshKey",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "2@1"
+                },
+                {
+                    "command": "azureVirtualMachines.deleteVirtualMachine",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "2@2"
                 }
             ],
             "explorer/context": [],

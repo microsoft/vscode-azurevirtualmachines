@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import { AzExtTreeDataProvider, AzureTreeItem, AzureUserInput, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createTelemetryReporter, IActionContext, registerCommand, registerUIExtensionVariables } from 'vscode-azureextensionui';
 // tslint:disable-next-line:no-submodule-imports
 import { AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
+import { configureSshKey } from './commands/configureSshKey';
 import { createVirtualMachine } from './commands/createVirtualMachine/createVirtualMachine';
 import { deleteNode } from './commands/deleteNode';
 import { openInPortal } from './commands/openInPortal';
@@ -40,6 +41,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.loadMore', async (actionContext: IActionContext, node: AzureTreeItem) => await ext.tree.loadMore(node, actionContext));
         registerCommand('azureVirtualMachines.openInPortal', openInPortal);
         registerCommand('azureVirtualMachines.createVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await createVirtualMachine(actionContext, node));
+        registerCommand('azureVirtualMachines.configureSshKey', async (actionContext: IActionContext, node?: VirtualMachineTreeItem) => await configureSshKey(actionContext, node));
         registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.contextValue, node));
     });
 
