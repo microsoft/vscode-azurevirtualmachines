@@ -6,7 +6,6 @@
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
-import { IParsedError, parseError } from "vscode-azureextensionui";
 import { ext } from '../extensionVariables';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { cpUtils } from "./cpUtils";
@@ -16,24 +15,14 @@ export const sshFsPath: string = join(os.homedir(), '.ssh');
 export async function getSshKey(vmName: string): Promise<string> {
     const sshKeyName: string = `azure_${vmName}_rsa`;
     const sshKeyPath: string = join(sshFsPath, sshKeyName);
-    const doesntExistError: string = 'No such file or directory';
-    const getContentCmd: string = os.platform() === 'win32' ? 'type' : 'cat';
 
-    os.type();
-
-    try {
-        return await cpUtils.executeCommand(undefined, undefined, `${getContentCmd} ${sshKeyPath}.pub`);
-    } catch (error) {
-        const pError: IParsedError = parseError(error);
+    if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
         // if the SSH key doesn't exist, create it
-        if (pError.message.includes(doesntExistError)) {
-            const sshKeygenCmd: string = `ssh-keygen -t rsa -b 2048 -f ${sshKeyPath} -N ""`;
-            await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
-            return await cpUtils.executeCommand(undefined, undefined, `${getContentCmd} ${sshKeyPath}.pub`);
-        }
-
-        throw error;
+        const sshKeygenCmd: string = `ssh-keygen -t rsa -b 2048 -f ${sshKeyPath} -N ""`;
+        await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
     }
+
+    return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
 }
 
 export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath?: string): Promise<void> {

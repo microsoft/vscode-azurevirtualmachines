@@ -34,7 +34,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         ext.azureAccountTreeItem = new AzureAccountTreeItem();
         context.subscriptions.push(ext.azureAccountTreeItem);
         ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, 'azureVirtualMachines.loadMore');
-        context.subscriptions.push(vscode.window.createTreeView('azVmTree', { treeDataProvider: ext.tree }));
+        context.subscriptions.push(vscode.window.createTreeView('azVmTree', { treeDataProvider: ext.tree, showCollapseAll: true }));
 
         registerCommand('azureVirtualMachines.selectSubscriptions', () => vscode.commands.executeCommand('azure-account.selectSubscriptions'));
         registerCommand('azureVirtualMachines.refresh', async (_actionContext: IActionContext, node?: AzureTreeItem) => await ext.tree.refresh(node));

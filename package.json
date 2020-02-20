@@ -64,7 +64,11 @@
             {
                 "command": "azureVirtualMachines.createVirtualMachine",
                 "title": "%azureVirtualMachines.createVirtualMachine%",
-                "category": "Azure Virtual Machines"
+                "category": "Azure Virtual Machines",
+                "icon": {
+                    "light": "resources/light/createVM.svg",
+                    "dark": "resources/dark/createVM.svg"
+                }
             },
             {
                 "command": "azureVirtualMachines.configureSshKey",
@@ -103,9 +107,14 @@
         "menus": {
             "view/title": [
                 {
+                    "command": "azureVirtualMachines.createVirtualMachine",
+                    "when": "view == azVmTree",
+                    "group": "navigation@1"
+                },
+                {
                     "command": "azureVirtualMachines.refresh",
                     "when": "view == azVmTree",
-                    "group": "navigation@3"
+                    "group": "navigation@2"
                 }
             ],
             "view/item/context": [
