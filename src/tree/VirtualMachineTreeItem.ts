@@ -105,7 +105,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     private getStateFromInstanceView(instanceView: ComputeManagementModels.VirtualMachineInstanceView): string | undefined {
-        const powerState: ComputeManagementModels.InstanceViewStatus | undefined = instanceView.statuses && instanceView.statuses.find(status => status.code && status.code.toLowerCase().includes('powerstate'));
+        const powerState: ComputeManagementModels.InstanceViewStatus | undefined = instanceView.statuses && instanceView.statuses.find((status): boolean => status.code && status.code.toLowerCase().includes('powerstate') ? true : false);
         return powerState ? powerState.displayStatus : undefined;
     }
 }
