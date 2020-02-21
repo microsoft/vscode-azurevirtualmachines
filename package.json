@@ -71,6 +71,16 @@
                 }
             },
             {
+                "command": "azureVirtualMachines.startVirtualMachine",
+                "title": "%azureVirtualMachines.startVirtualMachine%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.stopVirtualMachine",
+                "title": "%azureVirtualMachines.stopVirtualMachine%",
+                "category": "Azure Virtual Machines"
+            },
+            {
                 "command": "azureVirtualMachines.configureSshKey",
                 "title": "%azureVirtualMachines.configureSshKey%",
                 "category": "Azure Virtual Machines"
@@ -144,14 +154,24 @@
                     "group": "1@1"
                 },
                 {
-                    "command": "azureVirtualMachines.configureSshKey",
+                    "command": "azureVirtualMachines.startVirtualMachine",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "2@1"
                 },
                 {
-                    "command": "azureVirtualMachines.deleteVirtualMachine",
+                    "command": "azureVirtualMachines.stopVirtualMachine",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "2@2"
+                },
+                {
+                    "command": "azureVirtualMachines.deleteVirtualMachine",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "2@3"
+                },
+                {
+                    "command": "azureVirtualMachines.configureSshKey",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "3@1"
                 }
             ],
             "explorer/context": [],
