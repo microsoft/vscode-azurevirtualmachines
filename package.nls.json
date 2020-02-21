@@ -6,10 +6,10 @@
     "azureVirtualMachines.initProjectForVSCode": "Initialize Project for Use with VS Code...",
     "azureVirtualMachines.createVirtualMachine": "Create Virtual Machine...",
     "azureVirtualMachines.openInPortal": "Open in Portal",
-    "azureVirtualMachines.startFunctionApp": "Start",
-    "azureVirtualMachines.stopFunctionApp": "Stop",
+    "azureVirtualMachines.startVirtualMachine": "Start",
+    "azureVirtualMachines.stopVirtualMachine": "Stop",
     "azureVirtualMachines.restartFunctionApp": "Restart",
-    "azureVirtualMachines.deleteVirtualMachine": "Delete Virtual Machine...",
+    "azureVirtualMachines.deleteVirtualMachine": "Delete...",
     "azureVirtualMachines.configureSshKey": "Configure SSH Key...",
     "azureVirtualMachines.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp."
 }

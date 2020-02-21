@@ -14,6 +14,7 @@ import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/Virtu
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
 import { localize } from '../localize';
+import { getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp } from '../utils/nonNull';
 import { configureSshConfig } from '../utils/sshUtils';
 import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
@@ -55,15 +56,15 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         return await this.createTreeItemsWithErrorHandling(
             virtualMachines,
             'invalidVirtualMachine',
-            (vm: ComputeManagementModels.VirtualMachine) => {
-                return new VirtualMachineTreeItem(this, vm);
+            async (vm: ComputeManagementModels.VirtualMachine) => {
+                const instanceView: ComputeManagementModels.VirtualMachineInstanceView = await client.virtualMachines.instanceView(getResourceGroupFromId(nonNullProp(vm, 'id')), nonNullProp(vm, 'name'));
+                return new VirtualMachineTreeItem(this, vm, instanceView);
             },
             (vm: ComputeManagementModels.VirtualMachine) => {
                 return vm.name;
             }
         );
     }
-
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzureTreeItem> {
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.root, {
             resourceGroupDeferLocationStep: true,
@@ -98,7 +99,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const virtualMachine: ComputeManagementModels.VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
         // context.telemetry.properties.vm = virtualMachine.name;
 
-        const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine);
+        const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine, undefined /* assume all newly created VMs are running */);
         await configureSshConfig(newVm);
 
         return newVm;

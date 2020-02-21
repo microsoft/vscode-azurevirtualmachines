@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import ComputeManagementClient, { ComputeManagementModels } from 'azure-arm-compute';
-import NetworkManagementClient, { NetworkManagementModels } from 'azure-arm-network';
+import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
+import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
 import * as vscode from 'vscode';
 import { AzureParentTreeItem, AzureTreeItem, createAzureClient, DialogResponses } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
@@ -34,13 +34,19 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return `${getResourceGroupFromId(this.id).toLocaleLowerCase()}`;
     }
 
+    public get description(): string | undefined {
+        return this._state && this._state.toLowerCase().includes('deallocated') ? 'Stopped' : undefined;
+    }
+
     public static contextValue: string = 'azVmVirtualMachine';
     public readonly contextValue: string = VirtualMachineTreeItem.contextValue;
     public virtualMachine: ComputeManagementModels.VirtualMachine;
+    private _state?: string;
 
-    public constructor(parent: AzureParentTreeItem, vm: ComputeManagementModels.VirtualMachine) {
+    public constructor(parent: AzureParentTreeItem, vm: ComputeManagementModels.VirtualMachine, instanceView?: ComputeManagementModels.VirtualMachineInstanceView) {
         super(parent);
         this.virtualMachine = vm;
+        this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
     }
 
     public getUser(): string {
@@ -82,5 +88,24 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             vscode.window.showInformationMessage(deleteSucceeded);
             ext.outputChannel.appendLog(deleteSucceeded);
         });
+    }
+
+    public async refreshImpl(): Promise<void> {
+        try {
+            this._state = await this.getState();
+        } catch {
+            this._state = undefined;
+        }
+    }
+
+    public async getState(): Promise<string | undefined> {
+        const computeClient: ComputeManagementClient = createAzureClient(this.root, ComputeManagementClient);
+        return this.getStateFromInstanceView(await computeClient.virtualMachines.instanceView(this.resourceGroup, this.name));
+
+    }
+
+    private getStateFromInstanceView(instanceView: ComputeManagementModels.VirtualMachineInstanceView): string | undefined {
+        const powerState: ComputeManagementModels.InstanceViewStatus | undefined = instanceView.statuses && instanceView.statuses.find(status => status.code && status.code.toLowerCase().includes('powerstate'));
+        return powerState ? powerState.displayStatus : undefined;
     }
 }
