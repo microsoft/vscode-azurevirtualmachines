@@ -30,11 +30,16 @@
     ],
     "preview": true,
     "activationEvents": [
+        "azureVirtualMachines.selectSubscriptions",
         "onCommand:azureVirtualMachines.refresh",
         "onCommand:azureVirtualMachines.loadMore",
+        "azureVirtualMachines.createVirtualMachine",
+        "azureVirtualMachines.startVirtualMachine",
+        "azureVirtualMachines.stopVirtualMachine",
+        "azureVirtualMachines.addSshKey",
+        "azureVirtualMachines.deleteVirtualMachine",
         "onCommand:azureVirtualMachines.openInPortal",
-        "onView:azVmTree",
-        "onDebugInitialConfigurations"
+        "onView:azVmTree"
     ],
     "main": "./main.js",
     "contributes": {
