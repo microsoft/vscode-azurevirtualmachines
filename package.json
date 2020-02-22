@@ -241,7 +241,6 @@
         "@types/node": "^8.10.45",
         "@types/request": "2.0.7",
         "azure-arm-resource": "^3.0.0-preview",
-        "copy-webpack-plugin": "^4.6.0",
         "gulp": "^4.0.0",
         "gulp-chmod": "^2.0.0",
         "gulp-decompress": "^2.0.1",
