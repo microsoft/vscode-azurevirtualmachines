@@ -5,7 +5,6 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from "azure-arm-compute";
 import * as fse from "fs-extra";
-import { name } from 'path';
 import { ProgressLocation, Uri, window } from "vscode";
 import { createAzureClient, IActionContext } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
