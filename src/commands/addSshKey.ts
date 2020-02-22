@@ -14,7 +14,7 @@ import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { nonNullValueAndProp } from "../utils/nonNull";
 import { configureSshConfig, sshFsPath } from "../utils/sshUtils";
 
-export async function configureSshKey(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function addSshKey(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
         node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.contextValue, context);
     }

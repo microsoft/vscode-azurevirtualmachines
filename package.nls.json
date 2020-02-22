@@ -10,6 +10,6 @@
     "azureVirtualMachines.stopVirtualMachine": "Stop",
     "azureVirtualMachines.restartFunctionApp": "Restart",
     "azureVirtualMachines.deleteVirtualMachine": "Delete...",
-    "azureVirtualMachines.configureSshKey": "Configure SSH Key...",
+    "azureVirtualMachines.addSshKey": "Add SSH Key...",
     "azureVirtualMachines.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp."
 }
