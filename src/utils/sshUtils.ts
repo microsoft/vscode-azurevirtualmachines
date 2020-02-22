@@ -56,13 +56,10 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     }
 
     const sshKeyName: string = `azure_${vmti.name}_rsa`;
-    sshKeyPath = sshKeyPath || join('~', '.ssh', sshKeyName);
+    sshKeyPath = sshKeyPath || `~/.ssh/${sshKeyName}`;
+    const fourSpaces: string = '    ';
 
-    configFile = configFile +
-        `\nHost ${host}
-             HostName ${hostName}
-             User ${vmti.getUser()}
-             IdentityFile ${sshKeyPath}`;
+    configFile = configFile + `${os.EOL}Host ${host}${os.EOL}${fourSpaces}HostName ${hostName}${os.EOL}${fourSpaces}User ${vmti.getUser()}${os.EOL}${fourSpaces}IdentityFile ${sshKeyPath}`;
 
     await fse.writeFile(sshConfigPath, configFile);
 }

@@ -5,7 +5,6 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from "azure-arm-compute";
 import * as fse from "fs-extra";
-import { basename } from 'path';
 import { ProgressLocation, Uri, window } from "vscode";
 import { createAzureClient, IActionContext } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
@@ -53,5 +52,6 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
         ext.outputChannel.appendLog(configuringSshSucceeded);
     });
 
-    await configureSshConfig(node, basename(sshPublicKey.fsPath));
+    // the ssh/config file lists the private key, not the .pub file, so remove the ext from the file path
+    await configureSshConfig(node, sshPublicKey.path.substring(0, sshPublicKey.path.length - 4));
 }
