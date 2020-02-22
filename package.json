@@ -14,7 +14,7 @@
         "url": "https://github.com/microsoft/vscode-azurevirtualmachines"
     },
     "galleryBanner": {
-        "color": "#0072c6",
+        "color": "#3a3d41",
         "theme": "dark"
     },
     "homepage": "https://github.com/Microsoft/vscode-azurevirtualmachines/blob/master/README.md",
