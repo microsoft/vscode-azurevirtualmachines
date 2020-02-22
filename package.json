@@ -81,8 +81,8 @@
                 "category": "Azure Virtual Machines"
             },
             {
-                "command": "azureVirtualMachines.configureSshKey",
-                "title": "%azureVirtualMachines.configureSshKey%",
+                "command": "azureVirtualMachines.addSshKey",
+                "title": "%azureVirtualMachines.addSshKey%",
                 "category": "Azure Virtual Machines"
             },
             {
@@ -169,7 +169,7 @@
                     "group": "2@3"
                 },
                 {
-                    "command": "azureVirtualMachines.configureSshKey",
+                    "command": "azureVirtualMachines.addSshKey",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "3@1"
                 }
