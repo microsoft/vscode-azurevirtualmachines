@@ -114,8 +114,7 @@
             "azure": [
                 {
                     "id": "azVmTree",
-                    "name": "Virtual Machines",
-                    "when": "config.azureVirtualMachines.showExplorer == true"
+                    "name": "Virtual Machines"
                 }
             ]
         },
@@ -211,11 +210,6 @@
             {
                 "title": "Azure Virtual Machines",
                 "properties": {
-                    "azureVirtualMachines.showExplorer": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "%azureVirtualMachines.showExplorerDescription%"
-                    },
                     "azureVirtualMachines.enableOutputTimestamps": {
                         "type": "boolean",
                         "description": "%azureVirtualMachines.enableOutputTimestamps%",
