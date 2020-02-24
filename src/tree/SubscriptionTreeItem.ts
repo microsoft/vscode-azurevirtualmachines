@@ -20,7 +20,7 @@ import { configureSshConfig } from '../utils/sshUtils';
 import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
-    public readonly childTypeLabel: string = localize('VirtualMachine', 'Virtual Machine in Azure');
+    public readonly childTypeLabel: string = localize('VirtualMachine', 'Virtual Machine');
 
     private _nextLink: string | undefined;
 
@@ -67,7 +67,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzureTreeItem> {
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.root, {
-            resourceGroupDeferLocationStep: true,
             addressPrefix: '10.1.0.0/24'
         });
 
@@ -79,7 +78,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         // create a disk, publicIp, virtualNetwork, subnet, networkInterface, networkSecurityGroup (this has the security rules), and then virtuaMachine
         const executeSteps: AzureWizardExecuteStep<IVirtualMachineWizardContext>[] = [];
-        // executeSteps.push(new DiskCreateStep());
         executeSteps.push(new PublicIpCreateStep());
         executeSteps.push(new VirtualNetworkCreateStep());
         executeSteps.push(new SubnetCreateStep());
@@ -97,7 +95,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         await wizard.execute();
 
         const virtualMachine: ComputeManagementModels.VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
-        // context.telemetry.properties.vm = virtualMachine.name;
 
         const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine, undefined /* assume all newly created VMs are running */);
         await configureSshConfig(newVm);

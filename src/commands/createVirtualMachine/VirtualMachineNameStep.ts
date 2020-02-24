@@ -13,7 +13,7 @@ import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 export const virtualMachineNamingRules: IAzureNamingRules = {
     minLength: 1,
     maxLength: 64,
-    // cannot accept charactres that are invalid for Linux OS computername which is basically any non-alphanumeric except . and -
+    // cannot accept characters that are invalid for Linux OS computername which is basically any non-alphanumeric except . and -
     invalidCharsRegExp: /[^a-zA-Z0-9\.\-]/
 };
 
@@ -25,13 +25,14 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
         const rgName: string = wizardContext.newResourceGroupName || nonNullValueAndProp(wizardContext.resourceGroup, 'name');
         const suggestedName: string | undefined = await this.generateRelatedName(wizardContext, rgName, namingRules);
 
-        const prompt: string = localize('virtualMachineNamePrompt', 'Enter a globally unique name for the new virutalMachine.');
+        const prompt: string = localize('virtualMachineNamePrompt', 'Enter a name for the new virtual machine.');
         wizardContext.newVirtualMachineName = (await ext.ui.showInputBox({
             value: suggestedName,
             prompt,
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateVirtualMachineName(wizardContext, value)
         })).trim();
     }
+
     public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {
         return !wizardContext.newVirtualMachineName && !wizardContext.virtualMachine;
     }
@@ -45,7 +46,7 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
 
         if (name.length < virtualMachineNamingRules.minLength || name.length > virtualMachineNamingRules.maxLength) {
             return localize('invalidLength', 'The name must be between {0} and {1} characters.', virtualMachineNamingRules.minLength, virtualMachineNamingRules.maxLength);
-        } else if (name.match(virtualMachineNamingRules.invalidCharsRegExp) !== null) {
+        } else if (virtualMachineNamingRules.invalidCharsRegExp.test(name)) {
             return localize('invalidChars', "The name can only contain alphanumeric characters and the symbols .-");
         } else if (name.endsWith('.') || name.endsWith('-')) {
             return localize('invalidEndingChar', "The name cannot end in a period or hyphen.");
@@ -69,5 +70,4 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
 
         return true;
     }
-
 }

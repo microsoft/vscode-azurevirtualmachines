@@ -16,14 +16,14 @@ export async function stopVirtualMachine(context: IActionContext, node?: Virtual
     }
 
     const computeClient: ComputeManagementClient = createAzureClient(node.root, ComputeManagementClient);
-    const startingVm: string = localize('stoppingVm', `Stopping "${node.name}"...`);
-    const startedVm: string = localize('stoppedVm', `"${node.name}" has been stopped.`);
+    const stoppingVm: string = localize('stoppingVm', `Stopping "${node.name}"...`);
+    const stoppedVm: string = localize('stoppedVm', `"${node.name}" has been stopped.`);
 
     await node.runWithTemporaryDescription(localize('stopping', 'Stopping...'), async () => {
         const vmti: VirtualMachineTreeItem = nonNullValue(node);
-        ext.outputChannel.appendLog(startingVm);
+        ext.outputChannel.appendLog(stoppingVm);
         await computeClient.virtualMachines.deallocate(vmti.resourceGroup, vmti.name);
-        ext.outputChannel.appendLog(startedVm);
+        ext.outputChannel.appendLog(stoppedVm);
     });
 
 }

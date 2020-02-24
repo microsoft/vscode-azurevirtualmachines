@@ -42,10 +42,10 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.refresh', async (_actionContext: IActionContext, node?: AzureTreeItem) => await ext.tree.refresh(node));
         registerCommand('azureVirtualMachines.loadMore', async (actionContext: IActionContext, node: AzureTreeItem) => await ext.tree.loadMore(node, actionContext));
         registerCommand('azureVirtualMachines.openInPortal', openInPortal);
-        registerCommand('azureVirtualMachines.createVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await createVirtualMachine(actionContext, node));
-        registerCommand('azureVirtualMachines.startVirtualMachine', async (actionContext: IActionContext, node?: VirtualMachineTreeItem) => await startVirtualMachine(actionContext, node));
-        registerCommand('azureVirtualMachines.stopVirtualMachine', async (actionContext: IActionContext, node?: VirtualMachineTreeItem) => await stopVirtualMachine(actionContext, node));
-        registerCommand('azureVirtualMachines.addSshKey', async (actionContext: IActionContext, node?: VirtualMachineTreeItem) => await addSshKey(actionContext, node));
+        registerCommand('azureVirtualMachines.createVirtualMachine', createVirtualMachine);
+        registerCommand('azureVirtualMachines.startVirtualMachine', startVirtualMachine);
+        registerCommand('azureVirtualMachines.stopVirtualMachine', stopVirtualMachine);
+        registerCommand('azureVirtualMachines.addSshKey', addSshKey);
         registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.contextValue, node));
     });
 

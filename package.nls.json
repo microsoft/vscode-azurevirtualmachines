@@ -2,8 +2,6 @@
     "extension.description": "An Azure Virtual Machines extension for Visual Studio Code.",
     "azureVirtualMachines.refresh": "Refresh",
     "azureVirtualMachines.loadMore": "Load More",
-    "azureVirtualMachines.createNewProject": "Create New Project...",
-    "azureVirtualMachines.initProjectForVSCode": "Initialize Project for Use with VS Code...",
     "azureVirtualMachines.createVirtualMachine": "Create Virtual Machine...",
     "azureVirtualMachines.openInPortal": "Open in Portal",
     "azureVirtualMachines.startVirtualMachine": "Start",

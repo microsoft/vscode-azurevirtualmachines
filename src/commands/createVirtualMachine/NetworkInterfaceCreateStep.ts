@@ -38,6 +38,7 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         context.networkInterface = await networkClient.networkInterfaces.createOrUpdate(rgName, context.newNetworkInterfaceName, networkInterfaceProps);
         ext.outputChannel.appendLog(createdNi);
     }
+
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.networkInterface;
     }
@@ -51,5 +52,4 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
 
         return niName;
     }
-
 }

@@ -21,32 +21,14 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     newVirtualMachineName?: string;
 
     /**
-     * The hardware profile of the new VM. Specifies the size of the virtual machine.
-     * This will be defined after `VirtualMachineNameStep.execute` occurs.
-     */
-    hardwareProfile?: ComputeManagementModels.HardwareProfile;
-
-    /**
      * The size of the VM.  The default value is `Standard_D2s_v3`.
      */
     size?: string;
 
     /**
-     * The storage profile of the new VM. Specifies information about the image to use for the disk.
-     * This will be defined after `VirtualMachineNameStep.execute` occurs.
-     */
-    storageProfile?: ComputeManagementModels.StorageProfile;
-
-    /**
      * The image used to create the VM.  The default is `Ubuntu Server 18.04 LTS`.
      */
     image?: ComputeManagementModels.ImageReference;
-
-    /**
-     * The network profile of the new VM.  This is used to link the VM to a Network Interface.
-     * This will be defined after `VirtualMachineNameStep.execute` occurs.
-     */
-    networkProfile?: NetworkManagementModels.NetworkProfile;
 
     /**
      * The network interface of the new VM.  This contains all the ipConfigurations such as public IP and subnet
@@ -80,7 +62,7 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     subnet?: NetworkManagementModels.Subnet;
 
     /**
-     * The virutal network for the new VM.
+     * The virtual network for the new VM.
      * This will be defined after `VirtualNetworkCreateStep.execute`
      */
     virtualNetwork?: NetworkManagementModels.VirtualNetwork;

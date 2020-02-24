@@ -33,8 +33,8 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         context.publicIpAddress = await networkClient.publicIPAddresses.createOrUpdate(rgName, ipName, publicIpProps);
         ext.outputChannel.appendLog(createdIp);
     }
+
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.publicIpAddress;
     }
-
 }
