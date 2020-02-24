@@ -12,7 +12,7 @@ import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
-    public priority: number = 240;
+    public priority: number = 250;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = createAzureClient(context, NetworkManagementClient);
@@ -26,7 +26,7 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         const subnet: NetworkManagementModels.Subnet = nonNullProp(context, 'subnet');
 
         const networkInterfaceProps: NetworkManagementModels.NetworkInterface = {
-            location, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
+            location, networkSecurityGroup: context.networkSecurityGroup, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
         };
 
         const creatingNi: string = localize('creatingNi', `Creating new network interface "${context.newNetworkInterfaceName}"...`);

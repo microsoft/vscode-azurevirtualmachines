@@ -83,8 +83,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         executeSteps.push(new PublicIpCreateStep());
         executeSteps.push(new VirtualNetworkCreateStep());
         executeSteps.push(new SubnetCreateStep());
-        executeSteps.push(new NetworkInterfaceCreateStep());
         executeSteps.push(new NetworkSecurityGroupCreateStep());
+        executeSteps.push(new NetworkInterfaceCreateStep());
         executeSteps.push(new VirtualMachineCreateStep());
 
         const title: string = 'Create new virtual machine';
