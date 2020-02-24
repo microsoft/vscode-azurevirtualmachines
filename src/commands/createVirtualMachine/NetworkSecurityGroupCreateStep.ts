@@ -38,8 +38,8 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
         context.networkSecurityGroup = await networkClient.networkSecurityGroups.createOrUpdate(rgName, nsgName, networkSecurityGroupProps);
         ext.outputChannel.appendLog(createdNsg);
     }
+
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.networkSecurityGroup;
     }
-
 }

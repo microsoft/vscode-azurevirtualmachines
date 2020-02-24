@@ -8,15 +8,11 @@
     "search.exclude": {
         "out": true,
         "**/node_modules": true,
-        ".vscode-test": true,
-        "resources/backup*Templates": true
+        ".vscode-test": true
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.tslint": true,
     },
     "tslint.ignoreDefinitionFiles": true,
-    "files.exclude": {
-        "tools/JsonCli/src/**": true
-    },
     "typescript.preferences.importModuleSpecifier": "relative"
 }

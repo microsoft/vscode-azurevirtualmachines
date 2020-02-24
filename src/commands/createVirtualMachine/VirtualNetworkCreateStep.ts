@@ -23,7 +23,7 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const vnName: string = nonNullProp(context, 'newVirtualMachineName') + '-vnet';
 
         const creatingVn: string = localize('creatingVn', `Creating new virtual network "${vnName}"...`);
-        const createdVn: string = localize('creatingVn', `Created new virtual network "${vnName}"...`);
+        const createdVn: string = localize('creatingVn', `Created new virtual network "${vnName}".`);
 
         ext.outputChannel.appendLog(creatingVn);
         progress.report({ message: creatingVn });
@@ -32,8 +32,8 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
         ext.outputChannel.appendLog(createdVn);
         progress.report({ message: createdVn });
     }
+
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.virtualNetwork;
     }
-
 }

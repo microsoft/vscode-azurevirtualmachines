@@ -66,6 +66,3 @@ obj
 test-results.xml
 dist
 stats.json
-
-# debugging artifacts
-resources/dotnetTemplates

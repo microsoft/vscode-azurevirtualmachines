@@ -62,5 +62,4 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.virtualMachine && !!context.newVirtualMachineName;
     }
-
 }
