@@ -5,13 +5,15 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
 import { NetworkManagementModels } from 'azure-arm-network';
-import { Progress } from "vscode";
+import { MessageItem, Progress, window } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { getSshKey } from "../../utils/sshUtils";
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+
+const viewOutput: MessageItem = { title: 'View Output' };
 
 export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 260;
@@ -50,13 +52,27 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 
-        const creatingVm: string = localize('creatingVm', `Creating new virtual machine "${vmName}"...`);
-        const createdVm: string = localize('creatingVm', `Created new virtual machine "${vmName}".`);
+        const creatingVm: string = localize('creatingVm', 'Creating new virtual machine "{0}"...', vmName);
+        const creatingVmDetails: string = localize(
+            'creatingVmDetails',
+            'Creating new virtual "{0}" with size "{1}" and image "{2}"',
+            vmName,
+            nonNullProp(hardwareProfile, 'vmSize').replace(/_/g, ' '), // sizes are written with underscores as spaces
+            `${nonNullProp(storageProfile, 'imageReference').offer} ${nonNullProp(storageProfile, 'imageReference').sku}`);
 
-        ext.outputChannel.appendLog(creatingVm);
+        const createdVm: string = localize('creatingVm', 'Created new virtual machine "{0}".', vmName);
+
+        ext.outputChannel.appendLog(creatingVmDetails);
         progress.report({ message: creatingVm });
         context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
         ext.outputChannel.appendLog(createdVm);
+
+        // Note: intentionally not waiting for the result of this before returning
+        window.showInformationMessage(createdVm, viewOutput).then(async (result: MessageItem | undefined) => {
+            if (result === viewOutput) {
+                ext.outputChannel.show();
+            }
+        });
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {

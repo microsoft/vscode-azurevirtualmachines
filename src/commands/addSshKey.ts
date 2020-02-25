@@ -48,14 +48,14 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
         username: vm.osProfile && vm.osProfile.adminUsername || 'azureuser'
     };
 
-    const configuringSsh: string = localize('ConfiguringSsh', 'Configuring virtual machine "{0}" with SSH Public Key "{1}"...', node.name, sshPublicKey.fsPath);
-    const configuringSshSucceeded: string = localize('ConfiguringSshSucceeded', 'Successfully configured "{0}".', node.name);
+    const addingSshKey: string = localize('addingSshKey', 'Adding SSH Public Key "{0}" to Azure VM "{1}" ...', sshPublicKey.fsPath, node.name);
+    const addingSshKeySucceeded: string = localize('addingSshKeySucceeded', 'Successfully added key to "{0}".', node.name);
 
-    await window.withProgress({ location: ProgressLocation.Notification, title: configuringSsh }, async (): Promise<void> => {
-        ext.outputChannel.appendLog(configuringSsh);
+    await window.withProgress({ location: ProgressLocation.Notification, title: addingSshKey }, async (): Promise<void> => {
+        ext.outputChannel.appendLog(addingSshKey);
         await computeClient.virtualMachineExtensions.createOrUpdate(nonNullValueAndProp(node, 'resourceGroup'), nonNullValueAndProp(node, 'name'), extensionName, vmExtension);
-        window.showInformationMessage(configuringSshSucceeded);
-        ext.outputChannel.appendLog(configuringSshSucceeded);
+        window.showInformationMessage(addingSshKeySucceeded);
+        ext.outputChannel.appendLog(addingSshKeySucceeded);
     });
 
     // the ssh/config file lists the private key, not the .pub file, so remove the ext from the file path
