@@ -35,7 +35,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     public get description(): string | undefined {
-        return this._state && this._state.toLowerCase().includes('deallocated') ? 'Stopped' : undefined;
+        return this._state !== 'running' ? this._state : undefined;
     }
 
     public static contextValue: string = 'azVmVirtualMachine';
@@ -106,6 +106,6 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
     private getStateFromInstanceView(instanceView: ComputeManagementModels.VirtualMachineInstanceView): string | undefined {
         const powerState: ComputeManagementModels.InstanceViewStatus | undefined = instanceView.statuses && instanceView.statuses.find((status): boolean => status.code && status.code.toLowerCase().includes('powerstate') ? true : false);
-        return powerState ? powerState.displayStatus : undefined;
+        return powerState && powerState.displayStatus ? powerState.displayStatus.replace(/vm/i, '').trim() : undefined;
     }
 }
