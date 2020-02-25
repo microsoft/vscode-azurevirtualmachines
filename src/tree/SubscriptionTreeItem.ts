@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
-import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createAzureClient, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupListStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
+import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createAzureClient, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, ResourceGroupListStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
@@ -70,14 +70,21 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
             addressPrefix: '10.1.0.0/24'
         });
 
-        // prompt for resourceGroup, VM name, and location
+        // By default, only prompt for VM and Location. A new RG is made for every VM
         const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [];
-        promptSteps.push(new ResourceGroupListStep());
+        const executeSteps: AzureWizardExecuteStep<IVirtualMachineWizardContext>[] = [];
+
+        if (context.advancedCreation) {
+            promptSteps.push(new ResourceGroupListStep());
+        } else {
+            executeSteps.push(new ResourceGroupCreateStep());
+        }
+
         promptSteps.push(new VirtualMachineNameStep());
         LocationListStep.addStep(wizardContext, promptSteps);
 
         // create a disk, publicIp, virtualNetwork, subnet, networkInterface, networkSecurityGroup (this has the security rules), and then virtuaMachine
-        const executeSteps: AzureWizardExecuteStep<IVirtualMachineWizardContext>[] = [];
+
         executeSteps.push(new PublicIpCreateStep());
         executeSteps.push(new VirtualNetworkCreateStep());
         executeSteps.push(new SubnetCreateStep());

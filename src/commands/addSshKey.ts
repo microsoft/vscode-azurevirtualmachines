@@ -6,10 +6,11 @@
 import { ComputeManagementClient, ComputeManagementModels } from "azure-arm-compute";
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
-import { createAzureClient, IActionContext, IParsedError, parseError } from "vscode-azureextensionui";
+import { createAzureClient, IActionContext } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { resourceNotFound } from "../utils/azureUtils";
 import { nonNullValueAndProp } from "../utils/nonNull";
 import { configureSshConfig, sshFsPath } from "../utils/sshUtils";
 
@@ -34,12 +35,11 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
         // the VMAccessForLinux extension is necessary to configure more SSH keys
         vmExtension = await computeClient.virtualMachineExtensions.get(node.resourceGroup, node.name, extensionName);
     } catch (e) {
-        const parsedError: IParsedError = parseError(e);
-        if (parsedError.errorType === 'ResourceNotFound') {
-            vmExtension = { location: vm.location, publisher: 'Microsoft.OSTCExtensions', virtualMachineExtensionType: 'VMAccessForLinux', type: 'Microsoft.Compute/virtualMachines/extensions', typeHandlerVersion: '1.4', autoUpgradeMinorVersion: true };
+        if (!resourceNotFound(e)) {
+            throw e;
         }
 
-        throw e;
+        vmExtension = { location: vm.location, publisher: 'Microsoft.OSTCExtensions', virtualMachineExtensionType: 'VMAccessForLinux', type: 'Microsoft.Compute/virtualMachines/extensions', typeHandlerVersion: '1.4', autoUpgradeMinorVersion: true };
     }
 
     vmExtension.protectedSettings = {
