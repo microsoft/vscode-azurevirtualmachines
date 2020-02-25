@@ -50,10 +50,17 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 
-        const creatingVm: string = localize('creatingVm', `Creating new virtual machine "${vmName}"...`);
-        const createdVm: string = localize('creatingVm', `Created new virtual machine "${vmName}".`);
+        const creatingVm: string = localize('creatingVm', 'Creating new virtual machine "{0}"...', vmName);
+        const creatingVmDetails: string = localize(
+            'creatingVmDetails',
+            'Creating new virtual "{0}" with size "{1}" and image "{2}"',
+            vmName,
+            nonNullProp(hardwareProfile, 'vmSize').replace(/_/g, ' '), // sizes are written with underscores as spaces
+            `${nonNullProp(storageProfile, 'imageReference').offer} ${nonNullProp(storageProfile, 'imageReference').sku}`);
 
-        ext.outputChannel.appendLog(creatingVm);
+        const createdVm: string = localize('creatingVm', 'Created new virtual machine "{0}"...', vmName);
+
+        ext.outputChannel.appendLog(creatingVmDetails);
         progress.report({ message: creatingVm });
         context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
         ext.outputChannel.appendLog(createdVm);
