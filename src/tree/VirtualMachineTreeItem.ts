@@ -33,7 +33,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
     public get resourceGroup(): string {
         // https://github.com/microsoft/vscode-azurevirtualmachines/issues/70
-        return `${getResourceGroupFromId(this.id).toLocaleLowerCase()}`;
+        return getResourceGroupFromId(this.id).toLowerCase();
     }
 
     public get description(): string | undefined {
