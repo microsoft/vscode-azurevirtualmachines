@@ -38,11 +38,7 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     const hostName: string = await vmti.getHostName();
     let host: string = vmti.name;
 
-    if (configFile.includes(`HostName ${hostName}`)) {
-        // tslint:disable-next-line: no-floating-promises
-        ext.ui.showWarningMessage(`HostName "${hostName}" already exists. Use that profile to connect via SSH.`);
-        return;
-    } else if (configFile.includes(`Host ${vmti.name}`)) {
+    if (configFile.includes(`Host ${vmti.name}`)) {
         // tslint:disable-next-line: no-floating-promises
         ext.ui.showWarningMessage(`Host "${host}" already exists in SSH config.  Creating a copy of the host.`);
         let count: number = 2;
