@@ -23,7 +23,8 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     public get id(): string {
-        return nonNullProp(this.virtualMachine, 'id');
+        // https://github.com/microsoft/vscode-azurevirtualmachines/issues/70
+        return nonNullProp(this.virtualMachine, 'id').toLowerCase();
     }
 
     public get name(): string {
@@ -31,6 +32,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     public get resourceGroup(): string {
+        // https://github.com/microsoft/vscode-azurevirtualmachines/issues/70
         return `${getResourceGroupFromId(this.id).toLocaleLowerCase()}`;
     }
 

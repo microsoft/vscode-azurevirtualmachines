@@ -8,6 +8,9 @@ import { ext } from "../../extensionVariables";
 
 export async function revealTreeItem(resourceId: string): Promise<void> {
     return await callWithTelemetryAndErrorHandling('api.revealTreeItem', async (context: IActionContext) => {
+        // https://github.com/microsoft/vscode-azurevirtualmachines/issues/70
+        resourceId = resourceId.toLowerCase();
+
         const node: AzExtTreeItem | undefined = await ext.tree.findTreeItem(resourceId, { ...context, loadAll: true });
         if (node) {
             await ext.treeView.reveal(node, { select: true, focus: true, expand: true });
