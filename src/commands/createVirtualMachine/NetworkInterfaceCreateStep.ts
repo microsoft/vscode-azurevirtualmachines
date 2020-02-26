@@ -30,13 +30,12 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         };
 
         const creatingNi: string = localize('creatingNi', `Creating new network interface "${context.newNetworkInterfaceName}"...`);
-        const createdNi: string = localize('createdNi', `Created new network interface "${context.newNetworkInterfaceName}".`);
         progress.report({ message: creatingNi });
         ext.outputChannel.appendLog(creatingNi);
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         context.networkInterface = await networkClient.networkInterfaces.createOrUpdate(rgName, context.newNetworkInterfaceName, networkInterfaceProps);
-        ext.outputChannel.appendLog(createdNi);
+        ext.outputChannel.appendLog(localize('createdNi', `Created new network interface "${context.newNetworkInterfaceName}".`));
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {

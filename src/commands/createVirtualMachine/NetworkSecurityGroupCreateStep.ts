@@ -30,13 +30,12 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
         };
 
         const creatingNsg: string = localize('creatingNsg', `Creating new network security group "${nsgName}"...`);
-        const createdNsg: string = localize('createdNsg', `Created new network security group "${nsgName}".`);
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         ext.outputChannel.appendLog(creatingNsg);
         progress.report({ message: creatingNsg });
 
         context.networkSecurityGroup = await networkClient.networkSecurityGroups.createOrUpdate(rgName, nsgName, networkSecurityGroupProps);
-        ext.outputChannel.appendLog(createdNsg);
+        ext.outputChannel.appendLog(localize('createdNsg', `Created new network security group "${nsgName}".`));
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {

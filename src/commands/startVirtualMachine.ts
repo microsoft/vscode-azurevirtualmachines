@@ -16,14 +16,12 @@ export async function startVirtualMachine(context: IActionContext, node?: Virtua
     }
 
     const computeClient: ComputeManagementClient = createAzureClient(node.root, ComputeManagementClient);
-    const startingVm: string = localize('startingVm', `Starting "${node.name}"...`);
-    const startedVm: string = localize('startedVm', `"${node.name}" has been started.`);
 
     await node.runWithTemporaryDescription(localize('starting', 'Starting...'), async () => {
         const vmti: VirtualMachineTreeItem = nonNullValue(node);
-        ext.outputChannel.appendLog(startingVm);
+        ext.outputChannel.appendLog(localize('startingVm', `Starting "${vmti.name}"...`));
         await computeClient.virtualMachines.start(vmti.resourceGroup, vmti.name);
-        ext.outputChannel.appendLog(startedVm);
+        ext.outputChannel.appendLog(localize('startedVm', `"${vmti.name}" has been started.`));
     });
 
 }
