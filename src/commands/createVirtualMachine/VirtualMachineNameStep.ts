@@ -49,7 +49,7 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
             return localize('invalidChars', "The name can only contain alphanumeric characters and the symbols .-");
         } else if (name.endsWith('.') || name.endsWith('-')) {
             return localize('invalidEndingChar', "The name cannot end in a period or hyphen.");
-        } else if (wizardContext.resourceGroup && !await this.isNameAvailable(wizardContext, name)) {
+        } else if (!await this.isNameAvailable(wizardContext, name)) {
             return localize('nameAlreadyExists', 'Virtual machine name "{0}" already exists in resource group "{1}".', name, nonNullProp(wizardContext.resourceGroup, 'name'));
         } else {
             return undefined;
