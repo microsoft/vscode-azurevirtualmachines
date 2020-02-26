@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IParsedError, parseError } from 'vscode-azureextensionui';
 import { localize } from '../localize';
 
 function parseResourceId(id: string): RegExpMatchArray {

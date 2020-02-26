@@ -10,7 +10,6 @@ import { createAzureClient, IActionContext, parseError } from "vscode-azureexten
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
-import { resourceNotFound } from "../utils/azureUtils";
 import { nonNullValueAndProp } from "../utils/nonNull";
 import { configureSshConfig, sshFsPath } from "../utils/sshUtils";
 
