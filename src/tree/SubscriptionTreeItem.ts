@@ -92,6 +92,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         await wizard.prompt();
 
         context.showCreatingTreeItem(nonNullProp(wizardContext, 'newVirtualMachineName'));
+        wizardContext.newResourceGroupName = await wizardContext.relatedNameTask;
 
         await wizard.execute();
 
