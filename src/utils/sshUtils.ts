@@ -30,11 +30,7 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     await fse.ensureFile(sshConfigPath);
     let configFile: string = (await fse.readFile(sshConfigPath)).toString();
 
-    // look to see if the hostname already exists (the same ip address)
-
-    // HostName is the only thing that's unique so if we find a copy, prompt the user to use that profile instead
     // If we find duplicate Hosts, we can just make a new entry called Host (2)...(3)...etc
-
     const hostName: string = await vmti.getHostName();
     let host: string = vmti.name;
 
