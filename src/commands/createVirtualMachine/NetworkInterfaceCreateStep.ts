@@ -26,7 +26,7 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         const subnet: NetworkManagementModels.Subnet = nonNullProp(context, 'subnet');
 
         const networkInterfaceProps: NetworkManagementModels.NetworkInterface = {
-            location, networkSecurityGroup: context.networkSecurityGroup, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
+            location, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
         };
 
         const creatingNi: string = localize('creatingNi', `Creating new network interface "${context.newNetworkInterfaceName}"...`);

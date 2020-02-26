@@ -12,7 +12,7 @@ import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
-    public priority: number = 230;
+    public priority: number = 240;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = createAzureClient(context, NetworkManagementClient);
@@ -23,7 +23,7 @@ export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWiza
         const subnetName: string = 'default';
 
         const creatingSubnet: string = localize('creatingSubnet', `Creating new subnet "${subnetName}"...`);
-        const subnetProps: NetworkManagementModels.Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName };
+        const subnetProps: NetworkManagementModels.Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName, networkSecurityGroup: context.networkSecurityGroup };
 
         progress.report({ message: creatingSubnet });
         ext.outputChannel.appendLog(creatingSubnet);
