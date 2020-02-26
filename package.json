@@ -7,7 +7,7 @@
     "icon": "resources/azure-vm.png",
     "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
     "engines": {
-        "vscode": "^1.31.0"
+        "vscode": "^1.37.0"
     },
     "repository": {
         "type": "git",
@@ -237,10 +237,10 @@
         "@types/gulp": "^4.0.6",
         "@types/gulp-filter": "^3.0.33",
         "@types/mocha": "^5.2.6",
-        "@types/node": "^8.10.45",
+        "@types/node": "^10.0.0",
         "@types/request": "2.0.7",
         "azure-arm-resource": "^3.0.0-preview",
-        "gulp": "^4.0.0",
+        "gulp": "^4.0.2",
         "gulp-chmod": "^2.0.0",
         "gulp-decompress": "^2.0.1",
         "gulp-download": "^0.0.1",
@@ -251,11 +251,11 @@
         "ts-node": "^7.0.1",
         "tslint": "^5.14.0",
         "tslint-microsoft-contrib": "^5.2.1",
-        "typescript": "^3.3.4000",
-        "vsce": "^1.59.0",
-        "vscode": "^1.1.33",
-        "vscode-azureextensiondev": "0.2.3",
-        "webpack": "^4.29.6",
+        "typescript": "^3.8.2",
+        "vsce": "^1.71.0",
+        "vscode": "^1.1.36",
+        "vscode-azureextensiondev": "0.2.4",
+        "webpack": "^4.41.5",
         "webpack-cli": "^3.3.0"
     },
     "dependencies": {
