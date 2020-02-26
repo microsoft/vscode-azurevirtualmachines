@@ -8,8 +8,9 @@
 import * as vscode from 'vscode';
 import { AzExtTreeDataProvider, AzureTreeItem, AzureUserInput, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, createTelemetryReporter, IActionContext, registerCommand, registerUIExtensionVariables } from 'vscode-azureextensionui';
 // tslint:disable-next-line:no-submodule-imports
-import { AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
+import { AzureExtensionApi, AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
 import { addSshKey } from './commands/addSshKey';
+import { revealTreeItem } from './commands/api/revealTreeItem';
 import { createVirtualMachine } from './commands/createVirtualMachine/createVirtualMachine';
 import { deleteNode } from './commands/deleteNode';
 import { openInPortal } from './commands/openInPortal';
@@ -49,7 +50,10 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.contextValue, node));
     });
 
-    return createApiProvider([]);
+    return createApiProvider([<AzureExtensionApi>{
+        revealTreeItem,
+        apiVersion: '1.0.0'
+    }]);
 }
 
 // tslint:disable-next-line:no-empty
