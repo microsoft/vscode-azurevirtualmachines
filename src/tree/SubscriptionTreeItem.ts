@@ -74,17 +74,11 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<IVirtualMachineWizardContext>[] = [];
 
-        if (context.advancedCreation) {
-            promptSteps.push(new ResourceGroupListStep());
-        } else {
-            executeSteps.push(new ResourceGroupCreateStep());
-        }
-
+        executeSteps.push(new ResourceGroupCreateStep());
         promptSteps.push(new VirtualMachineNameStep());
         LocationListStep.addStep(wizardContext, promptSteps);
 
         // create a disk, publicIp, virtualNetwork, subnet, networkInterface, networkSecurityGroup (this has the security rules), and then virtuaMachine
-
         executeSteps.push(new PublicIpCreateStep());
         executeSteps.push(new VirtualNetworkCreateStep());
         executeSteps.push(new SubnetCreateStep());

@@ -7,7 +7,7 @@ import { ComputeManagementClient, ComputeManagementModels } from "azure-arm-comp
 import { AzureNameStep, createAzureClient, IAzureNamingRules, ResourceGroupListStep, resourceGroupNamingRules } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
-import { nonNullProp, nonNullValueAndProp } from "../../utils/nonNull";
+import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export const virtualMachineNamingRules: IAzureNamingRules = {
@@ -21,23 +21,14 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const namingRules: IAzureNamingRules[] = [resourceGroupNamingRules];
         namingRules.push(virtualMachineNamingRules);
-        let suggestedName: string | undefined;
-
-        if (wizardContext.advancedCreation) {
-            const rgName: string = wizardContext.newResourceGroupName || nonNullValueAndProp(wizardContext.resourceGroup, 'name');
-            suggestedName = await this.generateRelatedName(wizardContext, rgName, namingRules);
-        }
 
         const prompt: string = localize('virtualMachineNamePrompt', 'Enter a name for the new virtual machine.');
         wizardContext.newVirtualMachineName = (await ext.ui.showInputBox({
-            value: suggestedName,
             prompt,
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateVirtualMachineName(wizardContext, value)
         })).trim();
 
-        if (!wizardContext.advancedCreation) {
-            wizardContext.newResourceGroupName = await this.generateRelatedName(wizardContext, wizardContext.newVirtualMachineName, resourceGroupNamingRules);
-        }
+        wizardContext.newResourceGroupName = await this.generateRelatedName(wizardContext, wizardContext.newVirtualMachineName, resourceGroupNamingRules);
 
     }
 
@@ -66,22 +57,20 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
     }
 
     private async isNameAvailable(wizardContext: IVirtualMachineWizardContext, name: string): Promise<boolean> {
-        if (wizardContext.advancedCreation) {
-            // Virtual machine names must be unique to the current resource group.
-            if (wizardContext.resourceGroup) {
-                // only need to check if user used an existing resource group
-                const computeClient: ComputeManagementClient = createAzureClient(wizardContext, ComputeManagementClient);
-                const vmsInRg: ComputeManagementModels.VirtualMachineListResult = await computeClient.virtualMachines.list(nonNullProp(wizardContext.resourceGroup, 'name'));
-                if (vmsInRg.find((vm: ComputeManagementModels.VirtualMachine) => vm.name === name)) {
-                    return false;
-                }
+        // Virtual machine names must be unique to the current resource group.
+        if (wizardContext.resourceGroup) {
+            // only need to check if user used an existing resource group
+            const computeClient: ComputeManagementClient = createAzureClient(wizardContext, ComputeManagementClient);
+            const vmsInRg: ComputeManagementModels.VirtualMachineListResult = await computeClient.virtualMachines.list(nonNullProp(wizardContext.resourceGroup, 'name'));
+            if (vmsInRg.find((vm: ComputeManagementModels.VirtualMachine) => vm.name === name)) {
+                return false;
             }
 
             return true;
-        } else {
-            // this is a bit odd, but in basic creation, the RG name is the VM name. VMs only have to be unique to the RG,
-            // so if we're creating a new RG, then it's guarnateed that the VM name is available
-            return await ResourceGroupListStep.isNameAvailable(wizardContext, name);
         }
+
+        // in basic creation, the RG name is the VM name. VMs only have to be unique to the RG,
+        // so if we're creating a new RG, then it's guarnateed that the VM name is available
+        return await ResourceGroupListStep.isNameAvailable(wizardContext, name);
     }
 }

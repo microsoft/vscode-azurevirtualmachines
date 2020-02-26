@@ -77,9 +77,4 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      */
 
     addressPrefix?: string;
-
-    /**
-     * Indicates advanced creation should be used
-     */
-    advancedCreation?: boolean;
 }
