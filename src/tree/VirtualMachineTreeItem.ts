@@ -35,7 +35,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     public get description(): string | undefined {
-        return this._state !== 'running' ? this._state : undefined;
+        return this._state?.toLowerCase() !== 'running' ? this._state : undefined;
     }
 
     public static contextValue: string = 'azVmVirtualMachine';

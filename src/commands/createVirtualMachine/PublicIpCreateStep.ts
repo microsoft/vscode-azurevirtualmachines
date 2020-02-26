@@ -26,12 +26,11 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         const ipName: string = nonNullProp(context, 'newVirtualMachineName') + '-ip';
 
         const creatingIp: string = localize('creatingIp', `Creating new public IP addresss "${ipName}"...`);
-        const createdIp: string = localize('creatingIp', `Created new public IP addresss "${ipName}".`);
         progress.report({ message: creatingIp });
         ext.outputChannel.appendLog(creatingIp);
 
         context.publicIpAddress = await networkClient.publicIPAddresses.createOrUpdate(rgName, ipName, publicIpProps);
-        ext.outputChannel.appendLog(createdIp);
+        ext.outputChannel.appendLog(localize('creatingIp', `Created new public IP addresss "${ipName}".`));
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {

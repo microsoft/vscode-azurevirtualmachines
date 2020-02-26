@@ -23,14 +23,13 @@ export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWiza
         const subnetName: string = 'default';
 
         const creatingSubnet: string = localize('creatingSubnet', `Creating new subnet "${subnetName}"...`);
-        const createdSubnet: string = localize('createdSubnet', `Created new subnet "${subnetName}".`);
-
         const subnetProps: NetworkManagementModels.Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName };
+
         progress.report({ message: creatingSubnet });
         ext.outputChannel.appendLog(creatingSubnet);
 
         context.subnet = await networkClient.subnets.createOrUpdate(rgName, vnetName, subnetName, subnetProps);
-        ext.outputChannel.appendLog(createdSubnet);
+        ext.outputChannel.appendLog(localize('createdSubnet', `Created new subnet "${subnetName}".`));
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
