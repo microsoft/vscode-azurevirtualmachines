@@ -12,13 +12,13 @@ import { cpUtils } from "./cpUtils";
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
 
-export async function getSshKey(vmName: string): Promise<string> {
+export async function getSshKey(vmName: string, passphrase?: string): Promise<string> {
     const sshKeyName: string = `azure_${vmName}_rsa`;
     const sshKeyPath: string = join(sshFsPath, sshKeyName);
 
     if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
         // if the SSH key doesn't exist, create it
-        const sshKeygenCmd: string = `ssh-keygen -t rsa -b 2048 -f ${sshKeyPath} -N ""`;
+        const sshKeygenCmd: string = `ssh-keygen -t rsa -b 2048 -f ${sshKeyPath} -N "${passphrase}"`;
         await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
     }
 

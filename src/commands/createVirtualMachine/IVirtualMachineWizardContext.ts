@@ -77,4 +77,6 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      */
 
     addressPrefix?: string;
+
+    passphrase?: string;
 }

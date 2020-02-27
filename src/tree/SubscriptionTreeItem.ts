@@ -13,6 +13,7 @@ import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateS
 import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/VirtualMachineCreateStep';
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
+import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp } from '../utils/nonNull';
@@ -90,6 +91,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const wizard: AzureWizard<IVirtualMachineWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
 
         await wizard.prompt();
+        const placeHolder: string = localize('enterPassphrase', 'Enter passphrase (empty for no passphrase):');
+        wizardContext.passphrase = await ext.ui.showInputBox({ placeHolder, password: true });)
 
         context.showCreatingTreeItem(nonNullProp(wizardContext, 'newVirtualMachineName'));
         wizardContext.newResourceGroupName = await wizardContext.relatedNameTask;
