@@ -29,7 +29,9 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
             ]
         };
 
-        const creatingNsg: string = localize('creatingNsg', `Creating new network security group "${nsgName}"...`);
+        const enabledPorts: string[] = nonNullProp(networkSecurityGroupProps, 'securityRules').map(rule => nonNullProp(rule, 'destinationPortRange'));
+
+        const creatingNsg: string = localize('creatingNsg', `Creating new network security group "${nsgName}" with inbound ports ${enabledPorts.join(', ')} enabled...`);
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         ext.outputChannel.appendLog(creatingNsg);
         progress.report({ message: creatingNsg });
