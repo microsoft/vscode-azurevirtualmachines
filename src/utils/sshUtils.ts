@@ -7,6 +7,7 @@ import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
 import { ext } from '../extensionVariables';
+import { localize } from '../localize';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { cpUtils } from "./cpUtils";
 
@@ -16,9 +17,14 @@ export async function getSshKey(vmName: string, passphrase?: string): Promise<st
     const sshKeyName: string = `azure_${vmName}_rsa`;
     const sshKeyPath: string = join(sshFsPath, sshKeyName);
 
+    // if passphrase is undefined, it'll cause a problem with generating the ssh key, so make it empty string
+    // tslint:disable-next-line: strict-boolean-expressions
+    passphrase = passphrase || '';
+
     if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
         // if the SSH key doesn't exist, create it
-        const sshKeygenCmd: string = `ssh-keygen -t rsa -b 2048 -f ${sshKeyPath} -N "${passphrase}"`;
+        const sshKeygenCmd: string = `ssh-keygen -t rsa -b 4096 -f ${sshKeyPath} -N "${passphrase}"`;
+        ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair...'));
         await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
     }
 
@@ -54,4 +60,5 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     configFile = configFile + `${os.EOL}Host ${host}${os.EOL}${fourSpaces}HostName ${hostName}${os.EOL}${fourSpaces}User ${vmti.getUser()}${os.EOL}${fourSpaces}IdentityFile ${sshKeyPath}`;
 
     await fse.writeFile(sshConfigPath, configFile);
+    ext.outputChannel.appendLog(localize('addingEntry', `Added new entry to "{0}" with Host "{1}".`, sshConfigPath, host));
 }
