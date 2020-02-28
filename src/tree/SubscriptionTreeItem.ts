@@ -14,7 +14,6 @@ import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateS
 import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/VirtualMachineCreateStep';
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
-import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp } from '../utils/nonNull';

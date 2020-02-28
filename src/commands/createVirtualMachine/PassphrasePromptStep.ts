@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureNameStep, AzureWizardPromptStep, IAzureNamingRules, IWizardOptions } from "vscode-azureextensionui";
+import { AzureNameStep, IAzureNamingRules, IWizardOptions } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
