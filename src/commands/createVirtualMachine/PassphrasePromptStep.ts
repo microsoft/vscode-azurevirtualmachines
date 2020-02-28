@@ -3,19 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureNameStep, IAzureNamingRules, IWizardOptions } from "vscode-azureextensionui";
+import { AzureWizardPromptStep, IWizardOptions } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
-export const passphraseNamingRules: IAzureNamingRules = {
-    minLength: 5,
-    maxLength: 0, // there is no max length
-    invalidCharsRegExp: /[]/ // accepts all characters
-};
-
-export class PassphrasePromptStep extends AzureNameStep<IVirtualMachineWizardContext> {
+export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const prompt: string = localize('passphrasePrompt', 'Enter a passphrase for connecting to this Virtual Machine');
         const placeHolder: string = localize('enterPassphrase', 'Enter passphrase (empty for no passphrase)');
@@ -41,13 +35,10 @@ export class PassphrasePromptStep extends AzureNameStep<IVirtualMachineWizardCon
         }
     }
 
-    protected async isRelatedNameAvailable(_wizardContext: IVirtualMachineWizardContext, _name: string): Promise<boolean> {
-        return true;
-    }
-
     private async validatePassphrase(passphrase: string | undefined): Promise<string | undefined> {
-        if (passphrase && passphrase.length < passphraseNamingRules.minLength) {
-            return localize('invalidLength', 'The passphrase must be at least {0} characters.', passphraseNamingRules.minLength);
+        const passphraseMinLength: number = 5;
+        if (passphrase && passphrase.length < passphraseMinLength) {
+            return localize('invalidLength', 'The passphrase must be at least {0} characters or empty for no passphrase.', passphraseMinLength);
         } else {
             return undefined;
         }
