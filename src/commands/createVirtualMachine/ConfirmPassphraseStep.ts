@@ -10,7 +10,7 @@ import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export class ConfirmPassphraseStep extends AzureNameStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
-        const prompt: string = localize('reconfirmPassphrase', 'Re-confirm your passphrase');
+        const prompt: string = localize('confirmPassphrase', 'Confirm your passphrase');
         await ext.ui.showInputBox({
             prompt,
             password: true,
