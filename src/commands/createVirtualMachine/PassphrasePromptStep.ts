@@ -33,9 +33,8 @@ export class PassphrasePromptStep extends AzureNameStep<IVirtualMachineWizardCon
 
     public async getSubWizard(wizardContext: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
         if (wizardContext.passphrase) {
-            const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [new ConfirmPassphraseStep()];
             return {
-                promptSteps: promptSteps
+                promptSteps: [new ConfirmPassphraseStep()]
             };
         } else {
             return undefined;
@@ -48,7 +47,7 @@ export class PassphrasePromptStep extends AzureNameStep<IVirtualMachineWizardCon
 
     private async validatePassphrase(passphrase: string | undefined): Promise<string | undefined> {
         if (passphrase && passphrase.length < passphraseNamingRules.minLength) {
-            return localize('invalidLength', 'The name must be at least {0} characters.', passphraseNamingRules.minLength);
+            return localize('invalidLength', 'The passphrase must be at least {0} characters.', passphraseNamingRules.minLength);
         } else {
             return undefined;
         }
