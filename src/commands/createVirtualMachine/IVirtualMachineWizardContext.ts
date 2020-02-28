@@ -78,5 +78,9 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
 
     addressPrefix?: string;
 
+    /**
+     * Passphrase used to connect the VM via SSH.  Prompt can be disabled with `azureVirtualMachines.promptForPassphrase`.
+     * This will be defined after PassphrasePromptStep.
+     */
     passphrase?: string;
 }
