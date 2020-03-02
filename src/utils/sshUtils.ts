@@ -14,18 +14,22 @@ import { cpUtils } from "./cpUtils";
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
 
-export async function getSshKey(vmName: string, passphrase: string = ''): Promise<string> {
-    const sshKeyName: string = `azure_${vmName}_rsa`;
-    const sshKeyPath: string = join(sshFsPath, sshKeyName);
+export async function getSshKey(vmName: string, passphrase: string): Promise<string> {
+    return await callWithMaskHandling(
+        async () => {
+            const sshKeyName: string = `azure_${vmName}_rsa`;
+            const sshKeyPath: string = join(sshFsPath, sshKeyName);
 
-    if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
-        // if the SSH key doesn't exist, create it
-        const sshKeygenCmd: string = `ssh-keygen -t rsa -b 4096 -f ${sshKeyPath} -N "${passphrase}"`;
-        ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in directory "{0}"...', sshFsPath));
-        await callWithMaskHandling(async () => { await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd); }, passphrase);
-    }
+            if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
+                // if the SSH key doesn't exist, create it
+                const sshKeygenCmd: string = `ssh-keygen -t rsa -b 4096 -f ${sshKeyPath} -N "${passphrase}"`;
+                ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in directory "{0}"...', sshFsPath));
+                await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
+            }
 
-    return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
+            return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
+        },
+        passphrase);
 }
 
 export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath?: string): Promise<void> {
