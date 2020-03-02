@@ -23,7 +23,7 @@ export async function getSshKey(vmName: string, passphrase: string): Promise<str
             if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
                 // if the SSH key doesn't exist, create it
                 const sshKeygenCmd: string = `ssh-keygen -t rsa -b 4096 -f ${sshKeyPath} -N "${passphrase}"`;
-                ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in directory "{0}"...', sshFsPath));
+                ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
                 await cpUtils.executeCommand(undefined, undefined, sshKeygenCmd);
             }
 
