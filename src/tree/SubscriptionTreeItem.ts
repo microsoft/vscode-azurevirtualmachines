@@ -70,7 +70,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzureTreeItem> {
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.root, {
-            addressPrefix: '10.1.0.0/24'
+            addressPrefix: '10.1.0.0/24',
+            size: 'Standard_D2s_v3'
         });
 
         wizardContext.locationsTask = getAvailableVMLocations(wizardContext);

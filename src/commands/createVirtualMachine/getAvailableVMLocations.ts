@@ -13,10 +13,9 @@ export async function getAvailableVMLocations(context: IVirtualMachineWizardCont
     const resourceSkus: ComputeManagementModels.ResourceSkusResult = await computeClient.resourceSkus.list();
     return resourceSkus.
         filter(sku => sku.resourceType && sku.resourceType === 'virtualMachines')
-        // tslint:disable-next-line: strict-boolean-expressions
-        .filter(vm => vm.name && vm.name === context.size || 'Standard_D2s_v3')
-        .filter(vmBySize => vmBySize.restrictions?.length === 0 || vmBySize.restrictions?.find(res => res.type !== 'Location'))
-        .map(validVm => {
-            return { name: validVm.locations && validVm.locations[0] };
+        .filter(sku => sku.name && sku.name === context.size)
+        .filter(sku => sku.restrictions?.length === 0 || sku.restrictions?.find(rescriction => rescriction.type !== 'Location'))
+        .map(sku => {
+            return { name: sku.locations && sku.locations[0] };
         });
 }
