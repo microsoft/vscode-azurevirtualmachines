@@ -18,8 +18,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const computeClient: ComputeManagementClient = createAzureClient(context, ComputeManagementClient);
-        // tslint:disable-next-line: strict-boolean-expressions
-        const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size || 'Standard_D2s_v3' };
+        const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size };
 
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
         const storageProfile: ComputeManagementModels.StorageProfile = {
