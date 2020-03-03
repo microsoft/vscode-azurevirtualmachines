@@ -81,4 +81,13 @@ export namespace cpUtils {
         cmdOutputIncludingStderr: string;
         formattedArgs: string;
     }
+
+    const quotationMark: string = process.platform === 'win32' ? '"' : '\'';
+    /**
+     * Ensures spaces and special characters (most notably $) are preserved
+     */
+    export function wrapArgInQuotes(arg: string): string {
+        return quotationMark + arg + quotationMark;
+    }
+
 }

@@ -61,14 +61,13 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
         const networkInterfaces: ComputeManagementModels.NetworkInterfaceReference[] = nonNullValueAndProp(this.virtualMachine.networkProfile, 'networkInterfaces');
         if (networkInterfaces.length === 0) {
-            throw new Error();
+            throw new Error(localize('noNicConfigs', 'No network interfaces are associated with "{0}"', this.name));
         }
 
         const networkInterfaceName: string = getNameFromId(nonNullProp(networkInterfaces[0], 'id'));
         const networkInterface: NetworkManagementModels.NetworkInterface = await networkClient.networkInterfaces.get(rgName, networkInterfaceName);
         if (!networkInterface.ipConfigurations || networkInterface.ipConfigurations.length === 0) {
-            const noIpConfigs: string = localize('noIpConfigs', 'No IP configurations are associated with network interface "{0}"', networkInterface.name);
-            throw new Error(noIpConfigs);
+            throw new Error(localize('noIpConfigs', 'No IP configurations are associated with network interface "{0}"', networkInterface.name));
         }
 
         const publicIPAddressName: string = getNameFromId(nonNullValueAndProp(networkInterface.ipConfigurations[0].publicIPAddress, 'id'));

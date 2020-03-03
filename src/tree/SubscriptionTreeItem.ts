@@ -9,6 +9,7 @@ import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAva
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
+import { PassphrasePromptStep } from '../commands/createVirtualMachine/PassphrasePromptStep';
 import { PublicIpCreateStep } from '../commands/createVirtualMachine/PublicIpCreateStep';
 import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateStep';
 import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/VirtualMachineCreateStep';
@@ -18,6 +19,7 @@ import { localize } from '../localize';
 import { getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp } from '../utils/nonNull';
 import { configureSshConfig } from '../utils/sshUtils';
+import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
@@ -77,11 +79,14 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [];
         const executeSteps: AzureWizardExecuteStep<IVirtualMachineWizardContext>[] = [];
 
-        executeSteps.push(new ResourceGroupCreateStep());
         promptSteps.push(new VirtualMachineNameStep());
+        const promptForPassphrase: boolean | undefined = getWorkspaceSetting('promptForPassphrase');
+        if (promptForPassphrase) {
+            promptSteps.push(new PassphrasePromptStep());
+        }
         LocationListStep.addStep(wizardContext, promptSteps);
 
-        // create a disk, publicIp, virtualNetwork, subnet, networkInterface, networkSecurityGroup (this has the security rules), and then virtuaMachine
+        executeSteps.push(new ResourceGroupCreateStep());
         executeSteps.push(new PublicIpCreateStep());
         executeSteps.push(new VirtualNetworkCreateStep());
         executeSteps.push(new SubnetCreateStep());
