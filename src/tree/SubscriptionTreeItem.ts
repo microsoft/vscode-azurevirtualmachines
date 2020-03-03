@@ -5,6 +5,7 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
 import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createAzureClient, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
+import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
@@ -69,6 +70,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.root, {
             addressPrefix: '10.1.0.0/24'
         });
+
+        wizardContext.locationsTask = getAvailableVMLocations(wizardContext);
 
         // By default, only prompt for VM and Location. A new RG is made for every VM
         const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [];
