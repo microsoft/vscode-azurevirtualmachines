@@ -29,7 +29,7 @@ Once you are signed in, you can create your Azure Virutal machine by clicking th
 2. Type a name for your VM.  Alphanumeric characters are all valid.
 3. Type a passphrase or leave it empty for no passphrase.
     > For security reasons, it's _highly_ recommended that you use a passphrase for your SSH key.  It is what will be used to connect to your VM via SSH.
-4. The VM will be created with "Ubuntu 18.04-LTS" and size "Standard D2s V3" by default.
+4. The VM will be created with the image "Ubuntu 18.04-LTS" and size "Standard D2s V3" by default.
 5. A SSH key will automatically be generated and added to your `.ssh/config` file to be used to SSH into an Azure VM via "Visual Code Remote".
 
 
