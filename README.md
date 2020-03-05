@@ -11,7 +11,7 @@ Create and manage Azure Virtual Machines directly from VS Code.
 1. Download and install the [Azure Virtual Machines extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) for Visual Studio Code
 2. Once complete, you'll see an Azure icon in the Activity Bar
     > If your activity bar is hidden, you won't be able to access the extension. Show the Activity Bar by clicking View > Appearance > Show Activity Bar
-3. Sign in to your Azure Account by clicking Sign in to Azureâ€¦
+3. Sign in to your Azure Account by clicking Sign in to Azure
     >  If you don't already have an Azure Account, click "Create a Free Azure Account" or you can [try Azure for free](https://code.visualstudio.com/tryappservice/?utm_source=appservice-extension)
 
 ## Features
