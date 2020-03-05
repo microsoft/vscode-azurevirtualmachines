@@ -39,7 +39,7 @@ If you have an existing VM that you would like to add your own SSH key too, you 
 
 Your SSH Config (`~/.ssh/config`) file will be updated so you can connect via SSH using `$ ssh vm-name`.
 
-![AddSSHKey](resources/readme/addSSHKey.png)
+![AddSSHKey](resources/readme/AddSSHKey.png)
 
 ## Remote into Azure VM via SSH
 
