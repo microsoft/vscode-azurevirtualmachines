@@ -16,7 +16,7 @@ Create and manage Azure Virtual Machines directly from VS Code.
 
 ## Features
 
-* View, create, delete, start, stop, and restart Azure Virtual Machines
+* View, create, delete, start, and stop Azure Virtual Machines
 * Add SSH key to existing Azure Virtual Machines
 
 ### Create a New Virtual Machine
