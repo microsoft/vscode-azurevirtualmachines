@@ -6,39 +6,44 @@ Create and manage Azure Virtual Machines directly from VS Code.
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Installation
+
+1. Download and install the [Azure Virtual Machines extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) for Visual Studio Code
+2. Once complete, you'll see an Azure icon in the Activity Bar
+    > If your activity bar is hidden, you won't be able to access the extension. Show the Activity Bar by clicking View > Appearance > Show Activity Bar
+3. Sign in to your Azure Account by clicking Sign in to Azureâ€¦
+    >  If you don't already have an Azure Account, click "Create a Free Azure Account" or you can [try Azure for free](https://code.visualstudio.com/tryappservice/?utm_source=appservice-extension)
+
 ## Features
 
 * View, create, delete, start, stop, and restart Azure Virtual Machines
 * Add SSH key to existing Azure Virtual Machines
 
-### Create New Virtual Machine
+### Create a New Virtual Machine
 
-- Create an Azure VM with the default image of "Ubuntu 18.04-LTS" and size "Standard D2s V3"
+Once you are signed in, you can create your Azure Virutal machine by clicking the "+" button or by right-clicking your subscription.
 
-![CreateVirtualMachine](resources/CreateAzureVM.png)
+![CreateVirtualMachine](resources/readme/CreateAzureVM.png)
 
-![CreateVirtualMachine2](resources/CreateAzureVM2.png)
+1. Choose **Create Virtual Machine**
+2. Type a name for your VM.  Alphanumeric characters are all valid.
+3. Type a passphrase or leave it empty for no passphrase.
+    > For security reasons, it's _highly_ recommended that you use a passphrase for your SSH key.  It is what will be used to connect to your VM via SSH.
+4. The VM will be created with "Ubuntu 18.04-LTS" and size "Standard D2s V3" by default.
+5. A SSH key will automatically be generated and added to your `.ssh/config` file to be used to SSH into an Azure VM via "Visual Code Remote".
 
-- Automatically generates and configures an SSH key used to remotely connect to new Azure VM
-
-![CreateVirtualMachine3](resources/CreateAzureVM3.png)
 
 ### Add SSH key to existing Virtual Machine
 
-- Add SSH public keys to existing Azure VMs
+If you have an existing VM that you would like to add your own SSH key too, you can do that by right-clicking the VM tree item and clicking **Add SSH Key...**.
 
-![AddSSHKey](resources/AddSSHKey.png)
+It will automatically configure your `.ssh/config` file.
 
-![AddSSHKey2](resources/AddSSHKey2.png)
-- Automatically configures `.ssh/config` file to be used to SSH into Azure VM
-
-![AddSSHKey3](resources/AddSSHKey3.png)
-
-
+![AddSSHKey](resources/readme/AddSSHKey.png)
 
 ### Remote into Azure VM via SSH
 
-- Use [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) to seamlessly connect to your Azure VM from VS Code
+- Use [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) to seamlessly connect to your Azure VM from VS Code.
 
 ## Contributing
 
