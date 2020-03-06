@@ -1,10 +1,7 @@
-<!-- markdownlint-disable MD024 -->
-
 # Change Log
 
-All notable changes to the "azurevirtualmachines" extension will be documented in this file.
-
-## 0.1.0 - 2019-10-22
+## 0.1.0 - 2020-03-05
 
 ### Added
--
+- View, create, delete, start, and stop Azure Virtual Machines
+- Add SSH key to existing Azure Virtual Machines
