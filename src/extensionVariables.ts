@@ -19,7 +19,6 @@ export namespace ext {
     export let tree: AzExtTreeDataProvider;
     export let treeView: TreeView<AzExtTreeItem>;
     export let azureAccountTreeItem: AzureAccountTreeItem;
-    // tslint:disable-next-line: strict-boolean-expressions
-    export let ignoreBundle: boolean = !/^(false|0)?$/i.test(process.env.AZCODE_VIRTUALMACHINES_IGNORE_BUNDLE || '');
+    export let ignoreBundle: boolean | undefined;
     export const prefix: string = 'azureVirtualMachines';
 }
