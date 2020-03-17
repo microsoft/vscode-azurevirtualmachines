@@ -21,8 +21,9 @@ import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
 import { SubscriptionTreeItem } from './tree/SubscriptionTreeItem';
 import { VirtualMachineTreeItem } from './tree/VirtualMachineTreeItem';
 
-export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }): Promise<AzureExtensionApiProvider> {
+export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
     ext.context = context;
+    ext.ignoreBundle = ignoreBundle;
     ext.reporter = createTelemetryReporter(context);
     ext.outputChannel = createAzExtOutputChannel('Azure Virtual Machines', ext.prefix);
     context.subscriptions.push(ext.outputChannel);
