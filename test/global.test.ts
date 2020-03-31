@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IHookCallbackContext } from 'mocha';
 import * as vscode from 'vscode';
 import { TestOutputChannel, TestUserInput } from 'vscode-azureextensiondev';
 import { } from 'vscode-azureextensionui';
@@ -13,7 +12,7 @@ export let longRunningTestsEnabled: boolean;
 export let testUserInput: TestUserInput = new TestUserInput(vscode);
 
 // Runs before all tests
-suiteSetup(async function (this: IHookCallbackContext): Promise<void> {
+suiteSetup(async function (this: Mocha.Context): Promise<void> {
     this.timeout(120 * 1000);
 
     await vscode.commands.executeCommand('azureVirtualMachines.refresh'); // activate the extension before tests begin
@@ -24,6 +23,6 @@ suiteSetup(async function (this: IHookCallbackContext): Promise<void> {
     longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
 });
 
-suiteTeardown(async function (this: IHookCallbackContext): Promise<void> {
+suiteTeardown(async function (this: Mocha.Context): Promise<void> {
     this.timeout(90 * 1000);
 });
