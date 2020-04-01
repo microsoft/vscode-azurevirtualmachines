@@ -85,5 +85,10 @@
             "allow-single-concat"
         ],
         "no-use-before-declare": false
+    },
+    "linterOptions": {
+        "exclude": [
+            "**/*.d.ts"
+        ]
     }
 }
