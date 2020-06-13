@@ -6,6 +6,9 @@
     "publisher": "ms-azuretools",
     "icon": "resources/azure-vm.png",
     "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+    "extensionKind": [
+        "ui"
+    ],
     "engines": {
         "vscode": "^1.40.0"
     },
