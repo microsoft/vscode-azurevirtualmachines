@@ -19,7 +19,11 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     }
 
     const computeClient: ComputeManagementClient = createAzureClient(node.root, ComputeManagementClient);
-    const vm: ComputeManagementModels.VirtualMachine = await computeClient.virtualMachines.get(node.resourceGroup, node.name);
+    const vm: ComputeManagementModels.VirtualMachine = node.virtualMachine;
+
+    if (!node.isLinux) {
+        throw new Error(localize('notSupportedWindows', 'This operation is not supported on Windows VMs.'));
+    }
 
     const sshPublicKey: Uri = (await ext.ui.showOpenDialog({
         defaultUri: Uri.parse(sshFsPath),

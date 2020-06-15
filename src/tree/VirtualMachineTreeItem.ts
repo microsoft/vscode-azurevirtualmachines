@@ -43,12 +43,14 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     public static contextValue: string = 'azVmVirtualMachine';
     public readonly contextValue: string = VirtualMachineTreeItem.contextValue;
     public virtualMachine: ComputeManagementModels.VirtualMachine;
+    public isLinux: boolean;
     private _state?: string;
 
     public constructor(parent: AzureParentTreeItem, vm: ComputeManagementModels.VirtualMachine, instanceView?: ComputeManagementModels.VirtualMachineInstanceView) {
         super(parent);
         this.virtualMachine = vm;
         this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
+        this.isLinux = !!(vm.osProfile?.linuxConfiguration);
     }
 
     public getUser(): string {
