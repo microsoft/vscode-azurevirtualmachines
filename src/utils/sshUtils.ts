@@ -53,7 +53,8 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     }
 
     const sshKeyName: string = `azure_${vmti.name}_rsa`;
-    sshKeyPath = sshKeyPath || `~/.ssh/${sshKeyName}`;
+    // remove any slash prefix from the sshKeyPath because that will make Linux VMs unable to find the SSH key
+    sshKeyPath = sshKeyPath?.replace(/^\/|\\/, '') || `~/.ssh/${sshKeyName}`;
     const fourSpaces: string = '    ';
 
     configFile = configFile + `${os.EOL}Host ${host}${os.EOL}${fourSpaces}HostName ${hostName}${os.EOL}${fourSpaces}User ${vmti.getUser()}${os.EOL}${fourSpaces}IdentityFile ${sshKeyPath}`;
