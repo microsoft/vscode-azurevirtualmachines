@@ -22,6 +22,9 @@
     "categories": [
         "Azure"
     ],
+    "extensionKind": [
+        "ui"
+    ],
     "keywords": [
         "Azure",
         "Virtual Machines",
