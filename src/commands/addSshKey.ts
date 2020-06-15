@@ -19,9 +19,9 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     }
 
     const computeClient: ComputeManagementClient = createAzureClient(node.root, ComputeManagementClient);
-    const vm: ComputeManagementModels.VirtualMachine = await computeClient.virtualMachines.get(node.resourceGroup, node.name);
+    const vm: ComputeManagementModels.VirtualMachine = node.virtualMachine;
 
-    if (vm.osProfile?.windowsConfiguration) {
+    if (!node.isLinux) {
         throw new Error(localize('notSupportedWindows', 'This operation is not supported on Windows VMs.'));
     }
 
