@@ -23,7 +23,8 @@
         "Azure"
     ],
     "extensionKind": [
-        "ui"
+        "ui",
+        "workspace"
     ],
     "keywords": [
         "Azure",
