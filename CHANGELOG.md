@@ -7,7 +7,8 @@
     - Read more about that [here](https://code.visualstudio.com/api/advanced-topics/remote-extensions)
 
 ### Fixed
-- [Bugs fixed](https://github.com/microsoft/vscode-azurevirtualmachines/milestone/2?closed=1)
+- Creating a VM would fail if a `.ssh` folder didn't already exist [#87](https://github.com/microsoft/vscode-azurevirtualmachines/issues/87)
+- Error messages that were masked incorrectly [#93](https://github.com/microsoft/vscode-azurevirtualmachines/issues/93)
 
 ## 0.1.0 - 2020-03-05
 
