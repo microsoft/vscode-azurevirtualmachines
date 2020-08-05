@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import ComputeManagementClient from "azure-arm-compute";
+import { ComputeManagementClient } from "@azure/arm-compute";
 import { createAzureClient, IActionContext } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";

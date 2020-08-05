@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from "azure-arm-compute";
+import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
 import { createAzureClient, IActionContext, parseError } from "vscode-azureextensionui";

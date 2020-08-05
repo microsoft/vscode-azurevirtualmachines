@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
+import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';

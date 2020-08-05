@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
+import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
@@ -23,9 +23,9 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
 
         const networkSecurityGroupProps: NetworkManagementModels.NetworkSecurityGroup = {
             name: nsgName, location, securityRules: [
-                { name: 'SSH', protocol: 'TCP', sourcePortRange: '*', destinationPortRange: '22', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 340, direction: 'Inbound' },
-                { name: 'HTTPS', protocol: 'TCP', sourcePortRange: '*', destinationPortRange: '443', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 320, direction: 'Inbound' },
-                { name: 'HTTP', protocol: 'TCP', sourcePortRange: '*', destinationPortRange: '80', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 300, direction: 'Inbound' }
+                { name: 'SSH', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '22', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 340, direction: 'Inbound' },
+                { name: 'HTTPS', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '443', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 320, direction: 'Inbound' },
+                { name: 'HTTP', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '80', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 300, direction: 'Inbound' }
             ]
         };
 

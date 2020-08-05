@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
-import { NetworkManagementClient, NetworkManagementModels } from 'azure-arm-network';
+import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
+import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
 import { AzureParentTreeItem, AzureTreeItem, createAzureClient, DialogResponses } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
