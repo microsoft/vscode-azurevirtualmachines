@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementModels } from 'azure-arm-compute';
-import { NetworkManagementModels } from 'azure-arm-network';
+import { ComputeManagementModels } from '@azure/arm-compute';
+import { NetworkManagementModels } from '@azure/arm-network';
 import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
 
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
@@ -23,7 +23,7 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     /**
      * The size of the VM.  The default value is `Standard_D2s_v3`.
      */
-    size?: string;
+    size?: ComputeManagementModels.VirtualMachineSizeTypes;
 
     /**
      * The image used to create the VM.  The default is `Ubuntu Server 18.04 LTS`.

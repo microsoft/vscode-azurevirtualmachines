@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
-import { NetworkManagementModels } from 'azure-arm-network';
+import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
+import { NetworkManagementModels } from '@azure/arm-network';
 import { MessageItem, Progress, window } from "vscode";
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, createAzureClient, IActionContext } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
@@ -24,7 +24,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const storageProfile: ComputeManagementModels.StorageProfile = {
             // tslint:disable-next-line: strict-boolean-expressions
             imageReference: context.image || { offer: 'UbuntuServer', publisher: 'Canonical', sku: '18.04-LTS', version: 'latest' },
-            osDisk: { name: vmName, createOption: 'fromImage', managedDisk: { storageAccountType: 'Premium_LRS' } }
+            osDisk: { name: vmName, createOption: 'FromImage', managedDisk: { storageAccountType: 'Premium_LRS' } }
         };
 
         const networkInterface: NetworkManagementModels.NetworkInterface = nonNullProp(context, 'networkInterface');

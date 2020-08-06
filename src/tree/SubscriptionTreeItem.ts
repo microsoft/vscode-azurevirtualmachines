@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from 'azure-arm-compute';
+import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createAzureClient, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
@@ -69,9 +69,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         );
     }
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzureTreeItem> {
+        const size: ComputeManagementModels.VirtualMachineSizeTypes = 'Standard_D2s_v3';
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.root, {
             addressPrefix: '10.1.0.0/24',
-            size: 'Standard_D2s_v3'
+            size
         });
 
         wizardContext.locationsTask = getAvailableVMLocations(wizardContext);
