@@ -69,9 +69,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         );
     }
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzureTreeItem> {
+        const size: ComputeManagementModels.VirtualMachineSizeTypes = 'Standard_D2s_v3';
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.root, {
             addressPrefix: '10.1.0.0/24',
-            size: <ComputeManagementModels.VirtualMachineSizeTypes>'Standard_D2s_v3'
+            size
         });
 
         wizardContext.locationsTask = getAvailableVMLocations(wizardContext);
