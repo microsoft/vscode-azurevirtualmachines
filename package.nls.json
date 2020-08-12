@@ -3,6 +3,7 @@
     "azureVirtualMachines.refresh": "Refresh",
     "azureVirtualMachines.loadMore": "Load More",
     "azureVirtualMachines.createVirtualMachine": "Create Virtual Machine...",
+    "azureVirtualMachines.createVirtualMachineAdvanced": "Create Virtual Machine... (Advanced)",
     "azureVirtualMachines.openInPortal": "Open in Portal",
     "azureVirtualMachines.startVirtualMachine": "Start",
     "azureVirtualMachines.stopVirtualMachine": "Stop",

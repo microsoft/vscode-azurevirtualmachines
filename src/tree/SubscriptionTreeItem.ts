@@ -6,6 +6,7 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createAzureClient, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
+import { ImageListStep, ubuntu1804LTSImage } from '../commands/createVirtualMachine/ImageListStep';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
@@ -86,6 +87,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         if (promptForPassphrase) {
             promptSteps.push(new PassphrasePromptStep());
         }
+        promptSteps.push(new ImageListStep());
         LocationListStep.addStep(wizardContext, promptSteps);
 
         executeSteps.push(new ResourceGroupCreateStep());
@@ -97,6 +99,12 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         executeSteps.push(new VirtualMachineCreateStep());
 
         const title: string = 'Create new virtual machine';
+
+        if (!context.advancedCreation) {
+            // for basic create, default to image Ubuntu 18.04 LTS
+            wizardContext.image = ubuntu1804LTSImage;
+        }
+
         const wizard: AzureWizard<IVirtualMachineWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
 
         await wizard.prompt();

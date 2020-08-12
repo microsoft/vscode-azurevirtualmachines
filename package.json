@@ -38,6 +38,7 @@
         "onCommand:azureVirtualMachines.refresh",
         "onCommand:azureVirtualMachines.loadMore",
         "azureVirtualMachines.createVirtualMachine",
+        "azureVirtualMachines.createVirtualMachineAdvanced",
         "azureVirtualMachines.startVirtualMachine",
         "azureVirtualMachines.stopVirtualMachine",
         "azureVirtualMachines.addSshKey",
@@ -78,6 +79,11 @@
                     "light": "resources/light/createVM.svg",
                     "dark": "resources/dark/createVM.svg"
                 }
+            },
+            {
+                "command": "azureVirtualMachines.createVirtualMachineAdvanced",
+                "title": "%azureVirtualMachines.createVirtualMachineAdvanced%",
+                "category": "Azure Virtual Machines"
             },
             {
                 "command": "azureVirtualMachines.startVirtualMachine",
@@ -145,6 +151,11 @@
                     "command": "azureVirtualMachines.createVirtualMachine",
                     "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
                     "group": "1@1"
+                },
+                {
+                    "command": "azureVirtualMachines.createVirtualMachineAdvanced",
+                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
+                    "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.openInPortal",
