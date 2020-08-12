@@ -27,7 +27,7 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     size?: ComputeManagementModels.VirtualMachineSizeTypes;
 
     /**
-     * The OS of the VM.  The default is Linux
+     * The OS of the VM.  The default is `Linux`.
      */
     os?: VirtualMachineOS;
 
@@ -85,7 +85,8 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     addressPrefix?: string;
 
     /**
-     * Passphrase used to connect the VM via SSH.  Prompt can be disabled with `azureVirtualMachines.promptForPassphrase`.
+     * Linux: Passphrase used to connect the VM via SSH.  Prompt can be disabled with `azureVirtualMachines.promptForPassphrase`.
+     * Windows: Password used to as the admin password.
      * This will be defined after PassphrasePromptStep.
      */
     passphrase?: string;

@@ -10,7 +10,7 @@ import { ImageListStep, ubuntu1804LTSImage } from '../commands/createVirtualMach
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
-import { OSListStep } from '../commands/createVirtualMachine/OSListStep';
+import { OSListStep, VirtualMachineOS } from '../commands/createVirtualMachine/OSListStep';
 import { PassphrasePromptStep } from '../commands/createVirtualMachine/PassphrasePromptStep';
 import { PublicIpCreateStep } from '../commands/createVirtualMachine/PublicIpCreateStep';
 import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateStep';
@@ -21,7 +21,6 @@ import { localize } from '../localize';
 import { getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp } from '../utils/nonNull';
 import { configureSshConfig } from '../utils/sshUtils';
-import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
@@ -84,19 +83,12 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const executeSteps: AzureWizardExecuteStep<IVirtualMachineWizardContext>[] = [];
 
         promptSteps.push(new VirtualMachineNameStep());
-        const promptForPassphrase: boolean | undefined = getWorkspaceSetting('promptForPassphrase');
-        if (promptForPassphrase) {
-            promptSteps.push(new PassphrasePromptStep());
-        }
+        promptSteps.push(new OSListStep());
         promptSteps.push(new ImageListStep());
+
+        promptSteps.push(new PassphrasePromptStep());
         LocationListStep.addStep(wizardContext, promptSteps);
 
-        if (context.advancedCreation) {
-            promptSteps.push(new OSListStep());
-            promptSteps.push(new ImageListStep());
-        }
-
-        LocationListStep.addStep(wizardContext, promptSteps);
         executeSteps.push(new ResourceGroupCreateStep());
         executeSteps.push(new PublicIpCreateStep());
         executeSteps.push(new VirtualNetworkCreateStep());
@@ -109,6 +101,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         if (!context.advancedCreation) {
             // for basic create, default to image Ubuntu 18.04 LTS
+            wizardContext.os = VirtualMachineOS.linux;
             wizardContext.image = ubuntu1804LTSImage;
         }
 

@@ -12,6 +12,7 @@ import { localize } from '../../localize';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { getSshKey } from "../../utils/sshUtils";
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+import { VirtualMachineOS } from './OSListStep';
 
 export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 260;
@@ -22,8 +23,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
         const storageProfile: ComputeManagementModels.StorageProfile = {
-            // tslint:disable-next-line: strict-boolean-expressions
-            imageReference: context.image || { offer: 'UbuntuServer', publisher: 'Canonical', sku: '18.04-LTS', version: 'latest' },
+            imageReference: context.image,
             osDisk: { name: vmName, createOption: 'FromImage', managedDisk: { storageAccountType: 'Premium_LRS' } }
         };
 
@@ -32,6 +32,8 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         // tslint:disable-next-line: strict-boolean-expressions
         context.adminUsername = context.adminUsername || 'azureuser';
+
+        const windowConfiguration: ComputeManagementModels.WindowsConfiguration = {};
 
         const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
             disablePasswordAuthentication: true, ssh: {
@@ -43,7 +45,14 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
                 }]
             }
         };
-        const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername, linuxConfiguration };
+
+        const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
+        if (context.os === VirtualMachineOS.linux) {
+            osProfile.linuxConfiguration = linuxConfiguration;
+        } else {
+            osProfile.adminPassword = context.passphrase;
+            osProfile.windowsConfiguration = windowConfiguration;
+        }
 
         const location: string = nonNullValueAndProp(context.location, 'name');
         const virtualMachineProps: ComputeManagementModels.VirtualMachine = { location, hardwareProfile, storageProfile, networkProfile, osProfile };
