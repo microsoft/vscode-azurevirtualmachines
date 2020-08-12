@@ -6,6 +6,7 @@
 import { ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
 import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
+import { VirtualMachineOS } from './OSListStep';
 
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
     /**
@@ -24,6 +25,11 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      * The size of the VM.  The default value is `Standard_D2s_v3`.
      */
     size?: ComputeManagementModels.VirtualMachineSizeTypes;
+
+    /**
+     * The OS of the VM.  The default is Linux
+     */
+    os?: VirtualMachineOS;
 
     /**
      * The image used to create the VM.  The default is `Ubuntu Server 18.04 LTS`.
