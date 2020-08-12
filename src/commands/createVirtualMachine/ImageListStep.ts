@@ -24,71 +24,63 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return !context.image;
     }
 
-    private getAvailableImages(): ImageReferenceWithLabel[] {
+    public getAvailableImages(): ImageReferenceWithLabel[] {
         return [
             {
                 label: 'Ubuntu Server 18.04 LTS - Gen1',
                 publisher: 'Canonical',
                 offer: 'UbuntuServer',
                 sku: '18.04-LTS',
-                version: 'latest',
-                exactVersion: '18.04.202007290'
+                version: 'latest'
             },
             {
                 label: 'Red Hat Enterprise Linux 8.2 (LVM) - Gen1',
                 publisher: 'RedHat',
                 offer: 'RHEL',
                 sku: '8.2',
-                version: 'latest',
-                exactVersion: '8.2.2020050811'
+                version: 'latest'
             },
             {
                 label: 'SUSE Enterprise Linux 15 SP1 - Gen1',
                 publisher: 'suse',
                 offer: 'sles-15-sp1-basic',
                 sku: 'gen1',
-                version: 'latest',
-                exactVersion: '2020.06.10'
+                version: 'latest'
             },
             {
                 label: 'CentOS-based 8.2 - Gen1',
                 publisher: 'OpenLogic',
                 offer: 'CentOS',
                 sku: '8_2',
-                version: 'latest',
-                exactVersion: '8.2.2020062400'
+                version: 'latest'
             },
             {
                 label: 'Debian 10 "Buster" - Gen1',
                 publisher: 'debian',
                 offer: 'debian-10',
                 sku: '10',
-                version: 'latest',
-                exactVersion: '0.20200803.347'
+                version: 'latest'
             },
             {
                 label: 'Oracle Linux 7.8 - Gen1',
                 publisher: 'Oracle',
                 offer: 'Oracle-Linux',
                 sku: '78',
-                version: 'latest',
-                exactVersion: '7.8.3'
+                version: 'latest'
             },
             {
                 label: 'Ubuntu Server 16.04 LTS - Gen1',
                 publisher: 'Canonical',
                 offer: 'UbuntuServer',
                 sku: '16.04-LTS',
-                version: 'latest',
-                exactVersion: '16.04.202007290'
+                version: 'latest'
             },
             {
                 label: 'Data Science Virtual Machine - Ubuntu 18.04 - Gen1',
                 publisher: 'microsoft-dsvm',
                 offer: 'ubuntu-1804',
                 sku: '1804',
-                version: 'latest',
-                exactVersion: '20.07.06'
+                version: 'latest'
             }
         ];
     }

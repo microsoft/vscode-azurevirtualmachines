@@ -87,12 +87,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         if (promptForPassphrase) {
             promptSteps.push(new PassphrasePromptStep());
         }
-
-        if (context.advancedCreation) {
-            promptSteps.push(new ImageListStep());
-        }
-
+        promptSteps.push(new ImageListStep());
         LocationListStep.addStep(wizardContext, promptSteps);
+
         executeSteps.push(new ResourceGroupCreateStep());
         executeSteps.push(new PublicIpCreateStep());
         executeSteps.push(new VirtualNetworkCreateStep());
@@ -102,6 +99,12 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         executeSteps.push(new VirtualMachineCreateStep());
 
         const title: string = 'Create new virtual machine';
+
+        if (!context.advancedCreation) {
+            // for basic create, default to image Ubuntu 18.04 LTS, the first on the list
+            wizardContext.image = new ImageListStep().getAvailableImages()[0];
+        }
+
         const wizard: AzureWizard<IVirtualMachineWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
 
         await wizard.prompt();
