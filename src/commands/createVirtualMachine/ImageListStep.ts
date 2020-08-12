@@ -12,6 +12,15 @@ import { VirtualMachineOS } from './OSListStep';
 
 type ImageReferenceWithLabel = ComputeManagementModels.ImageReference & { label: string };
 
+export const ubuntu1804LTSImage: ImageReferenceWithLabel = {
+    label: 'Ubuntu Server 18.04 LTS - Gen1',
+    publisher: 'Canonical',
+    offer: 'UbuntuServer',
+    sku: '18.04-LTS',
+    version: 'latest',
+    exactVersion: '18.04.202007290'
+};
+
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
 
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
@@ -29,14 +38,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
     private getAvailableImages(os: VirtualMachineOS | undefined): ImageReferenceWithLabel[] {
         return os !== VirtualMachineOS.windows ?
             [
-                {
-                    label: 'Ubuntu Server 18.04 LTS - Gen1',
-                    publisher: 'Canonical',
-                    offer: 'UbuntuServer',
-                    sku: '18.04-LTS',
-                    version: 'latest',
-                    exactVersion: '18.04.202007290'
-                },
+                ubuntu1804LTSImage,
                 {
                     label: 'Red Hat Enterprise Linux 8.2 (LVM) - Gen1',
                     publisher: 'RedHat',
