@@ -14,6 +14,7 @@ import { OSListStep, VirtualMachineOS } from '../commands/createVirtualMachine/O
 import { PassphrasePromptStep } from '../commands/createVirtualMachine/PassphrasePromptStep';
 import { PublicIpCreateStep } from '../commands/createVirtualMachine/PublicIpCreateStep';
 import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateStep';
+import { UsernamePromptStep } from '../commands/createVirtualMachine/UsernamePromptStep';
 import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/VirtualMachineCreateStep';
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
@@ -86,6 +87,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         promptSteps.push(new OSListStep());
         promptSteps.push(new ImageListStep());
 
+        promptSteps.push(new UsernamePromptStep());
         promptSteps.push(new PassphrasePromptStep());
         LocationListStep.addStep(wizardContext, promptSteps);
 
@@ -103,6 +105,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
             // for basic create, default to image Ubuntu 18.04 LTS
             wizardContext.os = VirtualMachineOS.linux;
             wizardContext.image = ubuntu1804LTSImage;
+            wizardContext.adminUsername = 'azureuser';
         }
 
         const wizard: AzureWizard<IVirtualMachineWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });

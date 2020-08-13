@@ -30,11 +30,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const networkInterface: NetworkManagementModels.NetworkInterface = nonNullProp(context, 'networkInterface');
         const networkProfile: ComputeManagementModels.NetworkProfile = { networkInterfaces: [{ id: networkInterface.id }] };
 
-        // tslint:disable-next-line: strict-boolean-expressions
-        context.adminUsername = context.adminUsername || 'azureuser';
-
         const windowConfiguration: ComputeManagementModels.WindowsConfiguration = {};
-
         const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
             disablePasswordAuthentication: true, ssh: {
                 publicKeys: [{

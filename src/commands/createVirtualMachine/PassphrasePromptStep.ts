@@ -45,7 +45,7 @@ export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineW
         }
     }
 
-    private async validatePassphrase(os: VirtualMachineOS, value: string | undefined): Promise<string | undefined> {
+    private validatePassphrase(os: VirtualMachineOS, value: string | undefined): string | undefined {
         if (os === VirtualMachineOS.windows) {
             const passwordMinLength: number = 8;
             const passwordMaxLength: number = 123;
