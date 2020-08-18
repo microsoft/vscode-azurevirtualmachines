@@ -26,7 +26,7 @@ export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineW
             prompt,
             placeHolder,
             password: true,
-            validateInput: (value: string | undefined): Promise<string | undefined> => this.validatePassphrase(nonNullProp(wizardContext, 'os'), value)
+            validateInput: (value: string | undefined): string | undefined => this.validatePassphrase(nonNullProp(wizardContext, 'os'), value)
         }));
     }
 
