@@ -11,5 +11,6 @@
     "azureVirtualMachines.deleteVirtualMachine": "Delete...",
     "azureVirtualMachines.addSshKey": "Add SSH Key...",
     "azureVirtualMachines.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
-    "azureVirtualMachines.promptForPassphrase": "Prompts for a passphrase when creating an Azure Virtual Machine."
+    "azureVirtualMachines.promptForPassphrase": "Prompts for a passphrase when creating an Azure Virtual Machine.",
+    "azureVirtualMachines.copyIpAddress": "Copy IP Address"
 }
