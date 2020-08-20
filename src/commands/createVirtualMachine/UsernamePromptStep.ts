@@ -13,12 +13,8 @@ import { VirtualMachineOS } from "./OSListStep";
 export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const prompt: string = localize('usernamePrompt', 'Enter a username');
-
-        const placeHolder: string = localize('enterUsername', 'Enter username');
-
         wizardContext.adminUsername = (await ext.ui.showInputBox({
             prompt,
-            placeHolder,
             value: wizardContext.os === VirtualMachineOS.linux ? 'azureuser' : '',
             validateInput: async (value: string | undefined): Promise<string | undefined> => this.validateUsername(nonNullProp(wizardContext, 'os'), value)
         }));

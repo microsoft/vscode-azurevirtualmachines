@@ -17,7 +17,7 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const picks: IAzureQuickPickItem<VirtualMachineOS>[] = Object.keys(VirtualMachineOS).map((key: string) => {
             const os: VirtualMachineOS = <VirtualMachineOS>VirtualMachineOS[key];
-            return { label: this.getWebsiteOSDisplayName(os), description: '', data: os };
+            return { label: this.getWebsiteOSDisplayName(os), data: os };
         });
 
         wizardContext.os = (await ext.ui.showQuickPick(picks, { placeHolder: localize('selectOS', 'Select an OS.') })).data;

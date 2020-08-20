@@ -15,12 +15,12 @@ import { VirtualMachineOS } from "./OSListStep";
 export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const prompt: string = wizardContext.os === VirtualMachineOS.linux ?
-            localize('passphrasePrompt', 'Enter a passphrase for connecting to this Virtual Machine') :
+            localize('passphrasePrompt', 'Enter a passphrase for connecting to this virtual machine') :
             localize('passwordPrompt', 'Enter an admin password');
 
         const placeHolder: string = wizardContext.os === VirtualMachineOS.linux ?
-            localize('enterPassphrase', 'Enter passphrase (empty for no passphrase)') :
-            localize('enterPassphrase', 'Enter password');
+            localize('enterPassphrase', '(empty for no passphrase)') :
+            '';
 
         wizardContext.passphrase = (await ext.ui.showInputBox({
             prompt,
