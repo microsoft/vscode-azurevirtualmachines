@@ -86,7 +86,7 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
 
     /**
      * Linux: Passphrase used to connect the VM via SSH.  Prompt can be disabled with `azureVirtualMachines.promptForPassphrase`.
-     * Windows: Password used to as the admin password.
+     * Windows: **Required** Password used as the admin password.
      * This will be defined after PassphrasePromptStep.
      */
     passphrase?: string;
