@@ -45,7 +45,7 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
         if (name.length < virtualMachineNamingRules.minLength || name.length > virtualMachineNamingRules.maxLength) {
             return localize('invalidLength', 'The name must be between {0} and {1} characters.', virtualMachineNamingRules.minLength, virtualMachineNamingRules.maxLength);
         } else if (virtualMachineNamingRules.invalidCharsRegExp.test(name)) {
-            return localize('invalidChars', "The name can only contain alphanumeric characters and the symbols .-");
+            return localize('invalidChars', "The name can only contain alphanumeric characters and the symbols '.' and '-'");
         } else if (name.endsWith('.') || name.endsWith('-')) {
             return localize('invalidEndingChar', "The name cannot end in a period or hyphen.");
         } else if (wizardContext.resourceGroup?.name && !await this.isNameAvailableInRG(wizardContext, wizardContext.resourceGroup.name, name)) {
