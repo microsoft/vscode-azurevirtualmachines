@@ -12,7 +12,7 @@ import { localize } from '../localize';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { cpUtils } from "./cpUtils";
 
-export const sshFsPath: string = join(decodeURI(os.homedir()), '.ssh');
+export const sshFsPath: string = join(os.homedir(), '.ssh');
 
 export async function getSshKey(vmName: string, passphrase: string): Promise<string> {
     return await callWithMaskHandling(
