@@ -20,7 +20,7 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
 
         // this is the naming convention used by the portal
-        context.newNetworkInterfaceName = context.newNetworkInterfaceName || this.appendThreeRandomDigits(vmName);
+        context.newNetworkInterfaceName = context.newNetworkInterfaceName || this.formatNetworkInterfaceName(vmName);
 
         const publicIpAddress: NetworkManagementModels.PublicIPAddress = nonNullProp(context, 'publicIpAddress');
         const subnet: NetworkManagementModels.Subnet = nonNullProp(context, 'subnet');
@@ -42,7 +42,11 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         return !context.networkInterface;
     }
 
-    private appendThreeRandomDigits(niName: string): string {
+    private formatNetworkInterfaceName(niName: string): string {
+        const maxNumofChars: number = 20;
+        // the portal truncates the VM name by 20 characters
+        niName = niName.substr(0, maxNumofChars);
+
         for (let i: number = 0; i < 3; i += 1) {
             // as this isn't being used for security purposes, it should be sufficient to use Math.random()
             // tslint:disable-next-line: insecure-random
