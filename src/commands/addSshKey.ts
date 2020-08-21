@@ -26,7 +26,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     }
 
     const sshPublicKey: Uri = (await ext.ui.showOpenDialog({
-        defaultUri: Uri.parse(sshFsPath),
+        defaultUri: Uri.file(sshFsPath),
         filters: { 'SSH Public Key': ['pub'] }
     }))[0];
 
