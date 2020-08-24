@@ -81,8 +81,8 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         const confirmMessage: string = localize('deleteConfirmation', 'Are you sure you want to delete "{0}"?', this.name);
         await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
 
-        const deleting: string = localize('Deleting', 'Deleting "{0}"...', this.name);
-        const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted "{0}".', this.name);
+        const deleting: string = localize('Deleting', 'Deleting virtual machine "{0}"...', this.name);
+        const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted virtual machine "{0}".', this.name);
         const computeClient: ComputeManagementClient = createAzureClient(this.root, ComputeManagementClient);
 
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {

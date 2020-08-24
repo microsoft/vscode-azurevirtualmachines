@@ -6,11 +6,11 @@
     "azureVirtualMachines.createVirtualMachineAdvanced": "Create Virtual Machine... (Advanced)",
     "azureVirtualMachines.openInPortal": "Open in Portal",
     "azureVirtualMachines.startVirtualMachine": "Start",
+    "azureVirtualMachines.restartVirtualMachine": "Restart",
     "azureVirtualMachines.stopVirtualMachine": "Stop",
-    "azureVirtualMachines.restartFunctionApp": "Restart",
     "azureVirtualMachines.deleteVirtualMachine": "Delete...",
     "azureVirtualMachines.addSshKey": "Add SSH Key...",
     "azureVirtualMachines.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
-    "azureVirtualMachines.promptForPassphrase": "Prompts for a passphrase when creating an Azure Virtual Machine.",
+    "azureVirtualMachines.promptForPassphrase": "Prompts for a passphrase when creating a Linux Azure Virtual Machine.",
     "azureVirtualMachines.copyIpAddress": "Copy IP Address"
 }
