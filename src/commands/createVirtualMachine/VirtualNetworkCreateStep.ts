@@ -20,7 +20,7 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const virtualNetworkProps: NetworkManagementModels.VirtualNetwork = { location, addressSpace: { addressPrefixes: [nonNullProp(context, 'addressPrefix')] } };
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
-        const vnName: string = nonNullProp(context, 'newVirtualMachineName') + '-vnet';
+        const vnName: string = nonNullProp(context, 'newVirtualMachineName');
 
         const creatingVn: string = localize('creatingVn', `Creating new virtual network "${vnName}"...`);
         ext.outputChannel.appendLog(creatingVn);
