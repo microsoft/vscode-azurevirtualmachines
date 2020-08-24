@@ -116,7 +116,12 @@
             {
                 "command": "azureVirtualMachines.openInPortal",
                 "title": "%azureVirtualMachines.openInPortal%",
-                "category": "Azure Virtual machines"
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.copyIpAddress",
+                "title": "%azureVirtualMachines.copyIpAddress%",
+                "category": "Azure Virtual Machines"
             }
         ],
         "viewsContainers": {
@@ -173,12 +178,17 @@
                 {
                     "command": "azureVirtualMachines.refresh",
                     "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
-                    "group": "3@1"
+                    "group": "3@2"
+                },
+                {
+                    "command": "azureVirtualMachines.copyIpAddress",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.openInPortal",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
-                    "group": "1@1"
+                    "group": "3@1"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
@@ -203,7 +213,7 @@
                 {
                     "command": "azureVirtualMachines.addSshKey",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
-                    "group": "3@1"
+                    "group": "1@2"
                 }
             ],
             "explorer/context": [],

@@ -39,7 +39,7 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     let configFile: string = (await fse.readFile(sshConfigPath)).toString();
 
     // If we find duplicate Hosts, we can just make a new entry called Host (2)...(3)...etc
-    const hostName: string = await vmti.getHostName();
+    const hostName: string = await vmti.getIpAddress();
     let host: string = vmti.name;
 
     if (configFile.includes(`Host ${vmti.name}`)) {

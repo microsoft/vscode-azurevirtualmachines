@@ -57,7 +57,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return nonNullValueAndProp(this.virtualMachine.osProfile, 'adminUsername');
     }
 
-    public async getHostName(): Promise<string> {
+    public async getIpAddress(): Promise<string> {
         const networkClient: NetworkManagementClient = createAzureClient(this.root, NetworkManagementClient);
         const rgName: string = getResourceGroupFromId(this.id);
 

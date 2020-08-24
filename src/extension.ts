@@ -11,6 +11,7 @@ import { AzExtTreeDataProvider, AzureTreeItem, AzureUserInput, callWithTelemetry
 import { AzureExtensionApi, AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
 import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
+import { copyIpAddress } from './commands/copyIpAddress';
 import { createVirtualMachine, createVirtualMachineAdvanced } from './commands/createVirtualMachine/createVirtualMachine';
 import { deleteNode } from './commands/deleteNode';
 import { openInPortal } from './commands/openInPortal';
@@ -52,6 +53,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.stopVirtualMachine', stopVirtualMachine);
         registerCommand('azureVirtualMachines.addSshKey', addSshKey);
         registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.contextValue, node));
+        registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
     });
 
     return createApiProvider([<AzureExtensionApi>{
