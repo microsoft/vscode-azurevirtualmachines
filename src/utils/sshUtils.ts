@@ -25,7 +25,7 @@ export async function getSshKey(vmName: string, passphrase: string): Promise<str
                 // create the .ssh folder if it doesn't exist
                 await fse.ensureDir(sshFsPath);
                 await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
-                ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}"...', sshKeyPath));
+                ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath));
             }
 
             return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
