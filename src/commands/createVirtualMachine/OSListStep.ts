@@ -19,7 +19,6 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
             const os: VirtualMachineOS = <VirtualMachineOS>VirtualMachineOS[key];
             return { label: this.getWebsiteOSDisplayName(os), data: os };
         });
-
         wizardContext.os = (await ext.ui.showQuickPick(picks, { placeHolder: localize('selectOS', 'Select an OS.') })).data;
     }
 
