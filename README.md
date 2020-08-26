@@ -1,6 +1,10 @@
 # Azure Virtual Machines for Visual Studio Code (Preview)
 
+<!-- region exclude-from-marketplace -->
+
 [![Version](https://vsmarketplacebadge.apphb.com/version/ms-azuretools.vscode-azurevirtualmachines.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/ms-azuretools.vscode-azurevirtualmachines.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-azurevirtualmachines)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=24) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Microsoft/vscode-azurevirtualmachines/blob/master/LICENSE.md)
+
+<!-- endregion exclude-from-marketplace -->
 
 Create and manage Azure Virtual Machines directly from VS Code.
 
@@ -45,6 +49,8 @@ Your SSH Config (`~/.ssh/config`) file will be updated so you can connect via SS
 
 - Use [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) to seamlessly connect to your Azure VM from VS Code.
 
+<!-- region exclude-from-marketplace -->
+
 ## Contributing
 
 There are a couple of ways you can contribute to this repo:
@@ -65,6 +71,8 @@ Before we can accept your pull request you will need to sign a **Contribution Li
 ### Code of Conduct
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+<!-- endregion exclude-from-marketplace -->
 
 ## Telemetry
 
