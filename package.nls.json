@@ -12,5 +12,6 @@
     "azureVirtualMachines.addSshKey": "Add SSH Key...",
     "azureVirtualMachines.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
     "azureVirtualMachines.promptForPassphrase": "Prompts for a passphrase when creating a Linux Azure Virtual Machine.",
-    "azureVirtualMachines.copyIpAddress": "Copy IP Address"
+    "azureVirtualMachines.copyIpAddress": "Copy IP Address",
+    "azureVirtualMachines.viewProperties": "View Properties"
 }
