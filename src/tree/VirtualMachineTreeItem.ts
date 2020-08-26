@@ -15,7 +15,7 @@ import { treeUtils } from '../utils/treeUtils';
 
 export class VirtualMachineTreeItem extends AzureTreeItem {
     public get label(): string {
-        return `${this.resourceGroup}/${this.name}`;
+        return `${this.name}`;
     }
 
     public get iconPath(): treeUtils.IThemedIconPath {
