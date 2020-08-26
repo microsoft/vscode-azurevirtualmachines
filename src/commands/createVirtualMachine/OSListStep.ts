@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, IAzureQuickPickItem } from 'vscode-azureextensionui';
+import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from 'vscode-azureextensionui';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+import { ValidateWindowsNameStep } from './ValidateWindowsNameStep';
 
 export enum VirtualMachineOS {
     linux = 'linux',
@@ -19,12 +20,19 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
             const os: VirtualMachineOS = <VirtualMachineOS>VirtualMachineOS[key];
             return { label: this.getWebsiteOSDisplayName(os), data: os };
         });
-
         wizardContext.os = (await ext.ui.showQuickPick(picks, { placeHolder: localize('selectOS', 'Select an OS.') })).data;
     }
 
     public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {
         return wizardContext.os === undefined;
+    }
+
+    public async getSubWizard(wizardContext: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
+        if (wizardContext.os === VirtualMachineOS.windows) {
+            return { promptSteps: [new ValidateWindowsNameStep()] };
+        }
+
+        return undefined;
     }
 
     private getWebsiteOSDisplayName(kind: VirtualMachineOS): string {
