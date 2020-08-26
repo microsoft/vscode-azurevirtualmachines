@@ -23,13 +23,6 @@ export const ubuntu1804LTSImage: ImageReferenceWithLabel = {
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
 
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
-        if (context.os === VirtualMachineOS.windows && context.newVirtualMachineName?.includes('.')) {
-            const nameWithNoPeriods: string | undefined = context.newVirtualMachineName?.replace(/\./g, '');
-            const noPeriods: string = localize('noPeriods', 'Windows VM names cannot contain periods.  Use "{0}" instead?', nameWithNoPeriods);
-            await ext.ui.showWarningMessage(noPeriods, { modal: true }, { title: localize('use', 'Use') });
-            context.newVirtualMachineName = nameWithNoPeriods;
-        }
-
         const placeHolder: string = localize('selectImage', 'Select an image');
         context.image = (await ext.ui.showQuickPick(this.getAvailableImages(context.os).map((ir) => { return { label: ir.label, data: ir }; }), {
             placeHolder
