@@ -25,6 +25,14 @@ async function gulp_installInsidersAzureAccount(): Promise<void> {
     return gulp_installVSCodeExtension('ms-vscode', 'azure-account', true);
 }
 
+async function cleanReadme(): Promise<void> {
+    const readmePath: string = path.join(__dirname, 'README.md');
+    let data: string = (await fse.readFile(readmePath)).toString();
+    data = data.replace(/<!-- region exclude-from-marketplace -->.*?<!-- endregion exclude-from-marketplace -->/gis, '');
+    await fse.writeFile(readmePath, data);
+}
+
 exports['webpack-dev'] = gulp.series(prepareForWebpack, () => gulp_webpack('development'));
 exports['webpack-prod'] = gulp.series(prepareForWebpack, () => gulp_webpack('production'));
 exports.preTest = gulp_installInsidersAzureAccount;
+exports.cleanReadme = cleanReadme;
