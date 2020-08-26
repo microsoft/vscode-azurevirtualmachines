@@ -18,6 +18,7 @@ import { openInPortal } from './commands/openInPortal';
 import { restartVirtualMachine } from './commands/restartVirtualMachine';
 import { startVirtualMachine } from './commands/startVirtualMachine';
 import { stopVirtualMachine } from './commands/stopVirtualMachine';
+import { viewProperties } from './commands/viewProperties';
 import { ext } from './extensionVariables';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
 import { SubscriptionTreeItem } from './tree/SubscriptionTreeItem';
@@ -54,6 +55,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.addSshKey', addSshKey);
         registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.contextValue, node));
         registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
+        registerCommand('azureVirtualMachines.viewProperties', viewProperties);
     });
 
     return createApiProvider([<AzureExtensionApi>{

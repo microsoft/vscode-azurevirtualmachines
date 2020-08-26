@@ -40,6 +40,10 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return this._state?.toLowerCase() !== 'running' ? this._state : undefined;
     }
 
+    public get data(): ComputeManagementModels.VirtualMachine {
+        return this.virtualMachine;
+    }
+
     public static contextValue: string = 'azVmVirtualMachine';
     public readonly contextValue: string = VirtualMachineTreeItem.contextValue;
     public virtualMachine: ComputeManagementModels.VirtualMachine;

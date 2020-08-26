@@ -39,14 +39,15 @@
         "azureVirtualMachines.selectSubscriptions",
         "onCommand:azureVirtualMachines.refresh",
         "onCommand:azureVirtualMachines.loadMore",
-        "azureVirtualMachines.createVirtualMachine",
-        "azureVirtualMachines.createVirtualMachineAdvanced",
-        "azureVirtualMachines.startVirtualMachine",
-        "azureVirtualMachines.restartVirtualMachine",
-        "azureVirtualMachines.stopVirtualMachine",
-        "azureVirtualMachines.addSshKey",
-        "azureVirtualMachines.deleteVirtualMachine",
+        "onCommand:azureVirtualMachines.createVirtualMachine",
+        "onCommand:azureVirtualMachines.createVirtualMachineAdvanced",
+        "onCommand:azureVirtualMachines.startVirtualMachine",
+        "onCommand:azureVirtualMachines.restartVirtualMachine",
+        "onCommand:azureVirtualMachines.stopVirtualMachine",
+        "onCommand:azureVirtualMachines.addSshKey",
+        "onCommand:azureVirtualMachines.deleteVirtualMachine",
         "onCommand:azureVirtualMachines.openInPortal",
+        "onCommand:azureVirtualMachines.viewProperties",
         "onView:azVmTree"
     ],
     "main": "./main.js",
@@ -122,6 +123,11 @@
                 "command": "azureVirtualMachines.copyIpAddress",
                 "title": "%azureVirtualMachines.copyIpAddress%",
                 "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.viewProperties",
+                "title": "%azureVirtualMachines.viewProperties%",
+                "category": "Azure Virtual Machines"
             }
         ],
         "viewsContainers": {
@@ -186,9 +192,14 @@
                     "group": "1@1"
                 },
                 {
-                    "command": "azureVirtualMachines.openInPortal",
+                    "command": "azureVirtualMachines.viewProperties",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "3@1"
+                },
+                {
+                    "command": "azureVirtualMachines.openInPortal",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "3@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
