@@ -10,6 +10,8 @@ import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 import { VirtualMachineOS } from "./OSListStep";
 
+const reservedWords: string[] = ['admin', 'root', 'test', 'user'];
+
 export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const prompt: string = localize('usernamePrompt', 'Enter a username');
@@ -37,10 +39,11 @@ export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWiz
             return os === VirtualMachineOS.linux ?
                 localize('invalidLinuxUsername', 'Username must only contain letters, numbers, hyphens, and underscores and may not start with a hyphen or number.') :
                 localize('invalidWindowUsername', `Username cannot contain special characters \/""[]:|<>+=;,?*@& or end with '.'`);
+        } else if (reservedWords.includes(value.toLowerCase())) {
+            return localize('reservedWords', 'Usernames must not include reserved words');
         } else {
             return undefined;
         }
 
     }
-
 }
