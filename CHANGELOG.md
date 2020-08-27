@@ -3,7 +3,7 @@
 ## 0.2.0 - 2020-08-27
 
 ### Added
-- Advanced created that allows you to manually select properties (i.e. the OS, the image) when creating the VM
+- Advanced creation that allows you to manually select properties (i.e. the OS, the image) when creating the VM
 - `Copy IP Address` and `View Properties` on virtual machines items
 
 ### Removed
