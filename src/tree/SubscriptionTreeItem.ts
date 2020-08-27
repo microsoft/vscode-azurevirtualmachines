@@ -26,6 +26,7 @@ import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     public readonly childTypeLabel: string = localize('VirtualMachine', 'Virtual Machine');
+    public supportsAdvancedCreation: boolean = true;
 
     private _nextLink: string | undefined;
 
