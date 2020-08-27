@@ -18,6 +18,11 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public priority: number = 260;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        context.telemetry.properties.os = context.os;
+        context.telemetry.properties.image = context.image?.label;
+        context.telemetry.properties.location = context.location?.name;
+        context.telemetry.properties.size = context.size;
+
         const computeClient: ComputeManagementClient = createAzureClient(context, ComputeManagementClient);
         const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size };
 
@@ -69,11 +74,6 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         progress.report({ message: creatingVm });
         context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
         ext.outputChannel.appendLog(createdVm);
-
-        context.telemetry.properties.os = context.os;
-        context.telemetry.properties.image = context.image?.label;
-        context.telemetry.properties.location = context.location?.name;
-        context.telemetry.properties.size = context.size;
 
         const viewOutput: MessageItem = { title: 'View Output' };
         // Note: intentionally not waiting for the result of this before returning
