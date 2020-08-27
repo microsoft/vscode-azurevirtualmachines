@@ -12,7 +12,6 @@
 ### Fixed
 - [Bugs fixed](https://github.com/microsoft/vscode-azurevirtualmachines/milestone/5?closed=1)
 
-
 ## 0.1.1 - 2020-06-16
 
 ### Changed
