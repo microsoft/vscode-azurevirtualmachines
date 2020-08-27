@@ -6,6 +6,7 @@
 import { ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
 import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
+import { ImageReferenceWithLabel } from './ImageListStep';
 import { VirtualMachineOS } from './OSListStep';
 
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
@@ -34,7 +35,7 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     /**
      * The image used to create the VM.  The default is `Ubuntu Server 18.04 LTS`.
      */
-    image?: ComputeManagementModels.ImageReference;
+    image?: ImageReferenceWithLabel;
 
     /**
      * The network interface of the new VM.  This contains all the ipConfigurations such as public IP and subnet

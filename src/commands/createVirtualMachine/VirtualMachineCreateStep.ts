@@ -18,6 +18,11 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public priority: number = 260;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        context.telemetry.properties.os = context.os;
+        context.telemetry.properties.image = context.image?.label;
+        context.telemetry.properties.location = context.location?.name;
+        context.telemetry.properties.size = context.size;
+
         const computeClient: ComputeManagementClient = createAzureClient(context, ComputeManagementClient);
         const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size };
 
