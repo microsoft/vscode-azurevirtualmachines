@@ -70,6 +70,11 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
         ext.outputChannel.appendLog(createdVm);
 
+        context.telemetry.properties.os = context.os;
+        context.telemetry.properties.image = context.image?.label;
+        context.telemetry.properties.location = context.location?.name;
+        context.telemetry.properties.size = context.size;
+
         const viewOutput: MessageItem = { title: 'View Output' };
         // Note: intentionally not waiting for the result of this before returning
         window.showInformationMessage(createdVm, viewOutput).then(async (result: MessageItem | undefined) => {

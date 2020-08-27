@@ -10,7 +10,7 @@ import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from './OSListStep';
 
-type ImageReferenceWithLabel = ComputeManagementModels.ImageReference & { label: string };
+export type ImageReferenceWithLabel = ComputeManagementModels.ImageReference & { label: string };
 
 export const ubuntu1804LTSImage: ImageReferenceWithLabel = {
     label: 'Ubuntu Server 18.04 LTS - Gen1',
