@@ -2,7 +2,7 @@
 
 <!-- region exclude-from-marketplace -->
 
-[![Version](https://vsmarketplacebadge.apphb.com/version/ms-azuretools.vscode-azurevirtualmachines.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/ms-azuretools.vscode-azurevirtualmachines.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-azurevirtualmachines)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=24) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Microsoft/vscode-azurevirtualmachines/blob/master/LICENSE.md)
+[![Version](https://vsmarketplacebadge.apphb.com/version/ms-azuretools.vscode-azurevirtualmachines.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/ms-azuretools.vscode-azurevirtualmachines.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurevirtualmachines) [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-azurevirtualmachines)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=24) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Microsoft/vscode-azurevirtualmachines/blob/main/LICENSE.md)
 
 <!-- endregion exclude-from-marketplace -->
 
