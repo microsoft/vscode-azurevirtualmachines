@@ -6,10 +6,11 @@
 import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
-import { createAzureClient, IActionContext, parseError } from "vscode-azureextensionui";
+import { IActionContext, parseError } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { createComputeClient } from "../utils/azureClients";
 import { nonNullValueAndProp } from "../utils/nonNull";
 import { configureSshConfig, sshFsPath } from "../utils/sshUtils";
 
@@ -18,7 +19,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
         node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.contextValue, context);
     }
 
-    const computeClient: ComputeManagementClient = createAzureClient(node.root, ComputeManagementClient);
+    const computeClient: ComputeManagementClient = await createComputeClient(node.root);
     const vm: ComputeManagementModels.VirtualMachine = node.virtualMachine;
 
     if (!node.isLinux) {

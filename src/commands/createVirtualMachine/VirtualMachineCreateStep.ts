@@ -6,9 +6,10 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
 import { MessageItem, Progress, window } from "vscode";
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, createAzureClient, IActionContext } from "vscode-azureextensionui";
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { createComputeClient } from '../../utils/azureClients';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { getSshKey } from "../../utils/sshUtils";
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
@@ -23,7 +24,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         context.telemetry.properties.location = context.location?.name;
         context.telemetry.properties.size = context.size;
 
-        const computeClient: ComputeManagementClient = createAzureClient(context, ComputeManagementClient);
+        const computeClient: ComputeManagementClient = await createComputeClient(context);
         const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size };
 
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
