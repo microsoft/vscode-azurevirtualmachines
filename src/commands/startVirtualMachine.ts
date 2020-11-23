@@ -4,10 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { createAzureClient, IActionContext } from "vscode-azureextensionui";
+import { IActionContext } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { createComputeClient } from "../utils/azureClients";
 import { nonNullValue } from "../utils/nonNull";
 
 export async function startVirtualMachine(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
@@ -15,7 +16,7 @@ export async function startVirtualMachine(context: IActionContext, node?: Virtua
         node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.contextValue, context);
     }
 
-    const computeClient: ComputeManagementClient = createAzureClient(node.root, ComputeManagementClient);
+    const computeClient: ComputeManagementClient = await createComputeClient(node.root);
 
     await node.runWithTemporaryDescription(localize('starting', 'Starting...'), async () => {
         const vmti: VirtualMachineTreeItem = nonNullValue(node);

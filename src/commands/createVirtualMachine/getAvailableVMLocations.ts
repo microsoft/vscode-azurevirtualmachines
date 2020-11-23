@@ -4,11 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
-import { createAzureClient } from "vscode-azureextensionui";
+import { createComputeClient } from "../../utils/azureClients";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export async function getAvailableVMLocations(context: IVirtualMachineWizardContext): Promise<{ name?: string }[]> {
-    const computeClient: ComputeManagementClient = createAzureClient(context, ComputeManagementClient);
+    const computeClient: ComputeManagementClient = await createComputeClient(context);
 
     const resourceSkus: ComputeManagementModels.ResourceSkusResult = await computeClient.resourceSkus.list();
     return resourceSkus.

@@ -5,9 +5,10 @@
 
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import { Progress } from "vscode";
-import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
+import { AzureWizardExecuteStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { createNetworkClient } from '../../utils/azureClients';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
@@ -15,7 +16,7 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public priority: number = 230;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const networkClient: NetworkManagementClient = createAzureClient(context, NetworkManagementClient);
+        const networkClient: NetworkManagementClient = await createNetworkClient(context);
         const location: string = nonNullValueAndProp(context.location, 'name');
 
         const virtualNetworkProps: NetworkManagementModels.VirtualNetwork = { location, addressSpace: { addressPrefixes: [nonNullProp(context, 'addressPrefix')] } };

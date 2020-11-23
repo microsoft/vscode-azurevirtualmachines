@@ -4,9 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
-import { AzureNameStep, createAzureClient, IAzureNamingRules, ResourceGroupListStep, resourceGroupNamingRules } from "vscode-azureextensionui";
+import { AzureNameStep, IAzureNamingRules, ResourceGroupListStep, resourceGroupNamingRules } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
+import { createComputeClient } from "../../utils/azureClients";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export const virtualMachineNamingRules: IAzureNamingRules = {
@@ -57,7 +58,7 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
 
     private async isNameAvailableInRG(wizardContext: IVirtualMachineWizardContext, rgName: string, name: string): Promise<boolean> {
         // Virtual machine names must be unique to the current resource group.
-        const computeClient: ComputeManagementClient = createAzureClient(wizardContext, ComputeManagementClient);
+        const computeClient: ComputeManagementClient = await createComputeClient(wizardContext);
         const vmsInRg: ComputeManagementModels.VirtualMachineListResult = await computeClient.virtualMachines.list(rgName);
         if (vmsInRg.find((vm: ComputeManagementModels.VirtualMachine) => vm.name === name)) {
             return false;

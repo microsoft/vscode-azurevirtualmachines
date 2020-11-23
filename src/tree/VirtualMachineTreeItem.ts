@@ -6,9 +6,10 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
-import { AzureParentTreeItem, AzureTreeItem, createAzureClient, DialogResponses } from 'vscode-azureextensionui';
+import { AzureParentTreeItem, AzureTreeItem, DialogResponses } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
+import { createComputeClient, createNetworkClient } from '../utils/azureClients';
 import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
@@ -62,7 +63,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     public async getIpAddress(): Promise<string> {
-        const networkClient: NetworkManagementClient = createAzureClient(this.root, NetworkManagementClient);
+        const networkClient: NetworkManagementClient = await createNetworkClient(this.root);
         const rgName: string = getResourceGroupFromId(this.id);
 
         const networkInterfaces: ComputeManagementModels.NetworkInterfaceReference[] = nonNullValueAndProp(this.virtualMachine.networkProfile, 'networkInterfaces');
@@ -87,7 +88,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
         const deleting: string = localize('Deleting', 'Deleting virtual machine "{0}"...', this.name);
         const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted virtual machine "{0}".', this.name);
-        const computeClient: ComputeManagementClient = createAzureClient(this.root, ComputeManagementClient);
+        const computeClient: ComputeManagementClient = await createComputeClient(this.root);
 
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
             ext.outputChannel.appendLog(deleting);
@@ -106,9 +107,8 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     }
 
     public async getState(): Promise<string | undefined> {
-        const computeClient: ComputeManagementClient = createAzureClient(this.root, ComputeManagementClient);
+        const computeClient: ComputeManagementClient = await createComputeClient(this.root);
         return this.getStateFromInstanceView(await computeClient.virtualMachines.instanceView(this.resourceGroup, this.name));
-
     }
 
     private getStateFromInstanceView(instanceView: ComputeManagementModels.VirtualMachineInstanceView): string | undefined {

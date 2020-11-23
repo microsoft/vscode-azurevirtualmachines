@@ -5,9 +5,10 @@
 
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import { Progress } from "vscode";
-import { AzureWizardExecuteStep, createAzureClient } from "vscode-azureextensionui";
+import { AzureWizardExecuteStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { createNetworkClient } from '../../utils/azureClients';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from './OSListStep';
@@ -16,7 +17,7 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
     public priority: number = 220;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const networkClient: NetworkManagementClient = createAzureClient(context, NetworkManagementClient);
+        const networkClient: NetworkManagementClient = await createNetworkClient(context);
         const location: string = nonNullValueAndProp(context.location, 'name');
 
         // when creating a VM on the portal, this is the suffix that is added to the network security group

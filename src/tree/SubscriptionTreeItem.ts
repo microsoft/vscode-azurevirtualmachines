@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
-import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, createAzureClient, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
+import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { ImageListStep, ubuntu1804LTSImage } from '../commands/createVirtualMachine/ImageListStep';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
@@ -19,6 +19,7 @@ import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/Virtu
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
 import { localize } from '../localize';
+import { createComputeClient } from '../utils/azureClients';
 import { getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp } from '../utils/nonNull';
 import { configureSshConfig } from '../utils/sshUtils';
@@ -39,7 +40,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
             this._nextLink = undefined;
         }
 
-        const client: ComputeManagementClient = createAzureClient(this.root, ComputeManagementClient);
+        const client: ComputeManagementClient = await createComputeClient(this.root);
         let virtualMachines: ComputeManagementModels.VirtualMachineListResult;
 
         try {
