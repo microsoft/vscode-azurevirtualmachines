@@ -128,6 +128,11 @@
                 "command": "azureVirtualMachines.viewProperties",
                 "title": "%azureVirtualMachines.viewProperties%",
                 "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.remoteSsh",
+                "title": "%azureVirtualMachines.remoteSsh%",
+                "category": "Azure Virtual Machines"
             }
         ],
         "viewsContainers": {
@@ -220,6 +225,11 @@
                     "command": "azureVirtualMachines.deleteVirtualMachine",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "2@4"
+                },
+                {
+                    "command": "azureVirtualMachines.remoteSsh",
+                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
@@ -316,6 +326,7 @@
         "@azure/arm-network": "^22.0.0",
         "fs-extra": "^8.1.0",
         "semver": "^5.7.0",
+        "ssh-config": "^4.0.4",
         "vscode-azureextensionui": "^0.36.1",
         "vscode-nls": "^4.1.0"
     },

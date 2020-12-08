@@ -56,6 +56,13 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.contextValue, node));
         registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
         registerCommand('azureVirtualMachines.viewProperties', viewProperties);
+        registerCommand('azureVirtualMachines.remoteSsh', async (actionContext: IActionContext, node?: VirtualMachineTreeItem) => {
+            if (!node) {
+                node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.contextValue, actionContext);
+            }
+
+            await vscode.commands.executeCommand('opensshremotes.openEmptyWindow', { host: node.name });
+        });
     });
 
     return createApiProvider([<AzureExtensionApi>{
