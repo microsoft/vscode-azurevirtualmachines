@@ -41,7 +41,7 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
         } else {
             const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [new LinuxImageListStep(), new UsernamePromptStep()];
             if (wizardContext.advancedCreation) {
-                promptSteps.push(new SshKeyListStep());)
+                promptSteps.push(new SshKeyListStep());
             }
 
             return { promptSteps, executeSteps: [new SshKeyCreateStep()] };
