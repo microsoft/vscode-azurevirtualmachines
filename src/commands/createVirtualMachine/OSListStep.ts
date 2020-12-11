@@ -7,7 +7,13 @@ import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from 'vsco
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+import { LinuxImageListStep } from './linuxSteps/LinuxImageListStep';
+import { SshKeyCreateStep } from './linuxSteps/SshKeyCreateStep';
+import { SshKeyListStep } from './linuxSteps/SshKeyListStep';
+import { UsernamePromptStep } from './UsernamePromptStep';
 import { ValidateWindowsNameStep } from './ValidateWindowsNameStep';
+import { AdminPasswordPromptStep } from './windowsSteps/AdminPasswordPromptStep';
+import { WindowsImageListStep } from './windowsSteps/WindowsImageListStep';
 
 export enum VirtualMachineOS {
     linux = 'linux',
@@ -15,6 +21,8 @@ export enum VirtualMachineOS {
 }
 
 export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
+    public hideStepCount: boolean = true;
+
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const picks: IAzureQuickPickItem<VirtualMachineOS>[] = Object.keys(VirtualMachineOS).map((key: string) => {
             const os: VirtualMachineOS = <VirtualMachineOS>VirtualMachineOS[key];
@@ -29,7 +37,14 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
 
     public async getSubWizard(wizardContext: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
         if (wizardContext.os === VirtualMachineOS.windows) {
-            return { promptSteps: [new ValidateWindowsNameStep()] };
+            return { promptSteps: [new ValidateWindowsNameStep(), new WindowsImageListStep(), new UsernamePromptStep(), new AdminPasswordPromptStep()] };
+        } else {
+            const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [new LinuxImageListStep(), new UsernamePromptStep()];
+            if (wizardContext.advancedCreation) {
+                promptSteps.push(new SshKeyListStep());)
+            }
+
+            return { promptSteps, executeSteps: [new SshKeyCreateStep()] };
         }
 
         return undefined;

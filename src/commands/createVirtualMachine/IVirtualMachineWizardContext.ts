@@ -5,11 +5,11 @@
 
 import { ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
-import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
-import { ImageReferenceWithLabel } from './ImageListStep';
+import { ICreateChildImplContext, IResourceGroupWizardContext } from 'vscode-azureextensionui';
 import { VirtualMachineOS } from './OSListStep';
 
-export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
+export type ImageReferenceWithLabel = ComputeManagementModels.ImageReference & { label: string };
+export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext, ICreateChildImplContext {
     /**
      * The newly created Virtual Machine
      * This will be defined after `VirtualMachineCreateStep.execute` occurs.
@@ -91,4 +91,6 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      * This will be defined after PassphrasePromptStep.
      */
     passphrase?: string;
+
+    sshPublicKey?: string;
 }

@@ -6,15 +6,13 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
-import { ImageListStep, ubuntu1804LTSImage } from '../commands/createVirtualMachine/ImageListStep';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
+import { ubuntu1804LTSImage } from '../commands/createVirtualMachine/linuxSteps/LinuxImageListStep';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
 import { OSListStep, VirtualMachineOS } from '../commands/createVirtualMachine/OSListStep';
-import { PassphrasePromptStep } from '../commands/createVirtualMachine/PassphrasePromptStep';
 import { PublicIpCreateStep } from '../commands/createVirtualMachine/PublicIpCreateStep';
 import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateStep';
-import { UsernamePromptStep } from '../commands/createVirtualMachine/UsernamePromptStep';
 import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/VirtualMachineCreateStep';
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
@@ -87,10 +85,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         promptSteps.push(new VirtualMachineNameStep());
         promptSteps.push(new OSListStep());
-        promptSteps.push(new ImageListStep());
-
-        promptSteps.push(new UsernamePromptStep());
-        promptSteps.push(new PassphrasePromptStep());
         LocationListStep.addStep(wizardContext, promptSteps);
 
         executeSteps.push(new ResourceGroupCreateStep());
