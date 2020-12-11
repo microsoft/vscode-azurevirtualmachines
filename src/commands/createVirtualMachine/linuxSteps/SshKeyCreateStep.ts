@@ -25,9 +25,7 @@ export class SshKeyCreateStep extends AzureWizardExecuteStep<IVirtualMachineWiza
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const location: string = nonNullValueAndProp(context.location, 'name');
 
-        // when creating a VM on the portal, this is the suffix that is added to the public IP address
         const sshKeyName: string = vmName + '_key';
-
         const creatingSshKey: string = localize('creatingSshKey', `Creating new SSH key "${sshKeyName}"...`);
         progress.report({ message: creatingSshKey });
         ext.outputChannel.appendLog(creatingSshKey);
