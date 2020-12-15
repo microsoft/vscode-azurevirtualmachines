@@ -3,32 +3,59 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
-import { callWithMaskHandling } from 'vscode-azureextensionui';
+import { callWithMaskHandling, IParsedError, parseError } from 'vscode-azureextensionui';
+import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { createComputeClient } from './azureClients';
 import { cpUtils } from "./cpUtils";
+import { nonNullValueAndProp } from './nonNull';
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
 
-export async function getSshKey(vmName: string, passphrase: string): Promise<string> {
+export async function getSshKey(context: IVirtualMachineWizardContext, vmName: string, passphrase: string): Promise<string> {
     return await callWithMaskHandling(
         async () => {
             const sshKeyName: string = `azure_${vmName}_rsa`;
             const sshKeyPath: string = join(sshFsPath, sshKeyName);
+            const generatedKey: string = localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath);
 
-            if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
-                ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
-                // create the .ssh folder if it doesn't exist
-                await fse.ensureDir(sshFsPath);
-                await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
-                ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath));
+            // create the .ssh folder if it doesn't exist
+            await fse.ensureDir(sshFsPath);
+            try {
+
+                if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
+                    ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
+                    await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
+                }
+
+                return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
+
+            } catch (error) {
+                const parsedError: IParsedError = parseError(error);
+                // if the keygen failed, we can leverage Azure's SSH keys, but they do not allow for passphrases
+                ext.outputChannel.appendLog(localize('generatingKeyFailed', '{0}.  Generating SSH key pair in Azure...', parsedError.message));
+                if (passphrase) {
+                    ext.outputChannel.appendLog(localize('generatingKeyFailedNote', 'NOTE: Azure generated SSH keys do not support passphrases.'));
+                }
+
+                const client: ComputeManagementClient = await createComputeClient(context);
+                const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
+                await client.sshPublicKeys.create(rgName, vmName, { location: nonNullValueAndProp(context.location, 'name') });
+                const keyPair: ComputeManagementModels.SshPublicKeyGenerateKeyPairResult = await client.sshPublicKeys.generateKeyPair(rgName, vmName);
+
+                await fse.writeFile(`${sshKeyPath}.pub`, keyPair.publicKey);
+                await fse.writeFile(sshKeyPath, keyPair.privateKey);
+                return keyPair.publicKey;
+
+            } finally {
+                ext.outputChannel.appendLog(generatedKey);
             }
-
-            return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
         },
         passphrase);
 }

@@ -41,7 +41,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
             disablePasswordAuthentication: true, ssh: {
                 publicKeys: [{
                     // tslint:disable-next-line: strict-boolean-expressions
-                    keyData: await getSshKey(vmName, context.passphrase || ''),
+                    keyData: await getSshKey(context, vmName, context.passphrase || ''),
                     // because this is a Linux VM, use '/' as path separator rather than using path.join()
                     path: `/home/${context.adminUsername}/.ssh/authorized_keys`
                 }]
