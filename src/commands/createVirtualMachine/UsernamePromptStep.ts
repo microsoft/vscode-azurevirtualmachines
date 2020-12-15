@@ -10,7 +10,7 @@ import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 import { VirtualMachineOS } from "./OSListStep";
 
-const reservedWords: string[] = ['admin', 'root', 'test', 'user'];
+const reservedWords: string[] = ['admin', 'root', 'test', 'user', 'administrator'];
 
 export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {

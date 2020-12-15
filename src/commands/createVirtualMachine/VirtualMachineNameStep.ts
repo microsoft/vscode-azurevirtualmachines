@@ -18,6 +18,9 @@ export const virtualMachineNamingRules: IAzureNamingRules = {
 };
 
 export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardContext> {
+    // hide until OS step
+    public hideStepCount: boolean = true;
+
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const namingRules: IAzureNamingRules[] = [resourceGroupNamingRules];
         namingRules.push(virtualMachineNamingRules);

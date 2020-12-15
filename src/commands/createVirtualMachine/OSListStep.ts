@@ -8,11 +8,10 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { LinuxImageListStep } from './linuxSteps/LinuxImageListStep';
-import { SshKeyCreateStep } from './linuxSteps/SshKeyCreateStep';
-import { SshKeyListStep } from './linuxSteps/SshKeyListStep';
+import { PassphrasePromptStep } from './linuxSteps/PassphrasePromptStep';
 import { UsernamePromptStep } from './UsernamePromptStep';
-import { ValidateWindowsNameStep } from './ValidateWindowsNameStep';
 import { AdminPasswordPromptStep } from './windowsSteps/AdminPasswordPromptStep';
+import { ValidateWindowsNameStep } from './windowsSteps/ValidateWindowsNameStep';
 import { WindowsImageListStep } from './windowsSteps/WindowsImageListStep';
 
 export enum VirtualMachineOS {
@@ -39,15 +38,8 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
         if (wizardContext.os === VirtualMachineOS.windows) {
             return { promptSteps: [new ValidateWindowsNameStep(), new WindowsImageListStep(), new UsernamePromptStep(), new AdminPasswordPromptStep()] };
         } else {
-            const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [new LinuxImageListStep(), new UsernamePromptStep()];
-            if (wizardContext.advancedCreation) {
-                promptSteps.push(new SshKeyListStep());
-            }
-
-            return { promptSteps, executeSteps: [new SshKeyCreateStep()] };
+            return { promptSteps: [new LinuxImageListStep(), new UsernamePromptStep(), new PassphrasePromptStep()] };
         }
-
-        return undefined;
     }
 
     private getWebsiteOSDisplayName(kind: VirtualMachineOS): string {
