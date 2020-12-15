@@ -21,7 +21,6 @@ export class WindowsImageListStep extends AzureWizardPromptStep<IVirtualMachineW
         return !context.image;
     }
 
-    // tslint:disable-next-line:max-func-body-length
     private getAvailableImages(): ImageReferenceWithLabel[] {
         return [
             {

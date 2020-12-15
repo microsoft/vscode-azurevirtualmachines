@@ -6,11 +6,32 @@
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
+import { callWithMaskHandling } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { cpUtils } from "./cpUtils";
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
+
+export async function getSshKey(vmName: string, passphrase: string): Promise<string> {
+    return await callWithMaskHandling(
+        async () => {
+            const sshKeyName: string = `azure_${vmName}_rsa`;
+            const sshKeyPath: string = join(sshFsPath, sshKeyName);
+
+            if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
+                ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
+                // create the .ssh folder if it doesn't exist
+                await fse.ensureDir(sshFsPath);
+                await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
+                ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath));
+            }
+
+            return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
+        },
+        passphrase);
+}
 
 export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath?: string): Promise<void> {
     const sshConfigPath: string = join(sshFsPath, 'config');

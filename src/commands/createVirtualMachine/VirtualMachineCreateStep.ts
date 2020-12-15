@@ -11,6 +11,7 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createComputeClient } from '../../utils/azureClients';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
+import { getSshKey } from '../../utils/sshUtils';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from './OSListStep';
 
@@ -39,7 +40,8 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
             disablePasswordAuthentication: true, ssh: {
                 publicKeys: [{
-                    keyData: context.sshPublicKey,
+                    // tslint:disable-next-line: strict-boolean-expressions
+                    keyData: await getSshKey(vmName, context.passphrase || ''),
                     // because this is a Linux VM, use '/' as path separator rather than using path.join()
                     path: `/home/${context.adminUsername}/.ssh/authorized_keys`
                 }]

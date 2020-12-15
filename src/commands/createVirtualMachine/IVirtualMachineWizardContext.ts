@@ -91,6 +91,4 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      * This will be defined after PassphrasePromptStep.
      */
     passphrase?: string;
-
-    sshPublicKey?: string;
 }
