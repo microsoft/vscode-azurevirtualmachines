@@ -6,13 +6,8 @@
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from 'vscode-azureextensionui';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
-import { AdminPasswordPromptStep } from './AdminPasswordPromptStep';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
-import { LinuxImageListStep } from './LinuxImageListStep';
-import { PassphrasePromptStep } from './PassphrasePromptStep';
-import { UsernamePromptStep } from './UsernamePromptStep';
 import { ValidateWindowsNameStep } from './ValidateWindowsNameStep';
-import { WindowsImageListStep } from './WindowsImageListStep';
 
 export enum VirtualMachineOS {
     linux = 'linux',
@@ -34,10 +29,10 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
 
     public async getSubWizard(wizardContext: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
         if (wizardContext.os === VirtualMachineOS.windows) {
-            return { promptSteps: [new ValidateWindowsNameStep(), new WindowsImageListStep(), new UsernamePromptStep(), new AdminPasswordPromptStep()] };
-        } else {
-            return { promptSteps: [new LinuxImageListStep(), new UsernamePromptStep(), new PassphrasePromptStep()] };
+            return { promptSteps: [new ValidateWindowsNameStep()] };
         }
+
+        return undefined;
     }
 
     private getWebsiteOSDisplayName(kind: VirtualMachineOS): string {
