@@ -5,11 +5,11 @@
 
 import { ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
-import { ICreateChildImplContext, IResourceGroupWizardContext } from 'vscode-azureextensionui';
+import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
 import { VirtualMachineOS } from './OSListStep';
 
 export type ImageReferenceWithLabel = ComputeManagementModels.ImageReference & { label: string };
-export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext, ICreateChildImplContext {
+export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
     /**
      * The newly created Virtual Machine
      * This will be defined after `VirtualMachineCreateStep.execute` occurs.
