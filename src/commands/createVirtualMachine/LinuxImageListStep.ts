@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
-import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
-import { ImageReferenceWithLabel, IVirtualMachineWizardContext } from '../IVirtualMachineWizardContext';
+import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
+import { ImageReferenceWithLabel, IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export const ubuntu1804LTSImage: ImageReferenceWithLabel = {
     label: 'Ubuntu Server 18.04 LTS - Gen1',

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
-import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
-import { ImageReferenceWithLabel, IVirtualMachineWizardContext } from "../IVirtualMachineWizardContext";
+import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
+import { ImageReferenceWithLabel, IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export class WindowsImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
 

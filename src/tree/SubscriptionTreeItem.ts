@@ -7,7 +7,7 @@ import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-com
 import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
-import { ubuntu1804LTSImage } from '../commands/createVirtualMachine/linuxSteps/LinuxImageListStep';
+import { ubuntu1804LTSImage } from '../commands/createVirtualMachine/LinuxImageListStep';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
 import { OSListStep, VirtualMachineOS } from '../commands/createVirtualMachine/OSListStep';

@@ -6,13 +6,13 @@
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from 'vscode-azureextensionui';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { AdminPasswordPromptStep } from './AdminPasswordPromptStep';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
-import { LinuxImageListStep } from './linuxSteps/LinuxImageListStep';
-import { PassphrasePromptStep } from './linuxSteps/PassphrasePromptStep';
+import { LinuxImageListStep } from './LinuxImageListStep';
+import { PassphrasePromptStep } from './PassphrasePromptStep';
 import { UsernamePromptStep } from './UsernamePromptStep';
-import { AdminPasswordPromptStep } from './windowsSteps/AdminPasswordPromptStep';
-import { ValidateWindowsNameStep } from './windowsSteps/ValidateWindowsNameStep';
-import { WindowsImageListStep } from './windowsSteps/WindowsImageListStep';
+import { ValidateWindowsNameStep } from './ValidateWindowsNameStep';
+import { WindowsImageListStep } from './WindowsImageListStep';
 
 export enum VirtualMachineOS {
     linux = 'linux',
@@ -20,8 +20,6 @@ export enum VirtualMachineOS {
 }
 
 export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
-    public hideStepCount: boolean = true;
-
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
         const picks: IAzureQuickPickItem<VirtualMachineOS>[] = Object.keys(VirtualMachineOS).map((key: string) => {
             const os: VirtualMachineOS = <VirtualMachineOS>VirtualMachineOS[key];

@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from 'vscode-azureextensionui';
-import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
-import { IVirtualMachineWizardContext } from '../IVirtualMachineWizardContext';
+import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
+import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class ValidateWindowsNameStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {

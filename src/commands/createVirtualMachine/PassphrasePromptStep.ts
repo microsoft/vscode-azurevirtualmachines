@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, IWizardOptions } from "vscode-azureextensionui";
-import { ext } from "../../../extensionVariables";
-import { localize } from "../../../localize";
-import { getWorkspaceSetting } from "../../../vsCodeConfig/settings";
-import { ConfirmPassphraseStep } from "../ConfirmPassphraseStep";
-import { IVirtualMachineWizardContext } from "../IVirtualMachineWizardContext";
+import { ext } from "../../extensionVariables";
+import { localize } from "../../localize";
+import { getWorkspaceSetting } from "../../vsCodeConfig/settings";
+import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
+import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {

@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, IWizardOptions } from "vscode-azureextensionui";
-import { ext } from "../../../extensionVariables";
-import { localize } from "../../../localize";
-import { ConfirmPassphraseStep } from "../ConfirmPassphraseStep";
-import { IVirtualMachineWizardContext } from "../IVirtualMachineWizardContext";
+import { ext } from "../../extensionVariables";
+import { localize } from "../../localize";
+import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
+import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export class AdminPasswordPromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
