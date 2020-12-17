@@ -7,7 +7,7 @@ import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-com
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
-import { callWithMaskHandling, IParsedError, parseError } from 'vscode-azureextensionui';
+import { callWithMaskHandling, parseError } from 'vscode-azureextensionui';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
@@ -23,39 +23,37 @@ export async function getSshKey(context: IVirtualMachineWizardContext, vmName: s
         async () => {
             const sshKeyName: string = `azure_${vmName}_rsa`;
             const sshKeyPath: string = join(sshFsPath, sshKeyName);
-            const generatedKey: string = localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath);
 
-            // create the .ssh folder if it doesn't exist
-            await fse.ensureDir(sshFsPath);
-            try {
-
-                if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
-                    ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
+            if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
+                const generatingKey: string = localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath);
+                const generatedKey: string = localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath);
+                // create the .ssh folder if it doesn't exist
+                await fse.ensureDir(sshFsPath);
+                if (await sshKeygenExists()) {
+                    ext.outputChannel.appendLog(generatingKey);
                     await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
+                    ext.outputChannel.appendLog(generatedKey);
+                } else {
+                    // if ssh-keygen isn't found, we can leverage Azure's SSH keys, but they do not allow for passphrases
+                    ext.outputChannel.appendLog(localize('creatingAzureKey', 'Unable to find `ssh-keygen` in environment variable PATH.  Creating new Azure SSH Key "{0}"...', vmName));
+                    if (passphrase) {
+                        ext.outputChannel.appendLog(localize('generatingKeyFailedNote', 'NOTE: Azure generated SSH keys do not support passphrases.'));
+                    }
+
+                    const client: ComputeManagementClient = await createComputeClient(context);
+                    const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
+                    await client.sshPublicKeys.create(rgName, vmName, { location: nonNullValueAndProp(context.location, 'name') });
+                    ext.outputChannel.appendLog(localize('createdAzureKey', 'Created new Azure SSH Key "{0}".', vmName));
+
+                    ext.outputChannel.appendLog(generatingKey);
+                    const keyPair: ComputeManagementModels.SshPublicKeyGenerateKeyPairResult = await client.sshPublicKeys.generateKeyPair(rgName, vmName);
+                    await fse.writeFile(`${sshKeyPath}.pub`, keyPair.publicKey);
+                    await fse.writeFile(sshKeyPath, keyPair.privateKey);
+                    ext.outputChannel.appendLog(generatedKey);
                 }
-
-                return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
-
-            } catch (error) {
-                const parsedError: IParsedError = parseError(error);
-                // if the keygen failed, we can leverage Azure's SSH keys, but they do not allow for passphrases
-                ext.outputChannel.appendLog(localize('generatingKeyFailed', '{0}.  Generating SSH key pair in Azure...', parsedError.message));
-                if (passphrase) {
-                    ext.outputChannel.appendLog(localize('generatingKeyFailedNote', 'NOTE: Azure generated SSH keys do not support passphrases.'));
-                }
-
-                const client: ComputeManagementClient = await createComputeClient(context);
-                const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
-                await client.sshPublicKeys.create(rgName, vmName, { location: nonNullValueAndProp(context.location, 'name') });
-                const keyPair: ComputeManagementModels.SshPublicKeyGenerateKeyPairResult = await client.sshPublicKeys.generateKeyPair(rgName, vmName);
-
-                await fse.writeFile(`${sshKeyPath}.pub`, keyPair.publicKey);
-                await fse.writeFile(sshKeyPath, keyPair.privateKey);
-                return keyPair.publicKey;
-
-            } finally {
-                ext.outputChannel.appendLog(generatedKey);
             }
+
+            return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
         },
         passphrase);
 }
@@ -90,4 +88,16 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
 
     await fse.writeFile(sshConfigPath, configFile);
     ext.outputChannel.appendLog(localize('addingEntry', `Added new entry to "{0}" with Host "{1}".`, sshConfigPath, host));
+}
+
+async function sshKeygenExists(): Promise<boolean> {
+    try {
+        // this command should _always_ fail.  If ssh-keygen exists, it will throw an unknown option error.  If it doesn't, then it'll throw the not recognized error.
+        // unfortunately both return error code 1 so we have to rely on the English text
+        await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '--fake');
+    } catch (err) {
+        return !parseError(err).message.includes(`'ssh-keygen' is not recognized as an internal or external command`);
+    }
+
+    return false;
 }

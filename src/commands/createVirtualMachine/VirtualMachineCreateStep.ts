@@ -38,7 +38,8 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const windowConfiguration: ComputeManagementModels.WindowsConfiguration = {};
         const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
-            disablePasswordAuthentication: true, ssh: {
+            disablePasswordAuthentication: true,
+            ssh: {
                 publicKeys: [{
                     // tslint:disable-next-line: strict-boolean-expressions
                     keyData: await getSshKey(context, vmName, context.passphrase || ''),
