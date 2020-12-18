@@ -11,7 +11,7 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createComputeClient } from '../../utils/azureClients';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
-import { getSshKey } from "../../utils/sshUtils";
+import { getSshKey } from '../../utils/sshUtils';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from './OSListStep';
 

@@ -18,7 +18,7 @@ export async function restartVirtualMachine(context: IActionContext, node?: Virt
 
     const computeClient: ComputeManagementClient = await createComputeClient(node.root);
 
-    await node.runWithTemporaryDescription(localize('restarting', 'Restarting...'), async () => {
+    await node.runWithTemporaryDescription(context, localize('restarting', 'Restarting...'), async () => {
         const vmti: VirtualMachineTreeItem = nonNullValue(node);
         ext.outputChannel.appendLog(localize('restartingVm', `Restarting "${vmti.name}"...`));
         await computeClient.virtualMachines.restart(vmti.resourceGroup, vmti.name);

@@ -18,7 +18,7 @@ export async function stopVirtualMachine(context: IActionContext, node?: Virtual
 
     const computeClient: ComputeManagementClient = await createComputeClient(node.root);
 
-    await node.runWithTemporaryDescription(localize('deallocating', 'Deallocating...'), async () => {
+    await node.runWithTemporaryDescription(context, localize('deallocating', 'Deallocating...'), async () => {
         const vmti: VirtualMachineTreeItem = nonNullValue(node);
         ext.outputChannel.appendLog(localize('deallocatingVm', `Deallocating "${vmti.name}"...`));
         await computeClient.virtualMachines.deallocate(vmti.resourceGroup, vmti.name);

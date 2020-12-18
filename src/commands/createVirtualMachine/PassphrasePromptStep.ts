@@ -6,7 +6,6 @@
 import { AzureWizardPromptStep, IWizardOptions } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
-import { nonNullProp } from "../../utils/nonNull";
 import { getWorkspaceSetting } from "../../vsCodeConfig/settings";
 import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
@@ -14,19 +13,15 @@ import { VirtualMachineOS } from "./OSListStep";
 
 export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
-        const prompt: string = wizardContext.os === VirtualMachineOS.linux ?
-            localize('passphrasePrompt', 'Enter a passphrase for connecting to this virtual machine') :
-            localize('passwordPrompt', 'Enter an admin password');
-
-        const placeHolder: string = wizardContext.os === VirtualMachineOS.linux ?
-            localize('enterPassphrase', '(empty for no passphrase)') :
-            '';
+        const isWindows: boolean = wizardContext.os === VirtualMachineOS.windows;
+        const prompt: string = !isWindows ? localize('passphrasePrompt', 'Enter a passphrase for connecting to this virtual machine') : localize('passwordPrompt', 'Enter an admin password');
+        const placeHolder: string = !isWindows ? localize('enterPassphrase', '(empty for no passphrase)') : '';
 
         wizardContext.passphrase = (await ext.ui.showInputBox({
             prompt,
             placeHolder,
             password: true,
-            validateInput: (value: string | undefined): string | undefined => this.validatePassphrase(nonNullProp(wizardContext, 'os'), value)
+            validateInput: (value: string | undefined): string | undefined => this.validatePassphrase(value, isWindows)
         }));
     }
 
@@ -40,33 +35,39 @@ export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineW
             return {
                 promptSteps: [new ConfirmPassphraseStep()]
             };
+        }
+
+        return undefined;
+    }
+
+    private validatePassphrase(value: string | undefined, isWindows: boolean): string | undefined {
+        return !isWindows ? this.validateLinuxPassphrase(value) : this.validateWindowsPassword(value);
+    }
+
+    private validateLinuxPassphrase(value: string | undefined): string | undefined {
+        const passphraseMinLength: number = 5;
+        if (value && value.length < passphraseMinLength) {
+            return localize('invalidLength', 'The passphrase must be at least {0} characters or empty for no passphrase.', passphraseMinLength);
         } else {
             return undefined;
+
         }
     }
 
-    private validatePassphrase(os: VirtualMachineOS, value: string | undefined): string | undefined {
-        if (os === VirtualMachineOS.windows) {
-            const passwordMinLength: number = 8;
-            const passwordMaxLength: number = 123;
+    private validateWindowsPassword(value: string | undefined): string | undefined {
+        const passwordMinLength: number = 8;
+        const passwordMaxLength: number = 123;
 
-            if (!value) {
-                return localize('nonEmpty', 'The password must not be empty');
-            } else if (value.length < passwordMinLength || value.length > passwordMaxLength) {
-                return localize('invalidLength', 'The password must be between {0} and {1} characters long', passwordMinLength, passwordMaxLength);
-            } else if (this.numberOfPasswordComplexityRequirements(value) < 3) {
-                return localize('passwordComplexity', 'Password must have 3 of the following: 1 lower case character, 1 upper case character, 1 number, and 1 special character.');
-            } else {
-                return undefined;
-            }
+        if (!value) {
+            return localize('nonEmpty', 'The password must not be empty');
+        } else if (value.length < passwordMinLength || value.length > passwordMaxLength) {
+            return localize('invalidLength', 'The password must be between {0} and {1} characters long', passwordMinLength, passwordMaxLength);
+        } else if (this.numberOfPasswordComplexityRequirements(value) < 3) {
+            return localize('passwordComplexity', 'Password must have 3 of the following: 1 lower case character, 1 upper case character, 1 number, and 1 special character.');
         } else {
-            const passphraseMinLength: number = 5;
-            if (value && value.length < passphraseMinLength) {
-                return localize('invalidLength', 'The passphrase must be at least {0} characters or empty for no passphrase.', passphraseMinLength);
-            } else {
-                return undefined;
-            }
+            return undefined;
         }
+
     }
 
     private numberOfPasswordComplexityRequirements(password: string): number {

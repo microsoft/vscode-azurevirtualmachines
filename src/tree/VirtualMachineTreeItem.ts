@@ -6,7 +6,7 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
-import { AzureParentTreeItem, AzureTreeItem, DialogResponses } from 'vscode-azureextensionui';
+import { AzureParentTreeItem, AzureTreeItem, DialogResponses, IActionContext } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
@@ -98,7 +98,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         });
     }
 
-    public async refreshImpl(): Promise<void> {
+    public async refreshImpl(_context: IActionContext): Promise<void> {
         try {
             this._state = await this.getState();
         } catch {
