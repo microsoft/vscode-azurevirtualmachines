@@ -6,6 +6,8 @@
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
+// tslint:disable-next-line:no-require-imports
+import SSHConfig = require('ssh-config');
 import { callWithMaskHandling } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
@@ -36,19 +38,21 @@ export async function getSshKey(vmName: string, passphrase: string): Promise<str
 export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath?: string): Promise<void> {
     const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.ensureFile(sshConfigPath);
-    let configFile: string = (await fse.readFile(sshConfigPath)).toString();
 
     // If we find duplicate Hosts, we can just make a new entry called Host (2)...(3)...etc
     const hostName: string = await vmti.getIpAddress();
     let host: string = vmti.name;
 
-    if (configFile.includes(`Host ${vmti.name}`)) {
+    const configFile: string = (await fse.readFile(sshConfigPath)).toString();
+    // tslint:disable: no-unsafe-any
+    const sshConfig: SSHConfig = SSHConfig.parse(configFile);
+    if (!!sshConfig.find({ Host: host })) {
         // tslint:disable-next-line: no-floating-promises
         ext.ui.showWarningMessage(`Host "${host}" already exists in SSH config.  Creating a copy of the host.`);
         let count: number = 2;
 
         // increment until host doesn't already exist
-        while (configFile.includes(`Host ${vmti.name}-${count}`)) {
+        while (!!sshConfig.find({ Host: `${vmti.name}-${count}` })) {
             count = count + 1;
         }
 
@@ -57,10 +61,15 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
 
     const sshKeyName: string = `azure_${vmti.name}_rsa`;
     sshKeyPath = sshKeyPath || `~/.ssh/${sshKeyName}`;
-    const fourSpaces: string = '    ';
 
-    configFile = configFile + `${os.EOL}Host ${host}${os.EOL}${fourSpaces}HostName ${hostName}${os.EOL}${fourSpaces}User ${vmti.getUser()}${os.EOL}${fourSpaces}IdentityFile ${sshKeyPath}`;
+    sshConfig.append({
+        Host: host,
+        HostName: hostName,
+        User: vmti.getUser(),
+        IdentityFile: sshKeyPath
+    });
 
-    await fse.writeFile(sshConfigPath, configFile);
+    await fse.writeFile(sshConfigPath, SSHConfig.stringify(sshConfig));
+    // tslint:enable: no-unsafe-any
     ext.outputChannel.appendLog(localize('addingEntry', `Added new entry to "{0}" with Host "{1}".`, sshConfigPath, host));
 }
