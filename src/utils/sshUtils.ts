@@ -7,7 +7,8 @@ import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-com
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
-import { callWithMaskHandling, parseError } from 'vscode-azureextensionui';
+import { callWithMaskHandling } from 'vscode-azureextensionui';
+import * as which from 'which';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
@@ -92,12 +93,11 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
 
 async function sshKeygenExists(): Promise<boolean> {
     try {
-        // this command should _always_ fail.  If ssh-keygen exists, it will throw an unknown option error.  If it doesn't, then it'll throw the not recognized error.
-        // unfortunately both return error code 1 so we have to rely on the English text
-        await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '--fake');
+        // throws an error if it can't find cmd in PATH env
+        await which('ssh-keygen');
     } catch (err) {
-        return !parseError(err).message.includes(`'ssh-keygen' is not recognized as an internal or external command`);
+        return false;
     }
 
-    return false;
+    return true;
 }

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureTreeItem, IActionContext } from 'vscode-azureextensionui';
+import which = require('which');
 import { ext } from '../extensionVariables';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
