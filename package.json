@@ -130,8 +130,8 @@
                 "category": "Azure Virtual Machines"
             },
             {
-                "command": "azureVirtualMachines.remoteSsh",
-                "title": "%azureVirtualMachines.remoteSsh%",
+                "command": "azureVirtualMachines.openInRemoteSsh",
+                "title": "%azureVirtualMachines.openInRemoteSsh%",
                 "category": "Azure Virtual Machines"
             }
         ],
@@ -227,7 +227,7 @@
                     "group": "2@4"
                 },
                 {
-                    "command": "azureVirtualMachines.remoteSsh",
+                    "command": "azureVirtualMachines.openInRemoteSsh",
                     "when": "view == azVmTree && viewItem == azVmVirtualMachine",
                     "group": "1@1"
                 },
