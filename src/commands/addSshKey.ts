@@ -31,8 +31,6 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
         filters: { 'SSH Public Key': ['pub'] }
     }))[0];
 
-    await configureSshConfig(node, sshPublicKey.path.substring(0, sshPublicKey.path.length - 4));
-
     // tslint:disable-next-line: strict-boolean-expressions
     const extensionName: string = 'enablevmaccess';
     let vmExtension: ComputeManagementModels.VirtualMachineExtension;

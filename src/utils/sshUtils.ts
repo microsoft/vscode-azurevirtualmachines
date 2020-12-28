@@ -34,13 +34,15 @@ export async function getSshKey(vmName: string, passphrase: string): Promise<str
 }
 
 export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath?: string): Promise<void> {
-    let configFile: string = await getSshConfigFile();
+    const sshConfigPath: string = join(sshFsPath, 'config');
+    await fse.ensureFile(sshConfigPath);
+    let configFile: string = (await fse.readFile(sshConfigPath)).toString();
 
     // If we find duplicate Hosts, we can just make a new entry called Host (2)...(3)...etc
     const hostName: string = await vmti.getIpAddress();
     let host: string = vmti.name;
 
-    if (doesHostExistInConfig(host, configFile)) {
+    if (configFile.includes(`Host ${vmti.name}`)) {
         // tslint:disable-next-line: no-floating-promises
         ext.ui.showWarningMessage(`Host "${host}" already exists in SSH config.  Creating a copy of the host.`);
         let count: number = 2;
@@ -59,19 +61,6 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
 
     configFile = configFile + `${os.EOL}Host ${host}${os.EOL}${fourSpaces}HostName ${hostName}${os.EOL}${fourSpaces}User ${vmti.getUser()}${os.EOL}${fourSpaces}IdentityFile ${sshKeyPath}`;
 
-    const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.writeFile(sshConfigPath, configFile);
     ext.outputChannel.appendLog(localize('addingEntry', `Added new entry to "{0}" with Host "{1}".`, sshConfigPath, host));
-}
-
-export function doesHostExistInConfig(host: string, configFile: string): boolean {
-    const linesInConfig: string[] = configFile.split(/\r?\n/);
-    const hostStr: string = `Host ${host}`;
-    return linesInConfig.includes(hostStr);
-}
-
-export async function getSshConfigFile(): Promise<string> {
-    const sshConfigPath: string = join(sshFsPath, 'config');
-    await fse.ensureFile(sshConfigPath);
-    return (await fse.readFile(sshConfigPath)).toString();
 }

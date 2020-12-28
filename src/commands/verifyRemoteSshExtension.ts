@@ -23,7 +23,6 @@ export async function verifyRemoteSshExtension(context: IActionContext): Promise
 
         context.telemetry.properties.cancelStep = 'installRemoteSsh';
         context.errorHandling.suppressDisplay = true;
-
         throw new Error(`${remoteSshExtensionId} extension is not installed.`);
     }
 }
