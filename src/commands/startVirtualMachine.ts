@@ -13,7 +13,7 @@ import { nonNullValue } from "../utils/nonNull";
 
 export async function startVirtualMachine(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.regexpContextValue, context);
     }
 
     const computeClient: ComputeManagementClient = await createComputeClient(node.root);

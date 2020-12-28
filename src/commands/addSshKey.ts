@@ -16,15 +16,11 @@ import { configureSshConfig, sshFsPath } from "../utils/sshUtils";
 
 export async function addSshKey(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.linuxContextValue, context);
     }
 
     const computeClient: ComputeManagementClient = await createComputeClient(node.root);
     const vm: ComputeManagementModels.VirtualMachine = node.virtualMachine;
-
-    if (!node.isLinux) {
-        throw new Error(localize('notSupportedWindows', 'This operation is not supported on Windows VMs.'));
-    }
 
     const sshPublicKey: Uri = (await ext.ui.showOpenDialog({
         defaultUri: Uri.file(sshFsPath),

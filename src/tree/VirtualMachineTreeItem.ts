@@ -47,6 +47,8 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
     public static linuxContextValue: string = 'linuxVirtualMachine';
     public static windowsContextValue: string = 'windowsVirtualMachine';
+    public static regexpContextValue: RegExp = /VirtualMachine$/;
+
     public contextValue: string;
     public virtualMachine: ComputeManagementModels.VirtualMachine;
     public isLinux: boolean;
