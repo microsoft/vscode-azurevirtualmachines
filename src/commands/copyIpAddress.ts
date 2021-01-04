@@ -11,7 +11,7 @@ import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
 export async function copyIpAddress(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.regexpContextValue, context);
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
     }
 
     await vscode.env.clipboard.writeText(await node.getIpAddress());
