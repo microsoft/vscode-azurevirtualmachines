@@ -14,21 +14,28 @@ import { cpUtils } from "./cpUtils";
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
 
-export async function getSshKey(vmName: string, passphrase: string): Promise<string> {
+export async function createSshKey(vmName: string, passphrase: string): Promise<{ sshKeyName: string; keyData: string }> {
     return await callWithMaskHandling(
         async () => {
-            const sshKeyName: string = `azure_${vmName}_rsa`;
-            const sshKeyPath: string = join(sshFsPath, sshKeyName);
+            let sshKeyName: string = `azure_${vmName}_rsa`;
+            let sshKeyPath: string = join(sshFsPath, sshKeyName);
+            let keyExists: boolean = await fse.pathExists(`${sshKeyPath}.pub`);
 
-            if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
-                ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
-                // create the .ssh folder if it doesn't exist
-                await fse.ensureDir(sshFsPath);
-                await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
-                ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath));
+            while (keyExists) {
+                let count: number = 2;
+                sshKeyName = `azure_${vmName}_${count}_rsa`;
+                sshKeyPath = join(sshFsPath, sshKeyName);
+                keyExists = await fse.pathExists(`${sshKeyPath}.pub`);
+                count += 1;
             }
 
-            return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
+            ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
+            // create the .ssh folder if it doesn't exist
+            await fse.ensureDir(sshFsPath);
+            await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
+            ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath));
+
+            return { sshKeyName, keyData: (await fse.readFile(`${sshKeyPath}.pub`)).toString() };
         },
         passphrase);
 }
