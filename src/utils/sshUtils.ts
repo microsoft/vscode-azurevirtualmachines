@@ -6,8 +6,7 @@
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
-// tslint:disable-next-line:no-require-imports
-import SSHConfig = require('ssh-config');
+import * as SSHConfig from 'ssh-config';
 import { callWithMaskHandling } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
@@ -44,15 +43,15 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     let host: string = vmti.name;
 
     const configFile: string = (await fse.readFile(sshConfigPath)).toString();
-    // tslint:disable: no-unsafe-any
-    const sshConfig: SSHConfig = SSHConfig.parse(configFile);
-    if (!!sshConfig.find({ Host: host })) {
-        // tslint:disable-next-line: no-floating-promises
-        ext.ui.showWarningMessage(`Host "${host}" already exists in SSH config.  Creating a copy of the host.`);
+    const sshConfig: SSHConfig.Configuration = SSHConfig.parse(configFile);
+    // if the host can't be computed, it returns an empty {}
+    const hostEntry: SSHConfig.ResolvedConfiguration = sshConfig.compute(host);
+
+    if (!!hostEntry.Host) {
         let count: number = 2;
 
         // increment until host doesn't already exist
-        while (!!sshConfig.find({ Host: `${vmti.name}-${count}` })) {
+        while (!!sshConfig.compute(`${vmti.name}-${count}`).Host) {
             count = count + 1;
         }
 
@@ -69,7 +68,6 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
         IdentityFile: sshKeyPath
     });
 
-    await fse.writeFile(sshConfigPath, SSHConfig.stringify(sshConfig));
-    // tslint:enable: no-unsafe-any
+    await fse.writeFile(sshConfigPath, sshConfig.toString());
     ext.outputChannel.appendLog(localize('addingEntry', `Added new entry to "{0}" with Host "{1}".`, sshConfigPath, host));
 }
