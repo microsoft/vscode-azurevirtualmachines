@@ -43,11 +43,15 @@ If you have an existing VM that you would like to add your own SSH key too, you 
 
 Your SSH Config (`~/.ssh/config`) file will be updated so you can connect via SSH using `$ ssh vm-name`.
 
+> NOTE: This command is only available for Linux virtual machines.
+
 ![AddSSHKey](resources/readme/AddSSHKey.png)
 
 ### Remote into Azure VM via SSH
 
 - Use [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) to seamlessly connect to your Azure VM from VS Code.
+
+> NOTE: This command is only available for Linux virtual machines.
 
 <!-- region exclude-from-marketplace -->
 
