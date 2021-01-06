@@ -11,7 +11,7 @@ import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
 import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
-import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
+import { nonNullProp, nonNullValue, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
 export class VirtualMachineTreeItem extends AzureTreeItem {
@@ -92,10 +92,36 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         const deleting: string = localize('Deleting', 'Deleting virtual machine "{0}"...', this.name);
         const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted virtual machine "{0}".', this.name);
         const computeClient: ComputeManagementClient = await createComputeClient(this.root);
+        const networkClient: NetworkManagementClient = await createNetworkClient(this.root);
 
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
             ext.outputChannel.appendLog(deleting);
+            // tslint:disable-next-line:no-non-null-assertion
             await computeClient.virtualMachines.deleteMethod(this.resourceGroup, this.name);
+            for (const networkRef of this.data.networkProfile?.networkInterfaces) {
+                const networkName: string = getNameFromId(networkRef.id);
+                const networkInterface: NetworkManagementModels.NetworkInterface = await networkClient.networkInterfaces.get(this.resourceGroup, networkName);
+                await networkClient.networkInterfaces.deleteMethod(this.resourceGroup, networkName);
+
+                for (const ipConfigurations of networkInterface?.ipConfigurations) {
+                    const publicIpName: string = getNameFromId(ipConfigurations.publicIPAddress?.id);
+                    const virtualNetworkName: string = ipConfigurations.subnet?.id?.split('/')[8];
+                    const subnetName: string = getNameFromId(ipConfigurations.subnet?.id);
+                    const subnet: NetworkManagementModels.Subnet = await networkClient.subnets.get(this.resourceGroup, virtualNetworkName, subnetName);
+                    const nsgName: string = getNameFromId(subnet.networkSecurityGroup?.id);
+
+                    await networkClient.publicIPAddresses.deleteMethod(this.resourceGroup, publicIpName);
+                    await networkClient.virtualNetworks.deleteMethod(this.resourceGroup, virtualNetworkName);
+                    await networkClient.networkSecurityGroups.deleteMethod(this.resourceGroup, nsgName);
+                }
+
+            }
+
+            // tslint:disable-next-line:no-non-null-assertion
+            const diskName: string = getNameFromId(nonNullValue(this.data.storageProfile!.osDisk!.managedDisk!.id));
+            await computeClient.disks.deleteMethod(this.resourceGroup, diskName);
+            await networkClient.networkInterfaces.deleteMethod(this.resourceGroup, networkName);
+
             vscode.window.showInformationMessage(deleteSucceeded);
             ext.outputChannel.appendLog(deleteSucceeded);
         });
