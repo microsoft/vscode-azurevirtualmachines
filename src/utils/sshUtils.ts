@@ -61,7 +61,7 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
         let count: number = 2;
 
         // increment until host doesn't already exist
-        while (!!sshConfig.compute(`${vmti.name}-${count}`).Host) {
+        while (!!sshConfig.compute(`${vmti.name}-${count}`).Host && count < 100) {
             count = count + 1;
         }
 
