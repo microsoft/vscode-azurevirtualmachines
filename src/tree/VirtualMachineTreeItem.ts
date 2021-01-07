@@ -7,11 +7,12 @@ import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-com
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
 import { AzureParentTreeItem, AzureTreeItem, DialogResponses, IActionContext } from 'vscode-azureextensionui';
+import { deleteVmAssociatedResources } from '../commands/deleteVmAssociatedResources';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
 import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
-import { nonNullProp, nonNullValue, nonNullValueAndProp } from '../utils/nonNull';
+import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
 export class VirtualMachineTreeItem extends AzureTreeItem {
@@ -87,55 +88,41 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
     public async deleteTreeItemImpl(): Promise<void> {
         const confirmMessage: string = localize('deleteConfirmation', 'Are you sure you want to delete "{0}"?', this.name);
-        await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
+        const deleteAll: vscode.MessageItem = { title: localize('deleteAll', 'Delete with all associated resources') };
+        const result: vscode.MessageItem = await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, deleteAll, DialogResponses.cancel);
 
-        const deleting: string = localize('Deleting', 'Deleting virtual machine "{0}"...', this.name);
-        const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted virtual machine "{0}".', this.name);
-        const computeClient: ComputeManagementClient = await createComputeClient(this.root);
-        const networkClient: NetworkManagementClient = await createNetworkClient(this.root);
-
+        const deleting: string = result === deleteAll ? localize('Deleting', 'Deleting virtual machine "{0}" and all associated resources...', this.name) : localize('Deleting', 'Deleting virtual machine "{0}"...', this.name);
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
             ext.outputChannel.appendLog(deleting);
-            // tslint:disable-next-line:no-non-null-assertion
+            const computeClient: ComputeManagementClient = await createComputeClient(this.root);
             await computeClient.virtualMachines.deleteMethod(this.resourceGroup, this.name);
-            for (const networkRef of this.data.networkProfile?.networkInterfaces) {
-                const networkName: string = getNameFromId(networkRef.id);
-                const networkInterface: NetworkManagementModels.NetworkInterface = await networkClient.networkInterfaces.get(this.resourceGroup, networkName);
-                await networkClient.networkInterfaces.deleteMethod(this.resourceGroup, networkName);
 
-                for (const ipConfigurations of networkInterface?.ipConfigurations) {
-                    const publicIpName: string = getNameFromId(ipConfigurations.publicIPAddress?.id);
-                    const virtualNetworkName: string = ipConfigurations.subnet?.id?.split('/')[8];
-                    const subnetName: string = getNameFromId(ipConfigurations.subnet?.id);
-                    const subnet: NetworkManagementModels.Subnet = await networkClient.subnets.get(this.resourceGroup, virtualNetworkName, subnetName);
-                    const nsgName: string = getNameFromId(subnet.networkSecurityGroup?.id);
+            if (result === deleteAll) {
+                // if we can't retrieve the disk name, it's highly likely that it's the same as the vmName
+                const diskName: string = this.data.storageProfile?.osDisk?.managedDisk?.id ? getNameFromId(this.data.storageProfile.osDisk.managedDisk.id) : this.name;
+                const networkNames: string[] = [];
+                if (this.data.networkProfile && this.data.networkProfile.networkInterfaces) {
+                    for (const networkRef of this.data.networkProfile?.networkInterfaces) {
+                        networkNames.push(getNameFromId(nonNullProp(networkRef, 'id')));
+                    }
 
-                    await networkClient.publicIPAddresses.deleteMethod(this.resourceGroup, publicIpName);
-                    await networkClient.virtualNetworks.deleteMethod(this.resourceGroup, virtualNetworkName);
-                    await networkClient.networkSecurityGroups.deleteMethod(this.resourceGroup, nsgName);
                 }
-
+                await deleteVmAssociatedResources(this.root, this.resourceGroup, networkNames, diskName);
             }
 
-            // tslint:disable-next-line:no-non-null-assertion
-            const diskName: string = getNameFromId(nonNullValue(this.data.storageProfile!.osDisk!.managedDisk!.id));
-            await computeClient.disks.deleteMethod(this.resourceGroup, diskName);
-            await networkClient.networkInterfaces.deleteMethod(this.resourceGroup, networkName);
-
+            const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted virtual machine "{0}".', this.name);
             vscode.window.showInformationMessage(deleteSucceeded);
             ext.outputChannel.appendLog(deleteSucceeded);
         });
     }
-
     public async refreshImpl(_context: IActionContext): Promise<void> {
         try {
             this._state = await this.getState();
         } catch {
             this._state = undefined;
         }
-    }
 
-    public async getState(): Promise<string | undefined> {
+    } public async getState(): Promise<string | undefined> {
         const computeClient: ComputeManagementClient = await createComputeClient(this.root);
         return this.getStateFromInstanceView(await computeClient.virtualMachines.instanceView(this.resourceGroup, this.name));
     }
