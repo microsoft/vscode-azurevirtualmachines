@@ -45,8 +45,11 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return this.virtualMachine;
     }
 
-    public static contextValue: string = 'azVmVirtualMachine';
-    public readonly contextValue: string = VirtualMachineTreeItem.contextValue;
+    public static linuxContextValue: string = 'linuxVirtualMachine';
+    public static windowsContextValue: string = 'windowsVirtualMachine';
+    public static allOSContextValue: RegExp = /VirtualMachine$/;
+
+    public contextValue: string;
     public virtualMachine: ComputeManagementModels.VirtualMachine;
     public isLinux: boolean;
     private _state?: string;
@@ -55,7 +58,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         super(parent);
         this.virtualMachine = vm;
         this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
-        this.isLinux = !!(vm.osProfile?.linuxConfiguration);
+        this.contextValue = !!(vm.osProfile?.linuxConfiguration) ? VirtualMachineTreeItem.linuxContextValue : VirtualMachineTreeItem.windowsContextValue;
     }
 
     public getUser(): string {
