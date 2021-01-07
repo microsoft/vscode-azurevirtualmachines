@@ -115,6 +115,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             ext.outputChannel.appendLog(deleteSucceeded);
         });
     }
+
     public async refreshImpl(_context: IActionContext): Promise<void> {
         try {
             this._state = await this.getState();
@@ -122,7 +123,9 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             this._state = undefined;
         }
 
-    } public async getState(): Promise<string | undefined> {
+    }
+
+    public async getState(): Promise<string | undefined> {
         const computeClient: ComputeManagementClient = await createComputeClient(this.root);
         return this.getStateFromInstanceView(await computeClient.virtualMachines.instanceView(this.resourceGroup, this.name));
     }
