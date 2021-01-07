@@ -14,13 +14,22 @@ import { cpUtils } from "./cpUtils";
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
 
-export async function getSshKey(vmName: string, passphrase: string): Promise<string> {
+export async function createSshKey(vmName: string, passphrase: string): Promise<{ sshKeyName: string; keyData: string }> {
     return await callWithMaskHandling(
         async () => {
-            const sshKeyName: string = `azure_${vmName}_rsa`;
-            const sshKeyPath: string = join(sshFsPath, sshKeyName);
+            let sshKeyName: string = `azure_${vmName}_rsa`;
+            let sshKeyPath: string = join(sshFsPath, sshKeyName);
+            let keyExists: boolean = await fse.pathExists(`${sshKeyPath}.pub`);
 
-            if (!await fse.pathExists(`${sshKeyPath}.pub`)) {
+            const maxTime: number = Date.now() + 3000;
+            let count: number = 2;
+            while (keyExists && Date.now() < maxTime) {
+                sshKeyName = `azure_${vmName}_${count}_rsa`;
+                sshKeyPath = join(sshFsPath, sshKeyName);
+                keyExists = await fse.pathExists(`${sshKeyPath}.pub`);
+                count += 1;
+            }
+            if (!keyExists) {
                 ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
                 // create the .ssh folder if it doesn't exist
                 await fse.ensureDir(sshFsPath);
@@ -28,12 +37,13 @@ export async function getSshKey(vmName: string, passphrase: string): Promise<str
                 ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath));
             }
 
-            return (await fse.readFile(`${sshKeyPath}.pub`)).toString();
+            // if we couldn't generate a unique key in 3 seconds, just use an existing key. This should be rare
+            return { sshKeyName, keyData: (await fse.readFile(`${sshKeyPath}.pub`)).toString() };
         },
         passphrase);
 }
 
-export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath?: string): Promise<void> {
+export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath: string): Promise<void> {
     const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.ensureFile(sshConfigPath);
     let configFile: string = (await fse.readFile(sshConfigPath)).toString();
@@ -55,8 +65,6 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
         host = `${vmti.name}-${count}`;
     }
 
-    const sshKeyName: string = `azure_${vmti.name}_rsa`;
-    sshKeyPath = sshKeyPath || `~/.ssh/${sshKeyName}`;
     const fourSpaces: string = '    ';
 
     configFile = configFile + `${os.EOL}Host ${host}${os.EOL}${fourSpaces}HostName ${hostName}${os.EOL}${fourSpaces}User ${vmti.getUser()}${os.EOL}${fourSpaces}IdentityFile ${sshKeyPath}`;
