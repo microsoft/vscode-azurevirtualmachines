@@ -193,37 +193,37 @@
                 },
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.viewProperties",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
                     "group": "3@1"
                 },
                 {
                     "command": "azureVirtualMachines.openInPortal",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
                     "group": "3@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
                     "group": "2@4"
                 },
                 {
@@ -233,7 +233,7 @@
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem == linuxVirtualMachine",
                     "group": "1@2"
                 }
             ],

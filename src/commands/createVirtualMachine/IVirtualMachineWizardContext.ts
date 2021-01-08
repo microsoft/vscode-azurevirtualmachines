@@ -91,4 +91,9 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      * This will be defined after PassphrasePromptStep.
      */
     passphrase?: string;
+
+    /**
+     * Name of the SSH key used for the new virtual machine
+     */
+    sshKeyName?: string;
 }

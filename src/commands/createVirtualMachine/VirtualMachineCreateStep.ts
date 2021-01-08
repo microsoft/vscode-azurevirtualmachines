@@ -11,7 +11,7 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createComputeClient } from '../../utils/azureClients';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
-import { getSshKey } from '../../utils/sshUtils';
+import { createSshKey } from '../../utils/sshUtils';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from './OSListStep';
 
@@ -36,23 +36,24 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const networkInterface: NetworkManagementModels.NetworkInterface = nonNullProp(context, 'networkInterface');
         const networkProfile: ComputeManagementModels.NetworkProfile = { networkInterfaces: [{ id: networkInterface.id }] };
 
-        const windowConfiguration: ComputeManagementModels.WindowsConfiguration = {};
-        const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
-            disablePasswordAuthentication: true, ssh: {
-                publicKeys: [{
-                    // tslint:disable-next-line: strict-boolean-expressions
-                    keyData: await getSshKey(vmName, context.passphrase || ''),
-                    // because this is a Linux VM, use '/' as path separator rather than using path.join()
-                    path: `/home/${context.adminUsername}/.ssh/authorized_keys`
-                }]
-            }
-        };
-
         const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
         if (context.os === VirtualMachineOS.linux) {
+            // tslint:disable-next-line: strict-boolean-expressions
+            const { sshKeyName, keyData } = await createSshKey(vmName, context.passphrase || '');
+            context.sshKeyName = sshKeyName;
+            const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
+                disablePasswordAuthentication: true, ssh: {
+                    publicKeys: [{
+                        keyData,
+                        // because this is a Linux VM, use '/' as path separator rather than using path.join()
+                        path: `/home/${context.adminUsername}/.ssh/authorized_keys`
+                    }]
+                }
+            };
             osProfile.linuxConfiguration = linuxConfiguration;
         } else {
             osProfile.adminPassword = context.passphrase;
+            const windowConfiguration: ComputeManagementModels.WindowsConfiguration = {};
             osProfile.windowsConfiguration = windowConfiguration;
         }
 

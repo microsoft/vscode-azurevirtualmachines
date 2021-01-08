@@ -9,7 +9,7 @@ import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
 export async function openInPortal(context: IActionContext, node?: AzureTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<AzureTreeItem>(VirtualMachineTreeItem.contextValue, context);
+        node = await ext.tree.showTreeItemPicker<AzureTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
     }
 
     await node.openInPortal();
