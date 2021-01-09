@@ -194,7 +194,7 @@
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
                     "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
-                    "group": "1@1"
+                    "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.viewProperties",
@@ -228,13 +228,13 @@
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azVmTree && viewItem == azVmVirtualMachine",
+                    "when": "view == azVmTree && viewItem == linuxVirtualMachine",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
                     "when": "view == azVmTree && viewItem == linuxVirtualMachine",
-                    "group": "1@2"
+                    "group": "1@3"
                 }
             ],
             "explorer/context": [],

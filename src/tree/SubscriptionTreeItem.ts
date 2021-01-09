@@ -122,7 +122,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const virtualMachine: ComputeManagementModels.VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
 
         const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine, undefined /* assume all newly created VMs are running */);
-        if (newVm.isLinux) {
+        if (newVm.contextValue === VirtualMachineTreeItem.linuxContextValue) {
             await configureSshConfig(newVm, `~/.ssh/${wizardContext.sshKeyName}`);
         }
 

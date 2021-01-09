@@ -5,8 +5,7 @@
 
 import * as fse from 'fs-extra';
 import { join } from 'path';
-// tslint:disable-next-line:no-require-imports
-import SSHConfig = require('ssh-config');
+import * as SSHConfig from 'ssh-config';
 import { commands } from 'vscode';
 import { IActionContext } from 'vscode-azureextensionui';
 import { ext } from '../extensionVariables';
@@ -18,11 +17,7 @@ import { verifyRemoteSshExtension } from './verifyRemoteSshExtension';
 
 export async function openInRemoteSsh(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.contextValue, context);
-    }
-
-    if (!node.isLinux) {
-        throw new Error(localize('notSupportedWindows', 'This operation is not supported on Windows VMs.'));
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.linuxContextValue, context);
     }
 
     await verifyRemoteSshExtension(context);
@@ -30,14 +25,26 @@ export async function openInRemoteSsh(context: IActionContext, node?: VirtualMac
     const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.ensureFile(sshConfigPath);
     const configFile: string = (await fse.readFile(sshConfigPath)).toString();
-    // tslint:disable: no-unsafe-any
-    const sshConfig: SSHConfig = SSHConfig.parse(configFile);
+    const sshConfig: SSHConfig.HostConfigurationDirective[] = <SSHConfig.HostConfigurationDirective[]><unknown>SSHConfig.parse(configFile);
     const hostName: string = await node.getIpAddress();
-    if (!sshConfig.find(line => line.param === 'HostName' && line.value === hostName)) {
-        // tslint:enable: no-unsafe-any
-        await ext.ui.showWarningMessage(localize('unableFind', 'Unable to find "{0}" in SSH config.', node.data.name), { title: localize('addSSH', 'Add new SSH config host') });
+    let host: string = node.name;
+    let foundHostName: boolean = false;
+
+    for (const hostEntry of sshConfig) {
+        for (const config of hostEntry.config) {
+            const castedConfig: SSHConfig.BaseConfigurationDirective = <SSHConfig.BaseConfigurationDirective>config;
+            if (castedConfig.param === 'HostName' && castedConfig.value === hostName) {
+                host = Array.isArray(hostEntry.value) ? hostEntry.value[0] : hostEntry.value;
+                foundHostName = true;
+                break;
+            }
+        }
+    }
+
+    if (!foundHostName) {
+        await ext.ui.showWarningMessage(localize('unableFind', 'Unable to find "{0}" in SSH config.', host), { title: localize('addSSH', 'Add new SSH config host') });
         await addSshKey(context, node);
     }
 
-    await commands.executeCommand('opensshremotes.openEmptyWindow', { host: node.name });
+    await commands.executeCommand('opensshremotes.openEmptyWindow', { host });
 }
