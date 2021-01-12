@@ -128,6 +128,11 @@
                 "command": "azureVirtualMachines.viewProperties",
                 "title": "%azureVirtualMachines.viewProperties%",
                 "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.openInRemoteSsh",
+                "title": "%azureVirtualMachines.openInRemoteSsh%",
+                "category": "Azure Virtual Machines"
             }
         ],
         "viewsContainers": {
@@ -189,7 +194,7 @@
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
                     "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
-                    "group": "1@1"
+                    "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.viewProperties",
@@ -222,9 +227,14 @@
                     "group": "2@4"
                 },
                 {
+                    "command": "azureVirtualMachines.openInRemoteSsh",
+                    "when": "view == azVmTree && viewItem == linuxVirtualMachine",
+                    "group": "1@1"
+                },
+                {
                     "command": "azureVirtualMachines.addSshKey",
                     "when": "view == azVmTree && viewItem == linuxVirtualMachine",
-                    "group": "1@2"
+                    "group": "1@3"
                 }
             ],
             "explorer/context": [],
