@@ -17,7 +17,7 @@ import { verifyRemoteSshExtension } from './verifyRemoteSshExtension';
 
 export async function openInRemoteSsh(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.linuxContextValue, context);
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(/^VirtualMachine.+linux.+running/, context);
     }
 
     await verifyRemoteSshExtension(context);

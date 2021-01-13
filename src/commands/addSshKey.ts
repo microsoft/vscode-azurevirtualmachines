@@ -16,7 +16,7 @@ import { configureSshConfig, sshFsPath } from "../utils/sshUtils";
 
 export async function addSshKey(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.linuxContextValue, context);
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(/^VirtualMachine.+linux.+running/, context);
     }
 
     const computeClient: ComputeManagementClient = await createComputeClient(node.root);

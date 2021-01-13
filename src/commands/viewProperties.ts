@@ -9,7 +9,7 @@ import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
 export async function viewProperties(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allContextValue, context);
     }
 
     await openReadOnlyJson(node, node.data);

@@ -15,6 +15,12 @@ import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
 export class VirtualMachineTreeItem extends AzureTreeItem {
+    public static runningContextValue: RegExp = /^VirtualMachine.+running/;
+    public static stoppedContextValue: RegExp = /^VirtualMachine.+stopped/;
+    public static linuxContextValue: RegExp = /^VirtualMachine.+linux/;
+    public static windowsContextValue: RegExp = /^VirtualMachine.+windows/;
+    public static allContextValue: RegExp = /^VirtualMachine/;
+
     public get label(): string {
         return `${this.name}`;
     }
@@ -41,15 +47,17 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return this._state?.toLowerCase() !== 'running' ? this._state : undefined;
     }
 
+    public get contextValue(): string {
+        const os: string = !!(this.data.osProfile?.linuxConfiguration) ? 'linux' : 'windows';
+        const state: string = this._state?.toLowerCase() === 'running' ? 'running' : 'stopped';
+
+        return `VirtualMachine-${os}-${state}`;
+    }
+
     public get data(): ComputeManagementModels.VirtualMachine {
         return this.virtualMachine;
     }
 
-    public static linuxContextValue: string = 'linuxVirtualMachine';
-    public static windowsContextValue: string = 'windowsVirtualMachine';
-    public static allOSContextValue: RegExp = /VirtualMachine$/;
-
-    public contextValue: string;
     public virtualMachine: ComputeManagementModels.VirtualMachine;
     private _state?: string;
 
@@ -57,7 +65,6 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         super(parent);
         this.virtualMachine = vm;
         this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
-        this.contextValue = !!(vm.osProfile?.linuxConfiguration) ? VirtualMachineTreeItem.linuxContextValue : VirtualMachineTreeItem.windowsContextValue;
     }
 
     public getUser(): string {
