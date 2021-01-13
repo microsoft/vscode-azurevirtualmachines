@@ -213,7 +213,7 @@
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azVmTree && viewItem =~ /^VirtualMachine/",
+                    "when": "view == azVmTree && viewItem =~ /^VirtualMachine.+running/",
                     "group": "2@2"
                 },
                 {
