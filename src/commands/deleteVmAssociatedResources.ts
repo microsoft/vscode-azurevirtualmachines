@@ -6,24 +6,25 @@
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { NetworkManagementClient, NetworkManagementModels } from "@azure/arm-network";
 import { ResourceManagementClient } from "@azure/arm-resources";
-import { IAzureQuickPickItem, ISubscriptionContext, parseError } from "vscode-azureextensionui";
+import { IAzureQuickPickItem, ISubscriptionContext } from "vscode-azureextensionui";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { createComputeClient, createNetworkClient, createResourceClient } from "../utils/azureClients";
 import { getNameFromId } from "../utils/azureUtils";
 import { nonNullValueAndProp } from "../utils/nonNull";
 
-export type resourceToDelete = { resourceName: string; resourceType: string; deleteMethod(): Promise<void> };
+export type ResourceToDelete = { resourceName: string; resourceType: string; picked?: boolean; deleteMethod(): Promise<void> };
+export type ResourceDeleteError = { resource: ResourceToDelete; error: Error };
 const virtualNetworkLabel: string = localize('virtualNetwork', 'virtual network');
 const networkInterfaceLabel: string = localize('networkInterface', 'network interface');
 
-export async function getResourcesToDelete(
+export async function getAssociatedResourcesToDelete(
     context: ISubscriptionContext,
     resourceGroupName: string,
     networkNames: string[],
-    diskName: string): Promise<resourceToDelete[]> {
+    diskName: string): Promise<ResourceToDelete[]> {
 
-    const associatedResources: resourceToDelete[] = [];
+    const associatedResources: ResourceToDelete[] = [];
     const networkClient: NetworkManagementClient = await createNetworkClient(context);
 
     for (const networkName of networkNames) {
@@ -71,42 +72,55 @@ export async function getResourcesToDelete(
     return associatedResources;
 }
 
-export async function promptResourcesToDelete(vmName: string, resources: resourceToDelete[]): Promise<IAzureQuickPickItem<resourceToDelete>[]> {
+export async function promptResourcesToDelete(resources: ResourceToDelete[]): Promise<IAzureQuickPickItem<ResourceToDelete>[]> {
 
-    const quickPicks: IAzureQuickPickItem<resourceToDelete>[] = resources.map(resource => {
-        return { label: resource.resourceName, description: toTitleCase(resource.resourceType), data: resource };
+    const quickPicks: IAzureQuickPickItem<ResourceToDelete>[] = resources.map(resource => {
+        return { label: resource.resourceName, description: toTitleCase(resource.resourceType), data: resource, picked: resource.picked };
     });
 
-    return await ext.ui.showQuickPick(quickPicks, { placeHolder: localize('selectResources', 'Select resources associated to "{0}" to delete', vmName), canPickMany: true });
+    return await ext.ui.showQuickPick(quickPicks, { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
 }
 
-export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: IAzureQuickPickItem<resourceToDelete>[]): Promise<void> {
+export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[]): Promise<ResourceDeleteError[]> {
+    const errors: ResourceDeleteError[] = [];
+
+    // virtual machines have to be deleted before a lot of other resources so do it first
+    const virtualMachineIndex: number = resourcesToDelete.findIndex(r => { return r.data.resourceType === 'virtual machine'; });
+    if (virtualMachineIndex >= 0) {
+        await deleteWithOutput(resourcesToDelete.splice(virtualMachineIndex, 1)[0].data, errors);
+    }
+
     // network interfaces have to be delete before public IP and virtual networks
     const networkInterfaceIndex: number = resourcesToDelete.findIndex(r => { return r.data.resourceType === networkInterfaceLabel; });
     if (networkInterfaceIndex >= 0) {
-        await deleteWithOutput(resourcesToDelete.splice(networkInterfaceIndex, 1)[0].data);
+        await deleteWithOutput(resourcesToDelete.splice(networkInterfaceIndex, 1)[0].data, errors);
     }
 
     // virtual networks have to be deleted before nsg but after network interface
     const virtualNetworkIndex: number = resourcesToDelete.findIndex(r => { return r.data.resourceType === virtualNetworkLabel; });
     if (virtualNetworkIndex >= 0) {
-        await deleteWithOutput(resourcesToDelete.splice(virtualNetworkIndex, 1)[0].data);
+        await deleteWithOutput(resourcesToDelete.splice(virtualNetworkIndex, 1)[0].data, errors);
     }
 
     await Promise.all(resourcesToDelete.map(async r => {
-        await deleteWithOutput(r.data);
+        await deleteWithOutput(r.data, errors);
     }));
 
     const resourceClient: ResourceManagementClient = await createResourceClient(context);
+
     if ((await resourceClient.resources.listByResourceGroup(resourceGroupName)).length === 0) {
-        await deleteWithOutput({
-            resourceName: resourceGroupName, resourceType: localize('resourceGroup', 'resource group'),
-            deleteMethod: async (): Promise<void> => { await resourceClient.resourceGroups.deleteMethod(resourceGroupName); }
-        });
+        await deleteWithOutput(
+            {
+                resourceName: resourceGroupName, resourceType: localize('resourceGroup', 'resource group'),
+                deleteMethod: async (): Promise<void> => { await resourceClient.resourceGroups.deleteMethod(resourceGroupName); }
+            },
+            errors);
     }
+
+    return errors;
 }
 
-export async function deleteWithOutput(resource: resourceToDelete): Promise<void> {
+export async function deleteWithOutput(resource: ResourceToDelete, errors: ResourceDeleteError[]): Promise<void> {
     const deleting: string = localize('Deleting', 'Deleting {0} "{1}"...', resource.resourceType, resource.resourceName);
     const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resource.resourceType, resource.resourceName);
 
@@ -114,11 +128,15 @@ export async function deleteWithOutput(resource: resourceToDelete): Promise<void
     try {
         await resource.deleteMethod();
     } catch (error) {
-        ext.outputChannel.appendLog(localize('deleteFailed', 'Deleting {0} "{1}" failed with the error "{2}"', resource.resourceType, resource.resourceName, parseError(error).message));
+        ext.outputChannel.appendLog(localize('deleteFailed', 'Deleting {0} "{1}" failed.', resource.resourceType, resource.resourceName));
+        // tslint:disable-next-line: no-unsafe-any
+        errors.push({ resource, error });
         return;
     }
 
     ext.outputChannel.appendLog(deleteSucceeded);
+
+    return;
 }
 
 function toTitleCase(str: string): string {
