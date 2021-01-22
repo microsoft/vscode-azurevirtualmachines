@@ -3,19 +3,24 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
+import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import * as fse from 'fs-extra';
 import * as os from "os";
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
 import { callWithMaskHandling } from 'vscode-azureextensionui';
+import * as which from 'which';
+import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { createComputeClient } from './azureClients';
 import { cpUtils } from "./cpUtils";
+import { nonNullValueAndProp } from './nonNull';
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
 
-export async function createSshKey(vmName: string, passphrase: string): Promise<{ sshKeyName: string; keyData: string }> {
+export async function createSshKey(context: IVirtualMachineWizardContext, vmName: string, passphrase: string): Promise<{ sshKeyName: string; keyData: string }> {
     return await callWithMaskHandling(
         async () => {
             let sshKeyName: string = `azure_${vmName}_rsa`;
@@ -31,11 +36,39 @@ export async function createSshKey(vmName: string, passphrase: string): Promise<
                 count += 1;
             }
             if (!keyExists) {
-                ext.outputChannel.appendLog(localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath));
+                const generatingKey: string = localize('generatingKey', 'Generating public/private rsa key pair in "{0}"...', sshKeyPath);
+                const generatedKey: string = localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath);
+                ext.outputChannel.appendLog(generatingKey);
                 // create the .ssh folder if it doesn't exist
                 await fse.ensureDir(sshFsPath);
-                await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
-                ext.outputChannel.appendLog(localize('generatedKey', 'Generated public/private rsa key pair in "{0}".', sshKeyPath));
+
+                if (await sshKeygenExists()) {
+                    ext.outputChannel.appendLog(generatingKey);
+                    await cpUtils.executeCommand(undefined, undefined, 'ssh-keygen', '-t', 'rsa', '-b', '4096', '-f', cpUtils.wrapArgInQuotes(sshKeyPath), '-N', cpUtils.wrapArgInQuotes(passphrase));
+                    ext.outputChannel.appendLog(generatedKey);
+                } else {
+                    context.telemetry.properties.usedAzureKey = 'true';
+                    context.telemetry.properties.hadPassphrase = 'false';
+                    ext.outputChannel.appendLog(generatingKey);
+
+                    // if ssh-keygen isn't found, we can leverage Azure's SSH keys, but they do not allow for passphrases
+                    if (passphrase) {
+                        context.telemetry.properties.hadPassphrase = 'true';
+                        ext.outputChannel.appendLog(localize('unableToFindKeygen', 'NOTE: Unable to find `ssh-keygen` in environment variable PATH.  Passphrase will not be respected.', vmName));
+                    }
+
+                    const client: ComputeManagementClient = await createComputeClient(context);
+                    const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
+                    await client.sshPublicKeys.create(rgName, vmName, { location: nonNullValueAndProp(context.location, 'name') });
+
+                    const keyPair: ComputeManagementModels.SshPublicKeyGenerateKeyPairResult = await client.sshPublicKeys.generateKeyPair(rgName, vmName);
+                    await fse.writeFile(`${sshKeyPath}.pub`, keyPair.publicKey);
+                    await fse.writeFile(sshKeyPath, keyPair.privateKey);
+
+                    // delete because there's no purpose once we locally download the key pair
+                    await client.sshPublicKeys.deleteMethod(rgName, vmName);
+                    ext.outputChannel.appendLog(generatedKey);
+                }
             }
 
             // if we couldn't generate a unique key in 3 seconds, just use an existing key. This should be rare
@@ -77,4 +110,15 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
 
     await fse.writeFile(sshConfigPath, sshConfig.toString());
     ext.outputChannel.appendLog(localize('addingEntry', `Added new entry to "{0}" with Host "{1}".`, sshConfigPath, host));
+}
+
+async function sshKeygenExists(): Promise<boolean> {
+    try {
+        // throws an error if it can't find cmd in PATH env
+        await which('ssh-keygen');
+    } catch (err) {
+        return false;
+    }
+
+    return true;
 }

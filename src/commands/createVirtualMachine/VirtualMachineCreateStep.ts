@@ -39,7 +39,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
         if (context.os === VirtualMachineOS.linux) {
             // tslint:disable-next-line: strict-boolean-expressions
-            const { sshKeyName, keyData } = await createSshKey(vmName, context.passphrase || '');
+            const { sshKeyName, keyData } = await createSshKey(context, vmName, context.passphrase || '');
             context.sshKeyName = sshKeyName;
             const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
                 disablePasswordAuthentication: true, ssh: {
