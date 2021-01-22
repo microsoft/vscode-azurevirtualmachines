@@ -6,8 +6,9 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
-import { AzureParentTreeItem, AzureTreeItem, DialogResponses, IActionContext, IAzureQuickPickItem, parseError } from 'vscode-azureextensionui';
-import { deleteAllResources, getAssociatedResourcesToDelete, promptResourcesToDelete, ResourceDeleteError, ResourceToDelete } from '../commands/deleteVmAssociatedResources';
+import { AzureParentTreeItem, AzureTreeItem, IActionContext, parseError } from 'vscode-azureextensionui';
+import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
+import { IDeleteChildImplContext, ResourceDeleteError, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
@@ -86,49 +87,29 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return nonNullProp(ip, 'ipAddress');
     }
 
-    public async deleteTreeItemImpl(): Promise<void> {
-        // if we can't retrieve the disk name, it's highly likely that it's the same as the vmName if it was created from the extensionf
-        const diskName: string = this.data.storageProfile?.osDisk?.managedDisk?.id ? getNameFromId(this.data.storageProfile.osDisk.managedDisk.id) : this.name;
+    public async deleteTreeItemImpl(context: IDeleteChildImplContext): Promise<void> {
+        const multiDelete: boolean = context.resourcesToDelete.length > 1;
+        const resourcesToDelete: ResourceToDelete[] = context.resourcesToDelete;
 
-        const networkNames: string[] = [];
-        if (this.data.networkProfile && this.data.networkProfile.networkInterfaces) {
-            for (const networkRef of this.data.networkProfile?.networkInterfaces) {
-                networkNames.push(getNameFromId(nonNullProp(networkRef, 'id')));
-            }
-
-        }
-
-        const associatedResources: ResourceToDelete[] = await getAssociatedResourcesToDelete(this.root, this.resourceGroup, networkNames, diskName);
-        const computeClient: ComputeManagementClient = await createComputeClient(this.root);
-        associatedResources.unshift({
-            resourceName: this.name, resourceType: localize('virtualMachine', 'virtual machine'), picked: true,
-            deleteMethod: async (): Promise<void> => { await computeClient.virtualMachines.deleteMethod(this.resourceGroup, this.name); }
-        });
-
-        const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await promptResourcesToDelete(associatedResources);
-        const multiDelete: boolean = resourcesToDelete.length > 1;
-
-        const resourceList: string = resourcesToDelete.map(r => `"${r.data.resourceName}"`).join(',');
-        const confirmMessage: string = multiDelete ? localize('multiDeleteConfirmation', 'Are you sure you want to delete the following resources: {0}?', resourceList) :
-            localize('deleteConfirmation', 'Are you sure you want to delete {0} "{1}"?', resourcesToDelete[0].data.resourceType, resourcesToDelete[0].data.resourceName);
-
-        await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
-        const deleting: string = multiDelete ? localize('Deleting', 'Deleting {0}...', resourceList) :
-            localize('Deleting', 'Deleting {0} "{1}"...', resourcesToDelete[0].data.resourceType, resourcesToDelete[0].data.resourceName);
+        const deleting: string = multiDelete ? localize('Deleting', 'Deleting {0}...', context.resourceList) :
+            localize('Deleting', 'Deleting {0} "{1}"...', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
 
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
             if (multiDelete) { ext.outputChannel.appendLog(deleting); }
 
-            const errors: ResourceDeleteError[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
+            // the message needs to constructed here since resourcesToDelete gets spliced
+            const deleteSucceeded: string = multiDelete ? localize('DeleteSucceeded', 'Successfully deleted {0}.', context.resourceList) :
+                localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
 
-            const deleteSucceeded: string = multiDelete ? localize('DeleteSucceeded', 'Successfully deleted {0}.', resourceList) :
-                localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resourcesToDelete[0].data.resourceType, resourcesToDelete[0].data.resourceName);
+            const errors: ResourceDeleteError[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
 
             const formattedErrors: string = errors.map(err => '\n' + parseError(err.error).message).join(',');
             const outputDeleteWithErrors: string = localize('outputDeleteWithErrors', `Failed to delete resources with the following errors: ${formattedErrors}`);
-            const messageDeleteWithErrors: string = localize('messageDeleteWithErrors', `Failed to delete the following resources ${errors.map(err => `"${err.resource.resourceName}"`).join(',')}. Check the output channel for more information.`);
+            const messageDeleteWithErrors: string = localize(
+                'messageDeleteWithErrors',
+                `Failed to delete the following resources ${errors.map(err => `"${err.resource.resourceName}"`).join(',')}. Check the output channel for more information.`);
 
-            ext.outputChannel.appendLog(errors.length > 0 ? outputDeleteWithErrors : deleteSucceeded);
+            if (multiDelete) { ext.outputChannel.appendLog(errors.length > 0 ? outputDeleteWithErrors : deleteSucceeded); }
             vscode.window.showInformationMessage(errors.length > 0 ? messageDeleteWithErrors : deleteSucceeded);
         });
     }

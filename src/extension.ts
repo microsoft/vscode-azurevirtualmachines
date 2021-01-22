@@ -13,7 +13,7 @@ import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
 import { copyIpAddress } from './commands/copyIpAddress';
 import { createVirtualMachine, createVirtualMachineAdvanced } from './commands/createVirtualMachine/createVirtualMachine';
-import { deleteNode } from './commands/deleteNode';
+import { deleteVirtualMachine } from './commands/deleteVirtualMachine/deleteVirtualMachine';
 import { openInPortal } from './commands/openInPortal';
 import { restartVirtualMachine } from './commands/restartVirtualMachine';
 import { startVirtualMachine } from './commands/startVirtualMachine';
@@ -21,8 +21,6 @@ import { stopVirtualMachine } from './commands/stopVirtualMachine';
 import { viewProperties } from './commands/viewProperties';
 import { ext } from './extensionVariables';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
-import { SubscriptionTreeItem } from './tree/SubscriptionTreeItem';
-import { VirtualMachineTreeItem } from './tree/VirtualMachineTreeItem';
 
 export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
     ext.context = context;
@@ -53,7 +51,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.restartVirtualMachine', restartVirtualMachine);
         registerCommand('azureVirtualMachines.stopVirtualMachine', stopVirtualMachine);
         registerCommand('azureVirtualMachines.addSshKey', addSshKey);
-        registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.allOSContextValue, node));
+        registerCommand('azureVirtualMachines.deleteVirtualMachine', deleteVirtualMachine);
         registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
         registerCommand('azureVirtualMachines.viewProperties', viewProperties);
     });
