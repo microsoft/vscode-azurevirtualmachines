@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { parseError } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
-import { ResourceDeleteError, ResourceToDelete } from "./deleteConstants";
+import { ResourceToDelete } from "./deleteConstants";
 
-export async function deleteWithOutput(resource: ResourceToDelete, errors: ResourceDeleteError[]): Promise<void> {
+export async function deleteWithOutput(resource: ResourceToDelete, errors: string[]): Promise<void> {
     const deleting: string = localize('Deleting', 'Deleting {0} "{1}"...', resource.resourceType, resource.resourceName);
     const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resource.resourceType, resource.resourceName);
 
@@ -15,9 +16,8 @@ export async function deleteWithOutput(resource: ResourceToDelete, errors: Resou
     try {
         await resource.deleteMethod();
     } catch (error) {
-        ext.outputChannel.appendLog(localize('deleteFailed', 'Deleting {0} "{1}" failed.', resource.resourceType, resource.resourceName));
-        // tslint:disable-next-line: no-unsafe-any
-        errors.push({ resource, error });
+        ext.outputChannel.appendLog(localize('deleteFailed', 'Deleting {0} "{1}" failed: {2}', resource.resourceType, resource.resourceName, parseError(error).message));
+        errors.push(resource.resourceName);
         return;
     }
 

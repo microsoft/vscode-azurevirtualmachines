@@ -3,48 +3,46 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ResourceManagementClient } from "@azure/arm-resources";
+import { ResourceManagementClient, ResourceManagementModels } from "@azure/arm-resources";
 import { ISubscriptionContext } from "vscode-azureextensionui";
 import { localize } from "../../localize";
 import { createResourceClient } from "../../utils/azureClients";
-import { networkInterfaceLabel, ResourceDeleteError, ResourceToDelete, virtualMachineLabel, virtualNetworkLabel } from "./deleteConstants";
+import { networkInterfaceLabel, ResourceToDelete, virtualMachineLabel, virtualNetworkLabel } from "./deleteConstants";
 import { deleteWithOutput } from "./deleteWithOutput";
 
-export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<ResourceDeleteError[]> {
-    const errors: ResourceDeleteError[] = [];
+export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<string[]> {
+    const failedResources: string[] = [];
 
     // virtual machines have to be deleted before a lot of other resources so do it first
-    const virtualMachineIndex: number = resourcesToDelete.findIndex(r => { return r.resourceType === virtualMachineLabel; });
-    if (virtualMachineIndex >= 0) {
-        await deleteWithOutput(resourcesToDelete.splice(virtualMachineIndex, 1)[0], errors);
-    }
-
     // network interfaces have to be delete before public IP and virtual networks
-    const networkInterfaceIndex: number = resourcesToDelete.findIndex(r => { return r.resourceType === networkInterfaceLabel; });
-    if (networkInterfaceIndex >= 0) {
-        await deleteWithOutput(resourcesToDelete.splice(networkInterfaceIndex, 1)[0], errors);
-    }
-
     // virtual networks have to be deleted before nsg but after network interface
-    const virtualNetworkIndex: number = resourcesToDelete.findIndex(r => { return r.resourceType === virtualNetworkLabel; });
-    if (virtualNetworkIndex >= 0) {
-        await deleteWithOutput(resourcesToDelete.splice(virtualNetworkIndex, 1)[0], errors);
+    // the rest can be deleted in parallel
+    const orderedLabels: string[] = [virtualMachineLabel, networkInterfaceLabel, virtualNetworkLabel];
+    const serialResources: ResourceToDelete[] = [];
+    const parallelResources: ResourceToDelete[] = [];
+    for (const resource of resourcesToDelete) {
+        orderedLabels.includes(resource.resourceType) ? serialResources.push(resource) : parallelResources.push(resource);
     }
 
-    await Promise.all(resourcesToDelete.map(async r => {
-        await deleteWithOutput(r, errors);
-    }));
+    serialResources.sort((a, b) => orderedLabels.indexOf(a.resourceType) - orderedLabels.indexOf(b.resourceType));
+    for (const resource of serialResources) {
+        await deleteWithOutput(resource, failedResources);
+    }
+
+    await Promise.all(parallelResources.map(async r => await deleteWithOutput(r, failedResources)));
 
     const resourceClient: ResourceManagementClient = await createResourceClient(context);
 
-    if ((await resourceClient.resources.listByResourceGroup(resourceGroupName)).length === 0) {
+    const resources: ResourceManagementModels.ResourceListResult = await resourceClient.resources.listByResourceGroup(resourceGroupName);
+    // It's unlikely "nextLink" will be defined if the first batch returned no resources, but technically possible. We'll just skip deleting in that case
+    if (resources.length === 0 && !resources.nextLink) {
         await deleteWithOutput(
             {
                 resourceName: resourceGroupName, resourceType: localize('resourceGroup', 'resource group'),
                 deleteMethod: async (): Promise<void> => { await resourceClient.resourceGroups.deleteMethod(resourceGroupName); }
             },
-            errors);
+            failedResources);
     }
 
-    return errors;
+    return failedResources;
 }

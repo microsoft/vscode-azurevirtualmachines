@@ -13,11 +13,6 @@ export type ResourceToDelete = {
     deleteMethod(): Promise<void>; // an async wrapper for the deleteMethod to be called
 };
 
-export type ResourceDeleteError = {
-    resource: ResourceToDelete;
-    error: Error;
-};
-
 export interface IDeleteChildImplContext extends IActionContext {
 
     /**

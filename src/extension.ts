@@ -54,6 +54,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.deleteVirtualMachine', deleteVirtualMachine);
         registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
         registerCommand('azureVirtualMachines.viewProperties', viewProperties);
+        registerCommand('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
     });
 
     return createApiProvider([<AzureExtensionApi>{
