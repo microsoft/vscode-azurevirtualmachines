@@ -15,6 +15,7 @@ import { copyIpAddress } from './commands/copyIpAddress';
 import { createVirtualMachine, createVirtualMachineAdvanced } from './commands/createVirtualMachine/createVirtualMachine';
 import { deleteVirtualMachine } from './commands/deleteVirtualMachine/deleteVirtualMachine';
 import { openInPortal } from './commands/openInPortal';
+import { openInRemoteSsh } from './commands/openInRemoteSsh';
 import { restartVirtualMachine } from './commands/restartVirtualMachine';
 import { startVirtualMachine } from './commands/startVirtualMachine';
 import { stopVirtualMachine } from './commands/stopVirtualMachine';
@@ -54,6 +55,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.deleteVirtualMachine', deleteVirtualMachine);
         registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
         registerCommand('azureVirtualMachines.viewProperties', viewProperties);
+        registerCommand('azureVirtualMachines.openInRemoteSsh', openInRemoteSsh);
         registerCommand('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
     });
 

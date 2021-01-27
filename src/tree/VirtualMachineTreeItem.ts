@@ -53,7 +53,6 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
     public contextValue: string;
     public virtualMachine: ComputeManagementModels.VirtualMachine;
-    public isLinux: boolean;
     private _state?: string;
 
     public constructor(parent: AzureParentTreeItem, vm: ComputeManagementModels.VirtualMachine, instanceView?: ComputeManagementModels.VirtualMachineInstanceView) {
