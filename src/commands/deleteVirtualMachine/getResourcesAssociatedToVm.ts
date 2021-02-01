@@ -8,7 +8,7 @@ import { NetworkManagementClient, NetworkManagementModels } from "@azure/arm-net
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient, createNetworkClient } from "../../utils/azureClients";
-import { getNameFromId } from "../../utils/azureUtils";
+import { getNameFromId, getResourceGroupFromId } from "../../utils/azureUtils";
 import { networkInterfaceLabel, ResourceToDelete, virtualNetworkLabel } from "./deleteConstants";
 
 export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): Promise<ResourceToDelete[]> {
@@ -40,30 +40,33 @@ export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): 
                 for (const ipConfigurations of networkInterface.ipConfigurations) {
                     if (ipConfigurations.publicIPAddress?.id) {
                         const publicIpName: string = getNameFromId(ipConfigurations.publicIPAddress.id);
+                        const publicIpRg: string = getResourceGroupFromId(ipConfigurations.publicIPAddress.id);
                         associatedResources.push({
                             resourceName: publicIpName, resourceType: localize('publicip', 'public IP address'),
-                            deleteMethod: async (): Promise<void> => { await networkClient.publicIPAddresses.deleteMethod(resourceGroupName, publicIpName); }
+                            deleteMethod: async (): Promise<void> => { await networkClient.publicIPAddresses.deleteMethod(publicIpRg, publicIpName); }
                         });
 
                     }
 
                     if (ipConfigurations.subnet?.id) {
                         const subnetId: string = ipConfigurations.subnet.id;
+                        const subnetRg: string = getResourceGroupFromId(ipConfigurations.subnet.id);
                         // example of subnet id: '/subscriptions/9b5c7ccb-9857-4307-843b-8875e83f65e9/resourceGroups/linux-vm/providers/Microsoft.Network/virtualNetworks/linux-vm/subnets/default'
                         const virtualNetworkName: string = subnetId.split('/')[8];
                         associatedResources.push({
                             resourceName: virtualNetworkName, resourceType: virtualNetworkLabel,
-                            deleteMethod: async (): Promise<void> => { await networkClient.virtualNetworks.deleteMethod(resourceGroupName, virtualNetworkName); }
+                            deleteMethod: async (): Promise<void> => { await networkClient.virtualNetworks.deleteMethod(subnetRg, virtualNetworkName); }
                         });
 
                         const subnetName: string = getNameFromId(subnetId);
                         try {
-                            const subnet: NetworkManagementModels.Subnet = await networkClient.subnets.get(resourceGroupName, virtualNetworkName, subnetName);
+                            const subnet: NetworkManagementModels.Subnet = await networkClient.subnets.get(subnetRg, virtualNetworkName, subnetName);
                             if (subnet.networkSecurityGroup?.id) {
                                 const nsgName: string = getNameFromId(subnet.networkSecurityGroup.id);
+                                const nsgRg: string = getResourceGroupFromId(subnet.networkSecurityGroup.id);
                                 associatedResources.push({
                                     resourceName: nsgName, resourceType: localize('networkSecurityGroup', 'network security group'),
-                                    deleteMethod: async (): Promise<void> => { await networkClient.networkSecurityGroups.deleteMethod(resourceGroupName, nsgName); }
+                                    deleteMethod: async (): Promise<void> => { await networkClient.networkSecurityGroups.deleteMethod(nsgRg, nsgName); }
                                 });
                             }
                         } catch (err) {
@@ -78,13 +81,16 @@ export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): 
         }
     }
 
-    // if we can't retrieve the disk name, it's highly likely that it's the same as the vmName if it was created from the extension
-    const diskName: string = node.data.storageProfile?.osDisk?.managedDisk?.id ? getNameFromId(node.data.storageProfile.osDisk.managedDisk.id) : node.name;
-    const computeClient: ComputeManagementClient = await createComputeClient(node.root);
-    associatedResources.push({
-        resourceName: diskName, resourceType: localize('disk', 'disk'),
-        deleteMethod: async (): Promise<void> => { await computeClient.disks.deleteMethod(resourceGroupName, diskName); }
-    });
+    if (node.data.storageProfile?.osDisk?.managedDisk?.id) {
+        const diskName: string = getNameFromId(node.data.storageProfile.osDisk.managedDisk.id);
+        const diskRg: string = getResourceGroupFromId(node.data.storageProfile.osDisk.managedDisk.id);
+        const computeClient: ComputeManagementClient = await createComputeClient(node.root);
+        associatedResources.push({
+            resourceName: diskName, resourceType: localize('disk', 'disk'),
+            deleteMethod: async (): Promise<void> => { await computeClient.disks.deleteMethod(diskRg, diskName); }
+        });
+
+    }
 
     return associatedResources;
 }

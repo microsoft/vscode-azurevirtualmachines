@@ -9,32 +9,16 @@ import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../../utils/azureClients";
-import { nonNullValue } from "../../utils/nonNull";
 import { IDeleteChildImplContext, ResourceToDelete, virtualMachineLabel } from "./deleteConstants";
 import { getResourcesAssociatedToVm } from "./getResourcesAssociatedToVm";
-import { promptResourcesToDelete } from "./promptResourcesToDelete";
 
 export async function deleteVirtualMachine(context: IActionContext & Partial<IDeleteChildImplContext>, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
         node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
     }
 
-    const resourcesP: Promise<ResourceToDelete[]> = new Promise<ResourceToDelete[]>(async (resolve, _reject): Promise<void> => {
-        const vmNode: VirtualMachineTreeItem = nonNullValue(node);
-        const associatedResources: ResourceToDelete[] = await getResourcesAssociatedToVm(vmNode);
-        const computeClient: ComputeManagementClient = await createComputeClient(vmNode.root);
-
-        // add the vm to the resources to delete since it is not an associated resource
-        associatedResources.unshift({
-            resourceName: vmNode.name, resourceType: virtualMachineLabel, picked: true,
-            deleteMethod: async (): Promise<void> => { await computeClient.virtualMachines.deleteMethod(vmNode.resourceGroup, vmNode.name); }
-        });
-
-        resolve(associatedResources);
-    });
-
     context.telemetry.properties.cancelStep = 'prompt';
-    const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await promptResourcesToDelete(resourcesP);
+    const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await ext.ui.showQuickPick(getQuickPicks(node), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
     const multiDelete: boolean = resourcesToDelete.length > 1;
 
     const resourceList: string = resourcesToDelete.map(r => `"${r.data.resourceName}"`).join(', ');
@@ -43,6 +27,7 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
 
     context.telemetry.properties.cancelStep = 'confirmation';
     await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
+    context.telemetry.properties.cancelStep = undefined;
 
     context.telemetry.properties.numOfResources = resourcesToDelete.length.toString();
     context.telemetry.properties.deleteVm = String(resourcesToDelete.some(v => v.data.resourceType === virtualMachineLabel));
@@ -52,4 +37,21 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
 
     await node.deleteTreeItem(context);
 
+}
+
+async function getQuickPicks(node: VirtualMachineTreeItem): Promise<IAzureQuickPickItem<ResourceToDelete>[]> {
+    const resources: ResourceToDelete[] = await getResourcesAssociatedToVm(node);
+
+    // add the vm to the resources to delete since it is not an associated resource
+    resources.unshift({
+        resourceName: node.name, resourceType: virtualMachineLabel, picked: true,
+        deleteMethod: async (): Promise<void> => {
+            const computeClient: ComputeManagementClient = await createComputeClient(node.root);
+            await computeClient.virtualMachines.deleteMethod(node.resourceGroup, node.name);
+        }
+    });
+
+    return resources.map(resource => {
+        return { label: resource.resourceName, description: resource.resourceType, data: resource, picked: resource.picked };
+    });
 }
