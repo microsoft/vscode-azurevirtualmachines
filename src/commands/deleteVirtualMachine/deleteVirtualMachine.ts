@@ -19,8 +19,9 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
 
     context.telemetry.properties.cancelStep = 'prompt';
     const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await ext.ui.showQuickPick(getQuickPicks(node), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
-    const multiDelete: boolean = resourcesToDelete.length > 1;
+    context.telemetry.properties.cancelStep = undefined;
 
+    const multiDelete: boolean = resourcesToDelete.length > 1;
     const resourceList: string = resourcesToDelete.map(r => `"${r.data.resourceName}"`).join(', ');
     const confirmMessage: string = multiDelete ? localize('multiDeleteConfirmation', 'Are you sure you want to delete the following resources: {0}?', resourceList) :
         localize('deleteConfirmation', 'Are you sure you want to delete {0} "{1}"?', resourcesToDelete[0].data.resourceType, resourcesToDelete[0].data.resourceName);

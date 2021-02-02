@@ -15,25 +15,25 @@ export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): 
 
     const associatedResources: ResourceToDelete[] = [];
 
-    const networkNames: string[] = [];
+    const networkReferences: { name: string; rgName: string }[] = [];
     if (node.data.networkProfile?.networkInterfaces) {
         for (const networkRef of node.data.networkProfile?.networkInterfaces) {
             if (networkRef.id) {
-                networkNames.push(getNameFromId(networkRef.id));
+                networkReferences.push({ name: getNameFromId(networkRef.id), rgName: getResourceGroupFromId(networkRef.id) });
             }
         }
 
     }
 
-    const resourceGroupName: string = node.resourceGroup;
     const networkClient: NetworkManagementClient = await createNetworkClient(node.root);
-    for (const networkName of networkNames) {
+    for (const networkRef of networkReferences) {
         // if we fail to get a resource, we keep trying to get all associated resources we can rather than erroring out
         try {
-            const networkInterface: NetworkManagementModels.NetworkInterface = await networkClient.networkInterfaces.get(resourceGroupName, networkName);
+
+            const networkInterface: NetworkManagementModels.NetworkInterface = await networkClient.networkInterfaces.get(networkRef.rgName, networkRef.name);
             associatedResources.push({
-                resourceName: networkName, resourceType: networkInterfaceLabel,
-                deleteMethod: async (): Promise<void> => { await networkClient.networkInterfaces.deleteMethod(resourceGroupName, networkName); }
+                resourceName: networkRef.name, resourceType: networkInterfaceLabel,
+                deleteMethod: async (): Promise<void> => { await networkClient.networkInterfaces.deleteMethod(networkRef.rgName, networkRef.name); }
             });
 
             if (networkInterface.ipConfigurations) {
