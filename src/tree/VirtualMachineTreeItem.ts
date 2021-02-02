@@ -6,7 +6,9 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
-import { AzureParentTreeItem, AzureTreeItem, DialogResponses, IActionContext } from 'vscode-azureextensionui';
+import { AzureParentTreeItem, AzureTreeItem, IActionContext } from 'vscode-azureextensionui';
+import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
+import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
@@ -84,20 +86,38 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return nonNullProp(ip, 'ipAddress');
     }
 
-    public async deleteTreeItemImpl(): Promise<void> {
-        const confirmMessage: string = localize('deleteConfirmation', 'Are you sure you want to delete "{0}"?', this.name);
-        await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
+    public async deleteTreeItemImpl(context: IDeleteChildImplContext): Promise<void> {
+        const multiDelete: boolean = context.resourcesToDelete.length > 1;
+        const resourcesToDelete: ResourceToDelete[] = context.resourcesToDelete;
 
-        const deleting: string = localize('Deleting', 'Deleting virtual machine "{0}"...', this.name);
-        const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted virtual machine "{0}".', this.name);
-        const computeClient: ComputeManagementClient = await createComputeClient(this.root);
+        const deleting: string = multiDelete ? localize('Deleting', 'Deleting {0}...', context.resourceList) :
+            localize('Deleting', 'Deleting {0} "{1}"...', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
 
-        await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
-            ext.outputChannel.appendLog(deleting);
-            await computeClient.virtualMachines.deleteMethod(this.resourceGroup, this.name);
-            vscode.window.showInformationMessage(deleteSucceeded);
-            ext.outputChannel.appendLog(deleteSucceeded);
+        await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${deleting} Check the [output channel](command:${ext.prefix}.showOutputChannel) for status.` }, async (): Promise<void> => {
+            if (multiDelete) { ext.outputChannel.appendLog(deleting); }
+
+            const failedResources: string[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
+
+            const messageDeleteWithErrors: string = localize(
+                'messageDeleteWithErrors',
+                `Failed to delete the following resources ${failedResources.join(', ')}.`);
+
+            const deleteSucceeded: string = multiDelete ? localize('DeleteSucceeded', 'Successfully deleted {0}.', context.resourceList) :
+                localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
+
+            // single resources are already displayed in the output channel
+            if (multiDelete) { ext.outputChannel.appendLog(failedResources.length > 0 ? messageDeleteWithErrors : deleteSucceeded); }
+
+            if (failedResources.length > 0) {
+                context.errorHandling.suppressDisplay = true;
+                vscode.window.showErrorMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
+                throw new Error(messageDeleteWithErrors);
+            } else {
+                vscode.window.showInformationMessage(deleteSucceeded);
+            }
         });
+
+        await ext.tree.refresh(context, this.parent);
     }
 
     public async refreshImpl(_context: IActionContext): Promise<void> {
@@ -106,6 +126,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         } catch {
             this._state = undefined;
         }
+
     }
 
     public async getState(): Promise<string | undefined> {
