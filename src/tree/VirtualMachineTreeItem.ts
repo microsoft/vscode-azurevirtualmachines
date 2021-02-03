@@ -97,8 +97,6 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             if (multiDelete) { ext.outputChannel.appendLog(deleting); }
 
             const failedResources: string[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
-            await ext.tree.refresh(context, this.parent);
-
             const messageDeleteWithErrors: string = localize(
                 'messageDeleteWithErrors',
                 `Failed to delete the following resources ${failedResources.join(', ')}.`);
@@ -109,9 +107,9 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             // single resources are already displayed in the output channel
             if (multiDelete) { ext.outputChannel.appendLog(failedResources.length > 0 ? messageDeleteWithErrors : deleteSucceeded); }
             if (failedResources.length > 0) {
-                context.errorHandling.suppressDisplay = true;
-                vscode.window.showErrorMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
-                throw new Error(messageDeleteWithErrors);
+                ext.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
+                ext.outputChannel.appendLog(messageDeleteWithErrors);
+                context.telemetry.properties.failedResources = failedResources.length.toString();
             } else {
                 vscode.window.showInformationMessage(deleteSucceeded);
             }
