@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { DialogResponses, IActionContext, IAzureQuickPickItem } from "vscode-azureextensionui";
+import { DialogResponses, IActionContext, IAzureQuickPickItem, UserCancelledError } from "vscode-azureextensionui";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
@@ -19,6 +19,11 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
 
     context.telemetry.properties.cancelStep = 'prompt';
     const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await ext.ui.showQuickPick(getQuickPicks(node), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
+    if (resourcesToDelete.length === 0) {
+        // if nothing is checked, it should be considered a cancel
+        throw new UserCancelledError();
+    }
+
     context.telemetry.properties.cancelStep = undefined;
 
     const multiDelete: boolean = resourcesToDelete.length > 1;
