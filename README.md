@@ -51,6 +51,9 @@ Your SSH Config (`~/.ssh/config`) file will be updated so you can connect via SS
 
 - Use [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) to seamlessly connect to your Azure VM from VS Code.
 
+![ConnectToHost](resources/readme/ConnectToHost.png)
+
+
 > NOTE: This command is only available for Linux virtual machines.
 
 <!-- region exclude-from-marketplace -->
