@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.3.0 - 2021-02-08
+
+### Added
+- Delete VM with associated resources
+- Connect to Host via [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
+
+### Fixed
+- [Bugs fixed](https://github.com/microsoft/vscode-azurevirtualmachines/issues?q=is%3Aissue+milestone%3A0.3.0+is%3Aclosed)
+
 ## 0.2.0 - 2020-08-27
 
 ### Added
