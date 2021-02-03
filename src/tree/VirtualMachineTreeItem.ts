@@ -8,7 +8,7 @@ import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-net
 import * as vscode from 'vscode';
 import { AzureParentTreeItem, AzureTreeItem, IActionContext } from 'vscode-azureextensionui';
 import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
-import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
+import { IDeleteChildImplContext, ResourceToDelete, virtualMachineLabel } from '../commands/deleteVirtualMachine/deleteConstants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
@@ -96,7 +96,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${deleting} Check the [output channel](command:${ext.prefix}.showOutputChannel) for status.` }, async (): Promise<void> => {
             if (multiDelete) { ext.outputChannel.appendLog(deleting); }
 
-            const failedResources: string[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
+            const failedResources: ResourceToDelete[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
             const messageDeleteWithErrors: string = localize(
                 'messageDeleteWithErrors',
                 `Failed to delete the following resources ${failedResources.join(', ')}.`);
@@ -107,9 +107,14 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             // single resources are already displayed in the output channel
             if (multiDelete) { ext.outputChannel.appendLog(failedResources.length > 0 ? messageDeleteWithErrors : deleteSucceeded); }
             if (failedResources.length > 0) {
+                context.telemetry.properties.failedResources = failedResources.length.toString();
+                // if the vm itself failed to delete, we want to throw an error to make sure that the node is not removed from the tree
+                if (failedResources.some(r => r.resourceType === virtualMachineLabel)) {
+                    throw new Error(messageDeleteWithErrors);
+                }
+
                 // tslint:disable-next-line: no-floating-promises
                 ext.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
-                context.telemetry.properties.failedResources = failedResources.length.toString();
             } else {
                 vscode.window.showInformationMessage(deleteSucceeded);
             }
