@@ -107,8 +107,8 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             // single resources are already displayed in the output channel
             if (multiDelete) { ext.outputChannel.appendLog(failedResources.length > 0 ? messageDeleteWithErrors : deleteSucceeded); }
             if (failedResources.length > 0) {
+                // tslint:disable-next-line: no-floating-promises
                 ext.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
-                ext.outputChannel.appendLog(messageDeleteWithErrors);
                 context.telemetry.properties.failedResources = failedResources.length.toString();
             } else {
                 vscode.window.showInformationMessage(deleteSucceeded);
