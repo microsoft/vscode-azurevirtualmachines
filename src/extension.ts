@@ -19,6 +19,7 @@ import { openInRemoteSsh } from './commands/openInRemoteSsh';
 import { restartVirtualMachine } from './commands/restartVirtualMachine';
 import { startVirtualMachine } from './commands/startVirtualMachine';
 import { stopVirtualMachine } from './commands/stopVirtualMachine';
+import { remoteSshExtensionId } from './commands/verifyRemoteSshExtension';
 import { viewProperties } from './commands/viewProperties';
 import { ext } from './extensionVariables';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
@@ -57,6 +58,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.viewProperties', viewProperties);
         registerCommand('azureVirtualMachines.openInRemoteSsh', openInRemoteSsh);
         registerCommand('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
+        registerCommand('azureVirtualMachines.showRemoteSshExtension', () => { vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
     });
 
     return createApiProvider([<AzureExtensionApi>{
