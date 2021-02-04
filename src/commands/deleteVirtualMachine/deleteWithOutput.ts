@@ -8,7 +8,7 @@ import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { ResourceToDelete } from "./deleteConstants";
 
-export async function deleteWithOutput(resource: ResourceToDelete, errors: string[]): Promise<void> {
+export async function deleteWithOutput(resource: ResourceToDelete, errors: ResourceToDelete[]): Promise<void> {
     const deleting: string = localize('Deleting', 'Deleting {0} "{1}"...', resource.resourceType, resource.resourceName);
     const deleteSucceeded: string = localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resource.resourceType, resource.resourceName);
 
@@ -17,7 +17,7 @@ export async function deleteWithOutput(resource: ResourceToDelete, errors: strin
         await resource.deleteMethod();
     } catch (error) {
         ext.outputChannel.appendLog(localize('deleteFailed', 'Deleting {0} "{1}" failed: {2}', resource.resourceType, resource.resourceName, parseError(error).message));
-        errors.push(resource.resourceName);
+        errors.push(resource);
         return;
     }
 

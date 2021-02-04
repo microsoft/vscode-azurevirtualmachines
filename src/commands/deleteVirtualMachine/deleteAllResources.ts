@@ -10,8 +10,8 @@ import { createResourceClient } from "../../utils/azureClients";
 import { networkInterfaceLabel, ResourceToDelete, virtualMachineLabel, virtualNetworkLabel } from "./deleteConstants";
 import { deleteWithOutput } from "./deleteWithOutput";
 
-export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<string[]> {
-    const failedResources: string[] = [];
+export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<ResourceToDelete[]> {
+    const failedResources: ResourceToDelete[] = [];
 
     // virtual machines have to be deleted before a lot of other resources so do it first
     // network interfaces have to be delete before public IP and virtual networks
