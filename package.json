@@ -48,6 +48,7 @@
         "onCommand:azureVirtualMachines.deleteVirtualMachine",
         "onCommand:azureVirtualMachines.openInPortal",
         "onCommand:azureVirtualMachines.viewProperties",
+        "onCommand:azureVirtualMachines.reportIssue",
         "onView:azVmTree"
     ],
     "main": "./main.js",
@@ -132,6 +133,11 @@
             {
                 "command": "azureVirtualMachines.openInRemoteSsh",
                 "title": "%azureVirtualMachines.openInRemoteSsh%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.reportIssue",
+                "title": "%azureVirtualMachines.reportIssue%",
                 "category": "Azure Virtual Machines"
             }
         ],

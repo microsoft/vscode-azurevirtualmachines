@@ -14,5 +14,6 @@
     "azureVirtualMachines.promptForPassphrase": "Prompts for a passphrase when creating a Linux Azure Virtual Machine.",
     "azureVirtualMachines.copyIpAddress": "Copy IP Address",
     "azureVirtualMachines.viewProperties": "View Properties",
-    "azureVirtualMachines.openInRemoteSsh": "Connect to Host via Remote SSH"
+    "azureVirtualMachines.openInRemoteSsh": "Connect to Host via Remote SSH",
+    "azureVirtualMachines.reportIssue": "Report Issue..."
 }
