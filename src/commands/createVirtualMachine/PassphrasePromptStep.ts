@@ -23,6 +23,7 @@ export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineW
             password: true,
             validateInput: (value: string | undefined): string | undefined => this.validatePassphrase(value, isWindows)
         }));
+        wizardContext.valuesToMask.push(wizardContext.passphrase);
     }
 
     public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {

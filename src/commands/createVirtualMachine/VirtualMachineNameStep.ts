@@ -27,7 +27,7 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
             prompt,
             validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateVirtualMachineName(wizardContext, value)
         })).trim();
-
+        wizardContext.valuesToMask.push(wizardContext.newVirtualMachineName);
         wizardContext.relatedNameTask = this.generateRelatedName(wizardContext, wizardContext.newVirtualMachineName, resourceGroupNamingRules);
 
     }
