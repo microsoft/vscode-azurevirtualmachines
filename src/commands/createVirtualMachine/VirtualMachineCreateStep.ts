@@ -30,7 +30,11 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
         const storageProfile: ComputeManagementModels.StorageProfile = {
             imageReference: context.image,
-            osDisk: { name: vmName, createOption: 'FromImage', managedDisk: { storageAccountType: 'Premium_LRS' } }
+            osDisk: {
+                name: vmName,
+                createOption: 'FromImage',
+                managedDisk: { storageAccountType: context.isCustomCloud ? 'Standard_LRS' : 'Premium_LRS' }
+            }
         };
 
         const networkInterface: NetworkManagementModels.NetworkInterface = nonNullProp(context, 'networkInterface');
