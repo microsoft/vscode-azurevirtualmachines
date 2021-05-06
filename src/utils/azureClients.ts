@@ -16,9 +16,17 @@ export async function createComputeClient<T extends ISubscriptionContext>(contex
 }
 
 export async function createNetworkClient<T extends ISubscriptionContext>(context: T): Promise<NetworkManagementClient> {
-    return createAzureClient(context, (await import('@azure/arm-network')).NetworkManagementClient);
+    if (context.isCustomCloud) {
+        return <NetworkManagementClient><unknown>createAzureClient(context, (await import('@azure/arm-network-profile-2020-09-01-hybrid')).NetworkManagementClient);
+    } else {
+        return createAzureClient(context, (await import('@azure/arm-network')).NetworkManagementClient);
+    }
 }
 
 export async function createResourceClient<T extends ISubscriptionContext>(context: T): Promise<ResourceManagementClient> {
-    return createAzureClient(context, (await import('@azure/arm-resources')).ResourceManagementClient);
+    if (context.isCustomCloud) {
+        return <ResourceManagementClient><unknown>createAzureClient(context, (await import('@azure/arm-resources-profile-2020-09-01-hybrid')).ResourceManagementClient);
+    } else {
+        return createAzureClient(context, (await import('@azure/arm-resources')).ResourceManagementClient);
+    }
 }
