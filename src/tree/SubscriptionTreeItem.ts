@@ -100,7 +100,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         executeSteps.push(new NetworkSecurityGroupCreateStep());
         executeSteps.push(new NetworkInterfaceCreateStep());
         executeSteps.push(new VirtualMachineCreateStep());
-        executeSteps.push(new VerifyProvidersStep(['Microsoft.Network']));
+        executeSteps.push(new VerifyProvidersStep(['Microsoft.Compute', 'Microsoft.Network']));
 
         const title: string = 'Create new virtual machine';
 
