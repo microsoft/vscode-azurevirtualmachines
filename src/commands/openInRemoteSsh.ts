@@ -25,25 +25,24 @@ export async function openInRemoteSsh(context: IActionContext, node?: VirtualMac
     const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.ensureFile(sshConfigPath);
     const configFile: string = (await fse.readFile(sshConfigPath)).toString();
-    const sshConfig: SSHConfig.HostConfigurationDirective[] = <SSHConfig.HostConfigurationDirective[]><unknown>SSHConfig.parse(configFile);
+    const sshConfig: SSHConfig.HostConfigurationDirective[] = <SSHConfig.HostConfigurationDirective[]>SSHConfig.parse(configFile);
     const hostName: string = await node.getIpAddress();
-    let host: string = node.name;
-    let foundHostName: boolean = false;
 
-    for (const hostEntry of sshConfig) {
-        for (const config of hostEntry.config) {
+    const hostConfig: SSHConfig.HostConfigurationDirective | undefined = sshConfig.find(hostEntry => {
+        // tslint:disable-next-line: strict-boolean-expressions
+        return hostEntry.config && hostEntry.config.find(config => {
             const castedConfig: SSHConfig.BaseConfigurationDirective = <SSHConfig.BaseConfigurationDirective>config;
-            if (castedConfig.param === 'HostName' && castedConfig.value === hostName) {
-                host = Array.isArray(hostEntry.value) ? hostEntry.value[0] : hostEntry.value;
-                foundHostName = true;
-                break;
-            }
-        }
-    }
+            return castedConfig.param === 'HostName' && castedConfig.value === hostName;
+        });
+    });
 
-    if (!foundHostName) {
-        await ext.ui.showWarningMessage(localize('unableFind', 'Unable to find host "{0}" in SSH config.', host), { title: localize('addSSH', 'Add new SSH config host') });
+    let host: string;
+    if (hostConfig === undefined) {
+        await ext.ui.showWarningMessage(localize('unableFind', 'Unable to find host "{0}" in SSH config.', node.name), { title: localize('addSSH', 'Add new SSH config host') });
         await addSshKey(context, node);
+        host = node.name;
+    } else {
+        host = Array.isArray(hostConfig.value) ? hostConfig.value[0] : hostConfig.value;
     }
 
     await commands.executeCommand('opensshremotes.openEmptyWindow', { host });
