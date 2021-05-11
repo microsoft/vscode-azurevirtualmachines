@@ -42,7 +42,6 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
         if (context.os === VirtualMachineOS.linux) {
-            // tslint:disable-next-line: strict-boolean-expressions
             const { sshKeyName, keyData } = await createSshKey(context, vmName, context.passphrase || '');
             context.sshKeyName = sshKeyName;
             const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
@@ -83,7 +82,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         const viewOutput: MessageItem = { title: 'View Output' };
         // Note: intentionally not waiting for the result of this before returning
-        window.showInformationMessage(createdVm, viewOutput).then(async (result: MessageItem | undefined) => {
+        void window.showInformationMessage(createdVm, viewOutput).then(async (result: MessageItem | undefined) => {
             await callWithTelemetryAndErrorHandling('postCreateVM', async (c: IActionContext) => {
                 c.telemetry.properties.dialogResult = result?.title;
                 if (result === viewOutput) {

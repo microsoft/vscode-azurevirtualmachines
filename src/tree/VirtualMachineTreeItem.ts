@@ -59,7 +59,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         super(parent);
         this.virtualMachine = vm;
         this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
-        this.contextValue = !!(vm.osProfile?.linuxConfiguration) ? VirtualMachineTreeItem.linuxContextValue : VirtualMachineTreeItem.windowsContextValue;
+        this.contextValue = vm.osProfile?.linuxConfiguration ? VirtualMachineTreeItem.linuxContextValue : VirtualMachineTreeItem.windowsContextValue;
     }
 
     public getUser(): string {
@@ -113,10 +113,9 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
                     throw new Error(messageDeleteWithErrors);
                 }
 
-                // tslint:disable-next-line: no-floating-promises
-                ext.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
+                void ext.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
             } else {
-                vscode.window.showInformationMessage(deleteSucceeded);
+                void vscode.window.showInformationMessage(deleteSucceeded);
             }
         });
     }
