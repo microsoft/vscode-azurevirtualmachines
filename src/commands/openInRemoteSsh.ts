@@ -29,6 +29,7 @@ export async function openInRemoteSsh(context: IActionContext, node?: VirtualMac
     const hostName: string = await node.getIpAddress();
 
     const hostConfig: SSHConfig.HostConfigurationDirective | undefined = sshConfig.find(hostEntry => {
+        // tslint:disable-next-line: strict-boolean-expressions
         return hostEntry.config && hostEntry.config.find(config => {
             const castedConfig: SSHConfig.BaseConfigurationDirective = <SSHConfig.BaseConfigurationDirective>config;
             return castedConfig.param === 'HostName' && castedConfig.value === hostName;
