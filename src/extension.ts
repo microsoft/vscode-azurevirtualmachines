@@ -6,24 +6,23 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { AzExtTreeDataProvider, AzureTreeItem, AzureUserInput, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerUIExtensionVariables } from 'vscode-azureextensionui';
+import { AzExtTreeDataProvider, AzureTreeItem, AzureUserInput, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from 'vscode-azureextensionui';
 // tslint:disable-next-line:no-submodule-imports
 import { AzureExtensionApi, AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
 import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
 import { copyIpAddress } from './commands/copyIpAddress';
 import { createVirtualMachine, createVirtualMachineAdvanced } from './commands/createVirtualMachine/createVirtualMachine';
-import { deleteNode } from './commands/deleteNode';
+import { deleteVirtualMachine } from './commands/deleteVirtualMachine/deleteVirtualMachine';
 import { openInPortal } from './commands/openInPortal';
 import { openInRemoteSsh } from './commands/openInRemoteSsh';
 import { restartVirtualMachine } from './commands/restartVirtualMachine';
 import { startVirtualMachine } from './commands/startVirtualMachine';
 import { stopVirtualMachine } from './commands/stopVirtualMachine';
+import { remoteSshExtensionId } from './commands/verifyRemoteSshExtension';
 import { viewProperties } from './commands/viewProperties';
 import { ext } from './extensionVariables';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
-import { SubscriptionTreeItem } from './tree/SubscriptionTreeItem';
-import { VirtualMachineTreeItem } from './tree/VirtualMachineTreeItem';
 
 export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
     ext.context = context;
@@ -54,10 +53,16 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.restartVirtualMachine', restartVirtualMachine);
         registerCommand('azureVirtualMachines.stopVirtualMachine', stopVirtualMachine);
         registerCommand('azureVirtualMachines.addSshKey', addSshKey);
-        registerCommand('azureVirtualMachines.deleteVirtualMachine', async (actionContext: IActionContext, node?: SubscriptionTreeItem) => await deleteNode(actionContext, VirtualMachineTreeItem.allOSContextValue, node));
+        registerCommand('azureVirtualMachines.deleteVirtualMachine', deleteVirtualMachine);
         registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
         registerCommand('azureVirtualMachines.viewProperties', viewProperties);
         registerCommand('azureVirtualMachines.openInRemoteSsh', openInRemoteSsh);
+        registerCommand('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
+        registerCommand('azureVirtualMachines.showRemoteSshExtension', () => { vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
+
+        // Suppress "Report an Issue" button for all errors in favor of the command
+        registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
+        registerReportIssueCommand('azureVirtualMachines.reportIssue');
     });
 
     return createApiProvider([<AzureExtensionApi>{

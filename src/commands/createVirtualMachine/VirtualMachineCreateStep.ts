@@ -30,7 +30,11 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
         const storageProfile: ComputeManagementModels.StorageProfile = {
             imageReference: context.image,
-            osDisk: { name: vmName, createOption: 'FromImage', managedDisk: { storageAccountType: 'Premium_LRS' } }
+            osDisk: {
+                name: vmName,
+                createOption: 'FromImage',
+                managedDisk: { storageAccountType: context.isCustomCloud ? 'Standard_LRS' : 'Premium_LRS' }
+            }
         };
 
         const networkInterface: NetworkManagementModels.NetworkInterface = nonNullProp(context, 'networkInterface');
@@ -39,7 +43,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
         if (context.os === VirtualMachineOS.linux) {
             // tslint:disable-next-line: strict-boolean-expressions
-            const { sshKeyName, keyData } = await createSshKey(vmName, context.passphrase || '');
+            const { sshKeyName, keyData } = await createSshKey(context, vmName, context.passphrase || '');
             context.sshKeyName = sshKeyName;
             const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
                 disablePasswordAuthentication: true, ssh: {

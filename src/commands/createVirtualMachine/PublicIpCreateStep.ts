@@ -19,7 +19,12 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
 
         const location: string = nonNullValueAndProp(context.location, 'name');
-        const publicIpProps: NetworkManagementModels.PublicIPAddress = { publicIPAddressVersion: 'IPv4', sku: { name: 'Standard' }, publicIPAllocationMethod: 'Static', location };
+        const publicIpProps: NetworkManagementModels.PublicIPAddress = {
+            publicIPAddressVersion: 'IPv4',
+            sku: { name: context.isCustomCloud ? 'Basic' : 'Standard' },
+            publicIPAllocationMethod: 'Static',
+            location
+        };
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 

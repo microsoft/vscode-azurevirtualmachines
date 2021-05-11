@@ -20,6 +20,7 @@ export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWiz
             value: wizardContext.os === VirtualMachineOS.linux ? 'azureuser' : '',
             validateInput: async (value: string | undefined): Promise<string | undefined> => this.validateUsername(nonNullProp(wizardContext, 'os'), value)
         }));
+        wizardContext.valuesToMask.push(wizardContext.adminUsername);
     }
 
     public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {

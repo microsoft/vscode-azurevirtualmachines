@@ -1,5 +1,22 @@
 # Change Log
 
+## Unreleased
+### Added
+- Now depends on the "Azure Resources" extension, which provides a "Resource Groups" and "Help and Feedback" view
+
+### Changed
+- "Report an Issue" button was removed from errors. Use the "Help and Feedback" view or command palette instead
+- Icons updated to match VS Code's theme. Install new product icon themes [here](https://marketplace.visualstudio.com/search?term=tag%3Aproduct-icon-theme&target=VSCode)
+
+## 0.3.0 - 2021-02-08
+
+### Added
+- Delete VM with associated resources
+- Connect to Host via [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh)
+
+### Fixed
+- [Bugs fixed](https://github.com/microsoft/vscode-azurevirtualmachines/issues?q=is%3Aissue+milestone%3A0.3.0+is%3Aclosed)
+
 ## 0.2.0 - 2020-08-27
 
 ### Added
