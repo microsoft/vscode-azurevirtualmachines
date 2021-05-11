@@ -14,7 +14,7 @@ import { getResourcesAssociatedToVm } from "./getResourcesAssociatedToVm";
 
 export async function deleteVirtualMachine(context: IActionContext & Partial<IDeleteChildImplContext>, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, { ...context, suppressCreatePick: true });
     }
 
     context.telemetry.properties.cancelStep = 'prompt';
