@@ -6,7 +6,7 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
-import { AzureParentTreeItem, AzureTreeItem, IActionContext } from 'vscode-azureextensionui';
+import { AzExtErrorButton, AzureParentTreeItem, AzureTreeItem, IActionContext } from 'vscode-azureextensionui';
 import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
 import { IDeleteChildImplContext, ResourceToDelete, virtualMachineLabel } from '../commands/deleteVirtualMachine/deleteConstants';
 import { ext } from '../extensionVariables';
@@ -112,6 +112,9 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
                 context.telemetry.properties.failedResources = failedResources.length.toString();
                 // if the vm failed to delete or was not being deleted, we want to throw an error to make sure that the node is not removed from the tree
                 if (failedResources.some(r => r.resourceType === virtualMachineLabel) || !context.deleteVm) {
+                    // tslint:disable-next-line: no-floating-promises
+                    const viewOutputAzureButton: AzExtErrorButton = { title: localize('viewOutput', 'View Output'), callback: async (): Promise<void> => ext.outputChannel.show() };
+                    context.errorHandling.buttons = [viewOutputAzureButton];
                     throw new Error(messageDeleteWithErrors);
                 }
 
