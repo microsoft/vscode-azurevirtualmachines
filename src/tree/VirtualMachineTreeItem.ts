@@ -97,9 +97,11 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             if (multiDelete) { ext.outputChannel.appendLog(deleting); }
 
             const failedResources: ResourceToDelete[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
+            const failedResourceList: string = failedResources.map(r => `"${r.resourceName}"`).join(', ');
+
             const messageDeleteWithErrors: string = localize(
                 'messageDeleteWithErrors',
-                `Failed to delete the following resources ${failedResources.join(', ')}.`);
+                'Failed to delete the following resources: {0}.', failedResourceList);
 
             const deleteSucceeded: string = multiDelete ? localize('DeleteSucceeded', 'Successfully deleted {0}.', context.resourceList) :
                 localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
@@ -108,8 +110,8 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
             if (multiDelete) { ext.outputChannel.appendLog(failedResources.length > 0 ? messageDeleteWithErrors : deleteSucceeded); }
             if (failedResources.length > 0) {
                 context.telemetry.properties.failedResources = failedResources.length.toString();
-                // if the vm itself failed to delete, we want to throw an error to make sure that the node is not removed from the tree
-                if (failedResources.some(r => r.resourceType === virtualMachineLabel)) {
+                // if the vm failed to delete or was not being deleted, we want to throw an error to make sure that the node is not removed from the tree
+                if (failedResources.some(r => r.resourceType === virtualMachineLabel) || !context.deleteVm) {
                     throw new Error(messageDeleteWithErrors);
                 }
 

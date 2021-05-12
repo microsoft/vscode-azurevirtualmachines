@@ -33,10 +33,12 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
 
     context.telemetry.properties.cancelStep = 'confirmation';
     await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
+    context.deleteVm = resourcesToDelete.some(v => v.data.resourceType === virtualMachineLabel);
+
     context.telemetry.properties.cancelStep = undefined;
 
     context.telemetry.properties.numOfResources = resourcesToDelete.length.toString();
-    context.telemetry.properties.deleteVm = String(resourcesToDelete.some(v => v.data.resourceType === virtualMachineLabel));
+    context.telemetry.properties.deleteVm = String(context.deleteVm);
 
     context.resourcesToDelete = resourcesToDelete.map(r => r.data);
     context.resourceList = resourceList;

@@ -24,6 +24,11 @@ export interface IDeleteChildImplContext extends IActionContext {
      * String of resources that are being deleted used for output
      */
     resourceList: string;
+
+    /**
+     * Flag to determine if the virtual machine is in the resourcesToDelete
+     */
+    deleteVm?: boolean;
 }
 
 export const networkInterfaceLabel: string = localize('networkInterface', 'network interface');
