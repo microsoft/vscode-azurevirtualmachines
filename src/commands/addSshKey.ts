@@ -7,12 +7,13 @@ import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-com
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
 import { IActionContext, parseError } from "vscode-azureextensionui";
+import { sshFsPath } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
 import { nonNullValueAndProp } from "../utils/nonNull";
-import { configureSshConfig, sshFsPath } from "../utils/sshUtils";
+import { configureSshConfig } from "../utils/sshUtils";
 
 export async function addSshKey(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
     if (!node) {

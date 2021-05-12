@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext } from "vscode-azureextensionui";
-import { localize } from "../../localize";
 
 export type ResourceToDelete = {
     resourceName: string;
@@ -30,7 +29,3 @@ export interface IDeleteChildImplContext extends IActionContext {
      */
     deleteVm?: boolean;
 }
-
-export const networkInterfaceLabel: string = localize('networkInterface', 'network interface');
-export const virtualMachineLabel: string = localize('virtualMachine', 'virtual machine');
-export const virtualNetworkLabel: string = localize('virtualNetwork', 'virtual network');
