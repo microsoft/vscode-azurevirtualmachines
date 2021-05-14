@@ -50,7 +50,6 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
 
         for (let i: number = 0; i < 3; i += 1) {
             // as this isn't being used for security purposes, it should be sufficient to use Math.random()
-            // tslint:disable-next-line: insecure-random
             niName += Math.round(Math.random() * 9);
         }
 

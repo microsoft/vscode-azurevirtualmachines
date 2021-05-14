@@ -77,12 +77,10 @@ export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineW
         const numeric: RegExp = /[0-9]/;
         const specialCharacters: RegExp = /[!@#\$%\^&\*]/;
 
-        // tslint:disable: strict-boolean-expressions
         const lowercaseRequirement: number = password.match(lowercase)?.length || 0;
         const uppercaseRequirement: number = password.match(uppercase)?.length || 0;
         const numericRequirement: number = password.match(numeric)?.length || 0;
         const specialCharactersRequirement: number = password.match(specialCharacters)?.length || 0;
-        // tslint:enable: strict-boolean-expressions
 
         return lowercaseRequirement + uppercaseRequirement + numericRequirement + specialCharactersRequirement;
     }
