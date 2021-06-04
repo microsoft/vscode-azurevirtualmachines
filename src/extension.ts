@@ -7,7 +7,6 @@
 
 import * as vscode from 'vscode';
 import { AzExtTreeDataProvider, AzureTreeItem, AzureUserInput, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from 'vscode-azureextensionui';
-// tslint:disable-next-line:no-submodule-imports
 import { AzureExtensionApi, AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
 import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
@@ -58,7 +57,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommand('azureVirtualMachines.viewProperties', viewProperties);
         registerCommand('azureVirtualMachines.openInRemoteSsh', openInRemoteSsh);
         registerCommand('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
-        registerCommand('azureVirtualMachines.showRemoteSshExtension', () => { vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
+        registerCommand('azureVirtualMachines.showRemoteSshExtension', () => { void vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
 
         // Suppress "Report an Issue" button for all errors in favor of the command
         registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
@@ -71,6 +70,6 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
     }]);
 }
 
-// tslint:disable-next-line:no-empty
 export function deactivateInternal(): void {
+    return;
 }

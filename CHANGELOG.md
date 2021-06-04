@@ -1,12 +1,15 @@
 # Change Log
 
-## Unreleased
+## 0.4.0 - 2021-05-13
 ### Added
 - Now depends on the "Azure Resources" extension, which provides a "Resource Groups" and "Help and Feedback" view
 
 ### Changed
 - "Report an Issue" button was removed from errors. Use the "Help and Feedback" view or command palette instead
 - Icons updated to match VS Code's theme. Install new product icon themes [here](https://marketplace.visualstudio.com/search?term=tag%3Aproduct-icon-theme&target=VSCode)
+
+### Fixed
+- [Bugs fixed](https://github.com/microsoft/vscode-azurevirtualmachines/milestone/9?closed=1)
 
 ## 0.3.0 - 2021-02-08
 

@@ -28,7 +28,6 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
         filters: { 'SSH Public Key': ['pub'] }
     }))[0];
 
-    // tslint:disable-next-line: strict-boolean-expressions
     const extensionName: string = 'enablevmaccess';
     let vmExtension: ComputeManagementModels.VirtualMachineExtension;
 
@@ -45,7 +44,6 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
 
     vmExtension.protectedSettings = {
         ssh_key: (await fse.readFile(sshPublicKey.fsPath)).toString(),
-        // tslint:disable-next-line: strict-boolean-expressions
         username: vm.osProfile && vm.osProfile.adminUsername || 'azureuser'
     };
 
@@ -55,7 +53,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     await window.withProgress({ location: ProgressLocation.Notification, title: addingSshKey }, async (): Promise<void> => {
         ext.outputChannel.appendLog(addingSshKey);
         await computeClient.virtualMachineExtensions.createOrUpdate(nonNullValueAndProp(node, 'resourceGroup'), nonNullValueAndProp(node, 'name'), extensionName, vmExtension);
-        window.showInformationMessage(addingSshKeySucceeded);
+        void window.showInformationMessage(addingSshKeySucceeded);
         ext.outputChannel.appendLog(addingSshKeySucceeded);
     });
 

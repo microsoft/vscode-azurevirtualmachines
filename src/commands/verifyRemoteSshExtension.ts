@@ -10,7 +10,7 @@ import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 
 export async function verifyRemoteSshExtension(context: IActionContext): Promise<void> {
-    // tslint:disable-next-line:no-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const extension: Extension<any> | undefined = extensions.getExtension(remoteSshExtensionId);
     if (extension) {
         if (!extension.isActive) {
@@ -18,8 +18,7 @@ export async function verifyRemoteSshExtension(context: IActionContext): Promise
         }
 
     } else {
-        // tslint:disable-next-line: no-floating-promises
-        ext.ui.showWarningMessage(localize('remoteSshInstall', 'You must have the ["Remote - SSH" extension](command:azureVirtualMachines.showRemoteSshExtension) installed to perform this operation.'));
+        void ext.ui.showWarningMessage(localize('remoteSshInstall', 'You must have the ["Remote - SSH" extension](command:azureVirtualMachines.showRemoteSshExtension) installed to perform this operation.'));
         context.telemetry.properties.cancelStep = 'installRemoteSsh';
         context.errorHandling.suppressDisplay = true;
         throw new Error(`${remoteSshExtensionId} extension is not installed.`);

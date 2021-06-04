@@ -88,7 +88,7 @@ export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPat
     // if the host can't be computed, it returns an empty {}
     const hostEntry: SSHConfig.ResolvedConfiguration = sshConfig.compute(host);
 
-    if (!!hostEntry.Host) {
+    if (hostEntry.Host) {
         let count: number = 2;
 
         // increment until host doesn't already exist
