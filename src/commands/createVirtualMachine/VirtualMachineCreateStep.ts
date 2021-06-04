@@ -7,6 +7,7 @@ import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-com
 import { NetworkManagementModels } from '@azure/arm-network';
 import { MessageItem, Progress, window } from "vscode";
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext } from "vscode-azureextensionui";
+import { viewOutput } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createComputeClient } from '../../utils/azureClients';
@@ -80,7 +81,6 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
         ext.outputChannel.appendLog(createdVm);
 
-        const viewOutput: MessageItem = { title: 'View Output' };
         // Note: intentionally not waiting for the result of this before returning
         void window.showInformationMessage(createdVm, viewOutput).then(async (result: MessageItem | undefined) => {
             await callWithTelemetryAndErrorHandling('postCreateVM', async (c: IActionContext) => {
