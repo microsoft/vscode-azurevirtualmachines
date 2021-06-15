@@ -8,7 +8,7 @@ import { join } from "path";
 import { MessageItem } from "vscode";
 import { localize } from "./localize";
 
-export const viewOutput: MessageItem = { title: 'View Output' };
+export const viewOutput: MessageItem = { title: localize('viewOutput', 'View Output') };
 export const remoteSshExtensionId: string = 'ms-vscode-remote.remote-ssh';
 
 export const networkInterfaceLabel: string = localize('networkInterface', 'network interface');
