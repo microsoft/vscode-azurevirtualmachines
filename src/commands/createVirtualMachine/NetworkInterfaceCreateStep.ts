@@ -5,7 +5,7 @@
 
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import { Progress } from "vscode";
-import { AzureWizardExecuteStep } from "vscode-azureextensionui";
+import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
@@ -17,7 +17,7 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
-        const location: string = nonNullValueAndProp(context.location, 'name');
+        const location: string = (await LocationListStep.getLocation(context)).name
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
 
         // this is the naming convention used by the portal

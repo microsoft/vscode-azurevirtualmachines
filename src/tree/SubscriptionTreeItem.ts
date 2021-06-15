@@ -79,7 +79,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
             size
         });
 
-        wizardContext.locationsTask = getAvailableVMLocations(wizardContext);
+        const computeProvider: string = 'Microsoft.Compute';
+        LocationListStep.setLocationSubset(wizardContext, getAvailableVMLocations(wizardContext), computeProvider);
 
         // By default, only prompt for VM and Location. A new RG is made for every VM
         const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [];
@@ -100,7 +101,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         executeSteps.push(new NetworkSecurityGroupCreateStep());
         executeSteps.push(new NetworkInterfaceCreateStep());
         executeSteps.push(new VirtualMachineCreateStep());
-        executeSteps.push(new VerifyProvidersStep(['Microsoft.Compute', 'Microsoft.Network']));
+        executeSteps.push(new VerifyProvidersStep([computeProvider, 'Microsoft.Network']));
 
         const title: string = 'Create new virtual machine';
 

@@ -6,7 +6,7 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
 import { MessageItem, Progress, window } from "vscode";
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext } from "vscode-azureextensionui";
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext, LocationListStep } from "vscode-azureextensionui";
 import { viewOutput } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -20,9 +20,11 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public priority: number = 260;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        const location = (await LocationListStep.getLocation(context)).name;
+
         context.telemetry.properties.os = context.os;
         context.telemetry.properties.image = context.image?.label;
-        context.telemetry.properties.location = context.location?.name;
+        context.telemetry.properties.location = location;
         context.telemetry.properties.size = context.size;
 
         const computeClient: ComputeManagementClient = await createComputeClient(context);
@@ -61,7 +63,6 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
             osProfile.windowsConfiguration = windowConfiguration;
         }
 
-        const location: string = nonNullValueAndProp(context.location, 'name');
         const virtualMachineProps: ComputeManagementModels.VirtualMachine = { location, hardwareProfile, storageProfile, networkProfile, osProfile };
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
