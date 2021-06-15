@@ -5,10 +5,10 @@
 
 import { Extension, extensions } from "vscode";
 import { IActionContext } from "vscode-azureextensionui";
+import { remoteSshExtensionId } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 
-export const remoteSshExtensionId: string = 'ms-vscode-remote.remote-ssh';
 export async function verifyRemoteSshExtension(context: IActionContext): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const extension: Extension<any> | undefined = extensions.getExtension(remoteSshExtensionId);

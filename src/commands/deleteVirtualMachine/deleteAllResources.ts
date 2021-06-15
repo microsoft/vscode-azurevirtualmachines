@@ -5,9 +5,10 @@
 
 import { ResourceManagementClient, ResourceManagementModels } from "@azure/arm-resources";
 import { ISubscriptionContext } from "vscode-azureextensionui";
+import { networkInterfaceLabel, virtualMachineLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { createResourceClient } from "../../utils/azureClients";
-import { networkInterfaceLabel, ResourceToDelete, virtualMachineLabel, virtualNetworkLabel } from "./deleteConstants";
+import { ResourceToDelete } from "./deleteConstants";
 import { deleteWithOutput } from "./deleteWithOutput";
 
 export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<ResourceToDelete[]> {

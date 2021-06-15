@@ -8,10 +8,10 @@ import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
 import { commands } from 'vscode';
 import { IActionContext } from 'vscode-azureextensionui';
+import { sshFsPath } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
-import { sshFsPath } from '../utils/sshUtils';
 import { addSshKey } from './addSshKey';
 import { verifyRemoteSshExtension } from './verifyRemoteSshExtension';
 

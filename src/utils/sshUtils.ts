@@ -5,20 +5,18 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import * as fse from 'fs-extra';
-import * as os from "os";
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
 import { callWithMaskHandling } from 'vscode-azureextensionui';
 import * as which from 'which';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
+import { sshFsPath } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { createComputeClient } from './azureClients';
 import { cpUtils } from "./cpUtils";
 import { nonNullValueAndProp } from './nonNull';
-
-export const sshFsPath: string = join(os.homedir(), '.ssh');
 
 export async function createSshKey(context: IVirtualMachineWizardContext, vmName: string, passphrase: string): Promise<{ sshKeyName: string; keyData: string }> {
     return await callWithMaskHandling(

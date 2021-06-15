@@ -5,11 +5,12 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { DialogResponses, IActionContext, IAzureQuickPickItem, UserCancelledError } from "vscode-azureextensionui";
+import { virtualMachineLabel } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../../utils/azureClients";
-import { IDeleteChildImplContext, ResourceToDelete, virtualMachineLabel } from "./deleteConstants";
+import { IDeleteChildImplContext, ResourceToDelete } from "./deleteConstants";
 import { getResourcesAssociatedToVm } from "./getResourcesAssociatedToVm";
 
 export async function deleteVirtualMachine(context: IActionContext & Partial<IDeleteChildImplContext>, node?: VirtualMachineTreeItem): Promise<void> {

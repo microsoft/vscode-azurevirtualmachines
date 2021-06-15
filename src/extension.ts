@@ -18,8 +18,8 @@ import { openInRemoteSsh } from './commands/openInRemoteSsh';
 import { restartVirtualMachine } from './commands/restartVirtualMachine';
 import { startVirtualMachine } from './commands/startVirtualMachine';
 import { stopVirtualMachine } from './commands/stopVirtualMachine';
-import { remoteSshExtensionId } from './commands/verifyRemoteSshExtension';
 import { viewProperties } from './commands/viewProperties';
+import { remoteSshExtensionId } from './constants';
 import { ext } from './extensionVariables';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
 

@@ -5,11 +5,12 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { NetworkManagementClient, NetworkManagementModels } from "@azure/arm-network";
+import { networkInterfaceLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient, createNetworkClient } from "../../utils/azureClients";
 import { getNameFromId, getResourceGroupFromId } from "../../utils/azureUtils";
-import { networkInterfaceLabel, ResourceToDelete, virtualNetworkLabel } from "./deleteConstants";
+import { ResourceToDelete } from "./deleteConstants";
 
 export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): Promise<ResourceToDelete[]> {
 
