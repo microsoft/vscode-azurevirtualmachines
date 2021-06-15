@@ -20,7 +20,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public priority: number = 260;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const location = (await LocationListStep.getLocation(context)).name;
+        const location: string = (await LocationListStep.getLocation(context)).name;
 
         context.telemetry.properties.os = context.os;
         context.telemetry.properties.image = context.image?.label;
