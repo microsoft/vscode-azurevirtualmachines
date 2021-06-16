@@ -7,7 +7,7 @@ import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-com
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
-import { callWithMaskHandling } from 'vscode-azureextensionui';
+import { callWithMaskHandling, LocationListStep } from 'vscode-azureextensionui';
 import * as which from 'which';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { sshFsPath } from '../constants';
@@ -57,7 +57,7 @@ export async function createSshKey(context: IVirtualMachineWizardContext, vmName
 
                     const client: ComputeManagementClient = await createComputeClient(context);
                     const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
-                    await client.sshPublicKeys.create(rgName, vmName, { location: nonNullValueAndProp(context.location, 'name') });
+                    await client.sshPublicKeys.create(rgName, vmName, { location: (await LocationListStep.getLocation(context)).name });
 
                     const keyPair: ComputeManagementModels.SshPublicKeyGenerateKeyPairResult = await client.sshPublicKeys.generateKeyPair(rgName, vmName);
                     await fse.writeFile(`${sshKeyPath}.pub`, keyPair.publicKey);
