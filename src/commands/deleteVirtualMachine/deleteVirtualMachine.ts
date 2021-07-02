@@ -19,7 +19,7 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
     }
 
     context.telemetry.properties.cancelStep = 'prompt';
-    const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await ext.ui.showQuickPick(getQuickPicks(node), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
+    const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await context.ui.showQuickPick(getQuickPicks(node), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
     if (resourcesToDelete.length === 0) {
         // if nothing is checked, it should be considered a cancel
         throw new UserCancelledError();
@@ -33,7 +33,7 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
         localize('deleteConfirmation', 'Are you sure you want to delete {0} "{1}"?', resourcesToDelete[0].data.resourceType, resourcesToDelete[0].data.resourceName);
 
     context.telemetry.properties.cancelStep = 'confirmation';
-    await ext.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
+    await context.ui.showWarningMessage(confirmMessage, { modal: true }, DialogResponses.deleteResponse);
     context.deleteVm = resourcesToDelete.some(v => v.data.resourceType === virtualMachineLabel);
 
     context.telemetry.properties.cancelStep = undefined;

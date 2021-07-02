@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep, IWizardOptions } from "vscode-azureextensionui";
-import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { getWorkspaceSetting } from "../../vsCodeConfig/settings";
 import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
@@ -12,27 +11,27 @@ import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 import { VirtualMachineOS } from "./OSListStep";
 
 export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
-    public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
-        const isWindows: boolean = wizardContext.os === VirtualMachineOS.windows;
+    public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
+        const isWindows: boolean = context.os === VirtualMachineOS.windows;
         const prompt: string = !isWindows ? localize('passphrasePrompt', 'Enter a passphrase for connecting to this virtual machine') : localize('passwordPrompt', 'Enter an admin password');
         const placeHolder: string = !isWindows ? localize('enterPassphrase', '(empty for no passphrase)') : '';
 
-        wizardContext.passphrase = (await ext.ui.showInputBox({
+        context.passphrase = (await context.ui.showInputBox({
             prompt,
             placeHolder,
             password: true,
             validateInput: (value: string | undefined): string | undefined => this.validatePassphrase(value, isWindows)
         }));
-        wizardContext.valuesToMask.push(wizardContext.passphrase);
+        context.valuesToMask.push(context.passphrase);
     }
 
-    public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {
+    public shouldPrompt(context: IVirtualMachineWizardContext): boolean {
         const promptForPassphrase: boolean | undefined = getWorkspaceSetting('promptForPassphrase');
-        return !wizardContext.passphrase && !(!promptForPassphrase && wizardContext.os === VirtualMachineOS.linux);
+        return !context.passphrase && !(!promptForPassphrase && context.os === VirtualMachineOS.linux);
     }
 
-    public async getSubWizard(wizardContext: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
-        if (wizardContext.passphrase) {
+    public async getSubWizard(context: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
+        if (context.passphrase) {
             return {
                 promptSteps: [new ConfirmPassphraseStep()]
             };

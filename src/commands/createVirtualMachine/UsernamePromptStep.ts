@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
-import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
@@ -13,18 +12,18 @@ import { VirtualMachineOS } from "./OSListStep";
 const reservedWords: string[] = ['admin', 'administrator', 'root', 'test', 'user'];
 
 export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
-    public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
+    public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
         const prompt: string = localize('usernamePrompt', 'Enter a username');
-        wizardContext.adminUsername = (await ext.ui.showInputBox({
+        context.adminUsername = (await context.ui.showInputBox({
             prompt,
-            value: wizardContext.os === VirtualMachineOS.linux ? 'azureuser' : '',
-            validateInput: async (value: string | undefined): Promise<string | undefined> => this.validateUsername(nonNullProp(wizardContext, 'os'), value)
+            value: context.os === VirtualMachineOS.linux ? 'azureuser' : '',
+            validateInput: async (value: string | undefined): Promise<string | undefined> => this.validateUsername(nonNullProp(context, 'os'), value)
         }));
-        wizardContext.valuesToMask.push(wizardContext.adminUsername);
+        context.valuesToMask.push(context.adminUsername);
     }
 
-    public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {
-        return !wizardContext.adminUsername;
+    public shouldPrompt(context: IVirtualMachineWizardContext): boolean {
+        return !context.adminUsername;
     }
 
     private validateUsername(os: VirtualMachineOS, value: string | undefined): string | undefined {

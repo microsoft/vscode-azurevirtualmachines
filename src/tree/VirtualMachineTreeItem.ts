@@ -119,7 +119,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
                     throw new Error(messageDeleteWithErrors);
                 }
 
-                void ext.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
+                void context.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
             } else {
                 void vscode.window.showInformationMessage(deleteSucceeded);
             }
