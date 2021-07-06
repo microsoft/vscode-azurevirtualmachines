@@ -5,7 +5,6 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
 import { AzureNameStep, IAzureNamingRules, ResourceGroupListStep, resourceGroupNamingRules } from "vscode-azureextensionui";
-import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { createComputeClient } from "../../utils/azureClients";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
@@ -18,29 +17,29 @@ export const virtualMachineNamingRules: IAzureNamingRules = {
 };
 
 export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardContext> {
-    public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
+    public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
         const namingRules: IAzureNamingRules[] = [resourceGroupNamingRules];
         namingRules.push(virtualMachineNamingRules);
 
         const prompt: string = localize('virtualMachineNamePrompt', 'Enter a name for the new virtual machine.');
-        wizardContext.newVirtualMachineName = (await ext.ui.showInputBox({
+        context.newVirtualMachineName = (await context.ui.showInputBox({
             prompt,
-            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateVirtualMachineName(wizardContext, value)
+            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validateVirtualMachineName(context, value)
         })).trim();
-        wizardContext.valuesToMask.push(wizardContext.newVirtualMachineName);
-        wizardContext.relatedNameTask = this.generateRelatedName(wizardContext, wizardContext.newVirtualMachineName, resourceGroupNamingRules);
+        context.valuesToMask.push(context.newVirtualMachineName);
+        context.relatedNameTask = this.generateRelatedName(context, context.newVirtualMachineName, resourceGroupNamingRules);
 
     }
 
-    public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {
-        return !wizardContext.newVirtualMachineName && !wizardContext.virtualMachine;
+    public shouldPrompt(context: IVirtualMachineWizardContext): boolean {
+        return !context.newVirtualMachineName && !context.virtualMachine;
     }
 
-    protected async isRelatedNameAvailable(wizardContext: IVirtualMachineWizardContext, name: string): Promise<boolean> {
-        return await ResourceGroupListStep.isNameAvailable(wizardContext, name);
+    protected async isRelatedNameAvailable(context: IVirtualMachineWizardContext, name: string): Promise<boolean> {
+        return await ResourceGroupListStep.isNameAvailable(context, name);
     }
 
-    private async validateVirtualMachineName(wizardContext: IVirtualMachineWizardContext, name: string | undefined): Promise<string | undefined> {
+    private async validateVirtualMachineName(context: IVirtualMachineWizardContext, name: string | undefined): Promise<string | undefined> {
         name = name ? name.trim() : '';
 
         if (name.length < virtualMachineNamingRules.minLength || name.length > virtualMachineNamingRules.maxLength) {
@@ -49,16 +48,16 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
             return localize('invalidChars', "The name can only contain alphanumeric characters and the symbols '.' and '-'");
         } else if (name.startsWith('.') || name.endsWith('.') || name.startsWith('-') || name.endsWith('-')) {
             return localize('invalidEndingChar', "The name cannot start or end in a '.' or '-'.");
-        } else if (wizardContext.resourceGroup?.name && !await this.isNameAvailableInRG(wizardContext, wizardContext.resourceGroup.name, name)) {
-            return localize('nameAlreadyExists', 'Virtual machine name "{0}" already exists in resource group "{1}".', name, wizardContext.resourceGroup.name);
+        } else if (context.resourceGroup?.name && !await this.isNameAvailableInRG(context, context.resourceGroup.name, name)) {
+            return localize('nameAlreadyExists', 'Virtual machine name "{0}" already exists in resource group "{1}".', name, context.resourceGroup.name);
         } else {
             return undefined;
         }
     }
 
-    private async isNameAvailableInRG(wizardContext: IVirtualMachineWizardContext, rgName: string, name: string): Promise<boolean> {
+    private async isNameAvailableInRG(context: IVirtualMachineWizardContext, rgName: string, name: string): Promise<boolean> {
         // Virtual machine names must be unique to the current resource group.
-        const computeClient: ComputeManagementClient = await createComputeClient(wizardContext);
+        const computeClient: ComputeManagementClient = await createComputeClient(context);
         const vmsInRg: ComputeManagementModels.VirtualMachineListResult = await computeClient.virtualMachines.list(rgName);
         if (vmsInRg.find((vm: ComputeManagementModels.VirtualMachine) => vm.name === name)) {
             return false;

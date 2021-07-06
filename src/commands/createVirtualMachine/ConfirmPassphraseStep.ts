@@ -4,26 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
-import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export class ConfirmPassphraseStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
-    public async prompt(wizardContext: IVirtualMachineWizardContext): Promise<void> {
+    public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
         const prompt: string = localize('confirmPassphrase', 'Confirm your passphrase');
-        await ext.ui.showInputBox({
+        await context.ui.showInputBox({
             prompt,
             password: true,
-            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validatePassphrase(wizardContext, value)
+            validateInput: async (value: string | undefined): Promise<string | undefined> => await this.validatePassphrase(context, value)
         });
     }
 
-    public shouldPrompt(wizardContext: IVirtualMachineWizardContext): boolean {
-        return !!wizardContext.passphrase;
+    public shouldPrompt(context: IVirtualMachineWizardContext): boolean {
+        return !!context.passphrase;
     }
 
-    private async validatePassphrase(wizardContext: IVirtualMachineWizardContext, passphrase: string | undefined): Promise<string | undefined> {
-        if (passphrase !== wizardContext.passphrase) {
+    private async validatePassphrase(context: IVirtualMachineWizardContext, passphrase: string | undefined): Promise<string | undefined> {
+        if (passphrase !== context.passphrase) {
             return localize('passphraseMatch', 'The passphrases must match.');
         }
 

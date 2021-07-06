@@ -37,7 +37,7 @@ export async function openInRemoteSsh(context: IActionContext, node?: VirtualMac
 
     let host: string;
     if (hostConfig === undefined) {
-        await ext.ui.showWarningMessage(localize('unableFind', 'Unable to find host "{0}" in SSH config.', node.name), { title: localize('addSSH', 'Add new SSH config host') });
+        await context.ui.showWarningMessage(localize('unableFind', 'Unable to find host "{0}" in SSH config.', node.name), { title: localize('addSSH', 'Add new SSH config host') });
         await addSshKey(context, node);
         host = node.name;
     } else {

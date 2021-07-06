@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { TestOutputChannel, TestUserInput } from 'vscode-azureextensiondev';
+import { TestOutputChannel } from 'vscode-azureextensiondev';
 import { } from 'vscode-azureextensionui';
 import { ext } from '../extension.bundle';
 
 export let longRunningTestsEnabled: boolean;
-export const testUserInput: TestUserInput = new TestUserInput(vscode);
 
 // Runs before all tests
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
@@ -17,7 +16,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 
     await vscode.commands.executeCommand('azureVirtualMachines.refresh'); // activate the extension before tests begin
     ext.outputChannel = new TestOutputChannel();
-    ext.ui = testUserInput;
 
     longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
 });

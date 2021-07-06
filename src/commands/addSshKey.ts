@@ -23,7 +23,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     const computeClient: ComputeManagementClient = await createComputeClient(node.root);
     const vm: ComputeManagementModels.VirtualMachine = node.virtualMachine;
 
-    const sshPublicKey: Uri = (await ext.ui.showOpenDialog({
+    const sshPublicKey: Uri = (await context.ui.showOpenDialog({
         defaultUri: Uri.file(sshFsPath),
         filters: { 'SSH Public Key': ['pub'] }
     }))[0];

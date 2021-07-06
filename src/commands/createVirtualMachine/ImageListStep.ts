@@ -4,16 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
-import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { ImageReferenceWithLabel, IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from "./OSListStep";
 
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
-
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
         const placeHolder: string = localize('selectImage', 'Select an image');
-        context.image = (await ext.ui.showQuickPick(this.getAvailableImages(context).map((ir) => { return { label: ir.label, data: ir }; }), {
+        context.image = (await context.ui.showQuickPick(this.getAvailableImages(context).map((ir) => { return { label: ir.label, data: ir }; }), {
             placeHolder
         })).data;
     }
