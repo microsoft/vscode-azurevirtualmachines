@@ -14,9 +14,8 @@ export async function getAvailableVMLocations(context: IVirtualMachineWizardCont
     const resourceSkus: ComputeManagementModels.ResourceSkusResult = await computeClient.resourceSkus.list();
     return resourceSkus.
         filter(sku => sku.resourceType && sku.resourceType === 'virtualMachines')
-        .filter(sku => sku.name && sku.name === context.size)
+        .filter(sku => sku.name && sku.name === context.size && sku.locations)
         .filter(sku => sku.restrictions?.length === 0 || sku.restrictions?.find(rescriction => rescriction.type !== 'Location'))
-        .map(sku => {
-            return nonNullProp(sku, 'name');
-        });
+        .map(sku => nonNullProp(sku, 'locations'))
+        .reduce((list, loc) => list.concat(loc));
 }
