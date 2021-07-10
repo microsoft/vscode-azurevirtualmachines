@@ -125,7 +125,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine, undefined /* assume all newly created VMs are running */);
         if (newVm.contextValue === VirtualMachineTreeItem.linuxContextValue) {
-            await configureSshConfig(newVm, `~/.ssh/${wizardContext.sshKeyName}`);
+            await configureSshConfig(context, newVm, `~/.ssh/${wizardContext.sshKeyName}`);
         }
 
         return newVm;

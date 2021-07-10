@@ -26,7 +26,7 @@ export async function openInRemoteSsh(context: IActionContext, node?: VirtualMac
     await fse.ensureFile(sshConfigPath);
     const configFile: string = (await fse.readFile(sshConfigPath)).toString();
     const sshConfig: SSHConfig.HostConfigurationDirective[] = <SSHConfig.HostConfigurationDirective[]>SSHConfig.parse(configFile);
-    const hostName: string = await node.getIpAddress();
+    const hostName: string = await node.getIpAddress(context);
 
     const hostConfig: SSHConfig.HostConfigurationDirective | undefined = sshConfig.find(hostEntry => {
         return hostEntry.config && hostEntry.config.find(config => {
