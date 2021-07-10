@@ -58,5 +58,5 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     });
 
     // the ssh/config file lists the private key, not the .pub file, so remove the ext from the file path
-    await configureSshConfig(node, sshPublicKey.path.substring(0, sshPublicKey.path.length - 4));
+    await configureSshConfig(context, node, sshPublicKey.path.substring(0, sshPublicKey.path.length - 4));
 }

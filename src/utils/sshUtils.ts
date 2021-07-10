@@ -7,7 +7,7 @@ import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-com
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
-import { callWithMaskHandling, LocationListStep } from 'vscode-azureextensionui';
+import { callWithMaskHandling, IActionContext, LocationListStep } from 'vscode-azureextensionui';
 import * as which from 'which';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { sshFsPath } from '../constants';
@@ -75,12 +75,12 @@ export async function createSshKey(context: IVirtualMachineWizardContext, vmName
         passphrase);
 }
 
-export async function configureSshConfig(vmti: VirtualMachineTreeItem, sshKeyPath: string): Promise<void> {
+export async function configureSshConfig(context: IActionContext, vmti: VirtualMachineTreeItem, sshKeyPath: string): Promise<void> {
     const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.ensureFile(sshConfigPath);
 
     // If we find duplicate Hosts, we can just make a new entry called Host (2)...(3)...etc
-    const hostName: string = await vmti.getIpAddress();
+    const hostName: string = await vmti.getIpAddress(context);
     let host: string = vmti.name;
 
     const configFile: string = (await fse.readFile(sshConfigPath)).toString();

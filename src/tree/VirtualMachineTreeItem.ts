@@ -14,7 +14,7 @@ import { ext } from '../extensionVariables';
 import { localize } from '../localize';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
 import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
-import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
+import { nonNullProp, nonNullValue, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
 export class VirtualMachineTreeItem extends AzureTreeItem {
@@ -67,7 +67,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return nonNullValueAndProp(this.virtualMachine.osProfile, 'adminUsername');
     }
 
-    public async getIpAddress(): Promise<string> {
+    public async getIpAddress(context: IActionContext): Promise<string> {
         const networkClient: NetworkManagementClient = await createNetworkClient(this.root);
         const rgName: string = getResourceGroupFromId(this.id);
 
@@ -84,7 +84,16 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
 
         const publicIPAddressName: string = getNameFromId(nonNullValueAndProp(networkInterface.ipConfigurations[0].publicIPAddress, 'id'));
         const ip: NetworkManagementModels.PublicIPAddress = await networkClient.publicIPAddresses.get(rgName, publicIPAddressName);
-        return nonNullProp(ip, 'ipAddress');
+        const privateIp: string | undefined = networkInterface.ipConfigurations[0].privateIPAddress;
+        if (!ip.ipAddress) {
+            if (privateIp) {
+                context.ui.showWarningMessage(localize('noPublicIp', 'Unable to find public IP address. Using private IP address.'))
+            } else {
+                throw new Error(localize('noIpAddress', 'No IP addresses are associated with virtual machine "{0}"', this.name))
+            }
+        }
+
+        return ip.ipAddress ?? nonNullValue(privateIp);
     }
 
     public async deleteTreeItemImpl(context: IDeleteChildImplContext): Promise<void> {
