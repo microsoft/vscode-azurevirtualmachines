@@ -20,7 +20,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
         node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.linuxContextValue, context);
     }
 
-    const computeClient: ComputeManagementClient = await createComputeClient(node.root);
+    const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
     const vm: ComputeManagementModels.VirtualMachine = node.virtualMachine;
 
     const sshPublicKey: Uri = (await context.ui.showOpenDialog({
@@ -58,5 +58,5 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     });
 
     // the ssh/config file lists the private key, not the .pub file, so remove the ext from the file path
-    await configureSshConfig(node, sshPublicKey.path.substring(0, sshPublicKey.path.length - 4));
+    await configureSshConfig(context, node, sshPublicKey.path.substring(0, sshPublicKey.path.length - 4));
 }

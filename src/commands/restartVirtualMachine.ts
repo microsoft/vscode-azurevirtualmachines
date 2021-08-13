@@ -16,7 +16,7 @@ export async function restartVirtualMachine(context: IActionContext, node?: Virt
         node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
     }
 
-    const computeClient: ComputeManagementClient = await createComputeClient(node.root);
+    const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
 
     await node.runWithTemporaryDescription(context, localize('restarting', 'Restarting...'), async () => {
         const vmti: VirtualMachineTreeItem = nonNullValue(node);

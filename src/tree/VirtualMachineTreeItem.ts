@@ -6,7 +6,7 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import * as vscode from 'vscode';
-import { AzExtErrorButton, AzureParentTreeItem, AzureTreeItem, IActionContext } from 'vscode-azureextensionui';
+import { AzExtErrorButton, AzExtParentTreeItem, AzExtTreeItem, IActionContext } from 'vscode-azureextensionui';
 import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
 import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { viewOutput, virtualMachineLabel } from '../constants';
@@ -17,7 +17,7 @@ import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
-export class VirtualMachineTreeItem extends AzureTreeItem {
+export class VirtualMachineTreeItem extends AzExtTreeItem {
     public get label(): string {
         return `${this.name}`;
     }
@@ -56,7 +56,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
     public virtualMachine: ComputeManagementModels.VirtualMachine;
     private _state?: string;
 
-    public constructor(parent: AzureParentTreeItem, vm: ComputeManagementModels.VirtualMachine, instanceView?: ComputeManagementModels.VirtualMachineInstanceView) {
+    public constructor(parent: AzExtParentTreeItem, vm: ComputeManagementModels.VirtualMachine, instanceView?: ComputeManagementModels.VirtualMachineInstanceView) {
         super(parent);
         this.virtualMachine = vm;
         this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
@@ -67,8 +67,8 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         return nonNullValueAndProp(this.virtualMachine.osProfile, 'adminUsername');
     }
 
-    public async getIpAddress(): Promise<string> {
-        const networkClient: NetworkManagementClient = await createNetworkClient(this.root);
+    public async getIpAddress(context: IActionContext): Promise<string> {
+        const networkClient: NetworkManagementClient = await createNetworkClient([context, this]);
         const rgName: string = getResourceGroupFromId(this.id);
 
         const networkInterfaces: ComputeManagementModels.NetworkInterfaceReference[] = nonNullValueAndProp(this.virtualMachine.networkProfile, 'networkInterfaces');
@@ -97,7 +97,7 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${deleting} Check the [output channel](command:${ext.prefix}.showOutputChannel) for status.` }, async (): Promise<void> => {
             if (multiDelete) { ext.outputChannel.appendLog(deleting); }
 
-            const failedResources: ResourceToDelete[] = await deleteAllResources(this.root, this.resourceGroup, resourcesToDelete);
+            const failedResources: ResourceToDelete[] = await deleteAllResources(context, this.subscription, this.resourceGroup, resourcesToDelete);
             const failedResourceList: string = failedResources.map(r => `"${r.resourceName}"`).join(', ');
 
             const messageDeleteWithErrors: string = localize(
@@ -126,17 +126,17 @@ export class VirtualMachineTreeItem extends AzureTreeItem {
         });
     }
 
-    public async refreshImpl(_context: IActionContext): Promise<void> {
+    public async refreshImpl(context: IActionContext): Promise<void> {
         try {
-            this._state = await this.getState();
+            this._state = await this.getState(context);
         } catch {
             this._state = undefined;
         }
 
     }
 
-    public async getState(): Promise<string | undefined> {
-        const computeClient: ComputeManagementClient = await createComputeClient(this.root);
+    public async getState(context: IActionContext): Promise<string | undefined> {
+        const computeClient: ComputeManagementClient = await createComputeClient([context, this]);
         return this.getStateFromInstanceView(await computeClient.virtualMachines.instanceView(this.resourceGroup, this.name));
     }
 
