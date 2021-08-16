@@ -6,25 +6,25 @@
 import { ComputeManagementClient } from '@azure/arm-compute';
 import { NetworkManagementClient } from '@azure/arm-network';
 import { ResourceManagementClient } from '@azure/arm-resources';
-import { createAzureClient, ISubscriptionContext } from 'vscode-azureextensionui';
+import { AzExtClientContext, createAzureClient, parseClientContext } from 'vscode-azureextensionui';
 
 // Lazy-load @azure packages to improve startup performance.
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript
 
-export async function createComputeClient<T extends ISubscriptionContext>(context: T): Promise<ComputeManagementClient> {
+export async function createComputeClient(context: AzExtClientContext): Promise<ComputeManagementClient> {
     return createAzureClient(context, (await import('@azure/arm-compute')).ComputeManagementClient);
 }
 
-export async function createNetworkClient<T extends ISubscriptionContext>(context: T): Promise<NetworkManagementClient> {
-    if (context.isCustomCloud) {
+export async function createNetworkClient(context: AzExtClientContext): Promise<NetworkManagementClient> {
+    if (parseClientContext(context).isCustomCloud) {
         return <NetworkManagementClient><unknown>createAzureClient(context, (await import('@azure/arm-network-profile-2020-09-01-hybrid')).NetworkManagementClient);
     } else {
         return createAzureClient(context, (await import('@azure/arm-network')).NetworkManagementClient);
     }
 }
 
-export async function createResourceClient<T extends ISubscriptionContext>(context: T): Promise<ResourceManagementClient> {
-    if (context.isCustomCloud) {
+export async function createResourceClient(context: AzExtClientContext): Promise<ResourceManagementClient> {
+    if (parseClientContext(context).isCustomCloud) {
         return <ResourceManagementClient><unknown>createAzureClient(context, (await import('@azure/arm-resources-profile-2020-09-01-hybrid')).ResourceManagementClient);
     } else {
         return createAzureClient(context, (await import('@azure/arm-resources')).ResourceManagementClient);

@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ResourceManagementClient, ResourceManagementModels } from "@azure/arm-resources";
-import { ISubscriptionContext } from "vscode-azureextensionui";
+import { IActionContext, ISubscriptionContext } from "vscode-azureextensionui";
 import { networkInterfaceLabel, virtualMachineLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { createResourceClient } from "../../utils/azureClients";
 import { ResourceToDelete } from "./deleteConstants";
 import { deleteWithOutput } from "./deleteWithOutput";
 
-export async function deleteAllResources(context: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<ResourceToDelete[]> {
+export async function deleteAllResources(context: IActionContext, subscription: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<ResourceToDelete[]> {
     const failedResources: ResourceToDelete[] = [];
 
     // virtual machines have to be deleted before a lot of other resources so do it first
@@ -32,7 +32,7 @@ export async function deleteAllResources(context: ISubscriptionContext, resource
 
     await Promise.all(parallelResources.map(async r => await deleteWithOutput(r, failedResources)));
 
-    const resourceClient: ResourceManagementClient = await createResourceClient(context);
+    const resourceClient: ResourceManagementClient = await createResourceClient([context, subscription]);
 
     const resources: ResourceManagementModels.ResourceListResult = await resourceClient.resources.listByResourceGroup(resourceGroupName);
     // It's unlikely "nextLink" will be defined if the first batch returned no resources, but technically possible. We'll just skip deleting in that case

@@ -19,7 +19,7 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
     }
 
     context.telemetry.properties.cancelStep = 'prompt';
-    const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await context.ui.showQuickPick(getQuickPicks(node), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
+    const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await context.ui.showQuickPick(getQuickPicks(context, node), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
     if (resourcesToDelete.length === 0) {
         // if nothing is checked, it should be considered a cancel
         throw new UserCancelledError();
@@ -48,14 +48,14 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
 
 }
 
-async function getQuickPicks(node: VirtualMachineTreeItem): Promise<IAzureQuickPickItem<ResourceToDelete>[]> {
-    const resources: ResourceToDelete[] = await getResourcesAssociatedToVm(node);
+async function getQuickPicks(context: IActionContext, node: VirtualMachineTreeItem): Promise<IAzureQuickPickItem<ResourceToDelete>[]> {
+    const resources: ResourceToDelete[] = await getResourcesAssociatedToVm(context, node);
 
     // add the vm to the resources to delete since it is not an associated resource
     resources.unshift({
         resourceName: node.name, resourceType: virtualMachineLabel, picked: true,
         deleteMethod: async (): Promise<void> => {
-            const computeClient: ComputeManagementClient = await createComputeClient(node.root);
+            const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
             await computeClient.virtualMachines.deleteMethod(node.resourceGroup, node.name);
         }
     });

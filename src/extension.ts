@@ -6,7 +6,7 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { AzExtTreeDataProvider, AzureTreeItem, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from 'vscode-azureextensionui';
+import { AzExtTreeDataProvider, AzExtTreeItem, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from 'vscode-azureextensionui';
 import { AzureExtensionApi, AzureExtensionApiProvider } from 'vscode-azureextensionui/api';
 import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
@@ -42,8 +42,8 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         context.subscriptions.push(ext.treeView);
 
         registerCommand('azureVirtualMachines.selectSubscriptions', () => vscode.commands.executeCommand('azure-account.selectSubscriptions'));
-        registerCommand('azureVirtualMachines.refresh', async (actionContext: IActionContext, node?: AzureTreeItem) => await ext.tree.refresh(actionContext, node));
-        registerCommand('azureVirtualMachines.loadMore', async (actionContext: IActionContext, node: AzureTreeItem) => await ext.tree.loadMore(node, actionContext));
+        registerCommand('azureVirtualMachines.refresh', async (actionContext: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(actionContext, node));
+        registerCommand('azureVirtualMachines.loadMore', async (actionContext: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, actionContext));
         registerCommand('azureVirtualMachines.openInPortal', openInPortal);
         registerCommand('azureVirtualMachines.createVirtualMachine', createVirtualMachine);
         registerCommand('azureVirtualMachines.createVirtualMachineAdvanced', createVirtualMachineAdvanced);

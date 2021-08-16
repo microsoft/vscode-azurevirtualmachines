@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
-import { AzExtTreeItem, AzureTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { ImageListStep, ubuntu1804LTSImage } from '../commands/createVirtualMachine/ImageListStep';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
@@ -35,12 +35,12 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         return this._nextLink !== undefined;
     }
 
-    public async loadMoreChildrenImpl(clearCache: boolean): Promise<AzExtTreeItem[]> {
+    public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
         if (clearCache) {
             this._nextLink = undefined;
         }
 
-        const client: ComputeManagementClient = await createComputeClient(this.root);
+        const client: ComputeManagementClient = await createComputeClient([context, this]);
         let virtualMachines: ComputeManagementModels.VirtualMachineListResult;
 
         try {
@@ -72,9 +72,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
             }
         );
     }
-    public async createChildImpl(context: ICreateChildImplContext): Promise<AzureTreeItem> {
-        const size: ComputeManagementModels.VirtualMachineSizeTypes = this.root.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
-        const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.root, {
+    public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
+        const size: ComputeManagementModels.VirtualMachineSizeTypes = this.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
+        const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.subscription, {
             addressPrefix: '10.1.0.0/24',
             size
         });
@@ -125,7 +125,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine, undefined /* assume all newly created VMs are running */);
         if (newVm.contextValue === VirtualMachineTreeItem.linuxContextValue) {
-            await configureSshConfig(newVm, `~/.ssh/${wizardContext.sshKeyName}`);
+            await configureSshConfig(context, newVm, `~/.ssh/${wizardContext.sshKeyName}`);
         }
 
         return newVm;

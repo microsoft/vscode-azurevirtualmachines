@@ -5,6 +5,7 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { NetworkManagementClient, NetworkManagementModels } from "@azure/arm-network";
+import { IActionContext } from "vscode-azureextensionui";
 import { networkInterfaceLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
@@ -12,7 +13,7 @@ import { createComputeClient, createNetworkClient } from "../../utils/azureClien
 import { getNameFromId, getResourceGroupFromId } from "../../utils/azureUtils";
 import { ResourceToDelete } from "./deleteConstants";
 
-export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): Promise<ResourceToDelete[]> {
+export async function getResourcesAssociatedToVm(context: IActionContext, node: VirtualMachineTreeItem): Promise<ResourceToDelete[]> {
 
     const associatedResources: ResourceToDelete[] = [];
 
@@ -26,7 +27,7 @@ export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): 
 
     }
 
-    const networkClient: NetworkManagementClient = await createNetworkClient(node.root);
+    const networkClient: NetworkManagementClient = await createNetworkClient([context, node]);
     for (const networkRef of networkReferences) {
         // if we fail to get a resource, we keep trying to get all associated resources we can rather than erroring out
         try {
@@ -85,7 +86,7 @@ export async function getResourcesAssociatedToVm(node: VirtualMachineTreeItem): 
     if (node.data.storageProfile?.osDisk?.managedDisk?.id) {
         const diskName: string = getNameFromId(node.data.storageProfile.osDisk.managedDisk.id);
         const diskRg: string = getResourceGroupFromId(node.data.storageProfile.osDisk.managedDisk.id);
-        const computeClient: ComputeManagementClient = await createComputeClient(node.root);
+        const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
         associatedResources.push({
             resourceName: diskName, resourceType: localize('disk', 'disk'),
             deleteMethod: async (): Promise<void> => { await computeClient.disks.deleteMethod(diskRg, diskName); }
