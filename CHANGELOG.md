@@ -1,9 +1,11 @@
 # Change Log
 
-## Unreleased
+## 0.4.1 - 2021-08-24
 
 ### Changed
 - Minimum version of VS Code is now 1.57.0
+### Fixed
+- [No longer display locations that are unavailable](https://github.com/microsoft/vscode-azurevirtualmachines/issues/20)
 
 ## 0.4.0 - 2021-05-13
 ### Added
