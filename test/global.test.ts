@@ -30,3 +30,10 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
     this.timeout(90 * 1000);
 });
+
+suite("suite1", () => {
+    test("test1", () => {
+        // suiteSetup only runs if a suite/test exists, so added a placeholder test here so we can at least verify the extension can activate
+        // once actual tests exist, we can remove this
+    });
+});
