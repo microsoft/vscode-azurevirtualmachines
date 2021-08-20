@@ -7,12 +7,13 @@ import { ComputeManagementClient } from '@azure/arm-compute';
 import { ResourceManagementClient } from '@azure/arm-resources';
 import * as vscode from 'vscode';
 import { createTestActionContext, TestAzureAccount } from 'vscode-azureextensiondev';
-import { AzExtTreeDataProvider, AzureAccountTreeItem, createComputeClient, createResourceClient, ext, ISubscriptionContext } from '../../extension.bundle';
+import { AzExtTreeDataProvider, AzureAccountTreeItem, createComputeClient, createResourceClient, ext, getAvailableVMLocations, getVirtualMachineSize, ISubscriptionContext } from '../../extension.bundle';
 import { longRunningTestsEnabled } from '../global.test';
 
 export let testAccount: TestAzureAccount;
 export let computeClient: ComputeManagementClient;
 export const resourceGroupsToDelete: string[] = [];
+export let locations: string[];
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     if (longRunningTestsEnabled) {
@@ -22,6 +23,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         ext.azureAccountTreeItem = new AzureAccountTreeItem(testAccount);
         ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, 'azureDatabases.loadMore');
         computeClient = await createComputeClient([await createTestActionContext(), <ISubscriptionContext>testAccount.getSubscriptionContext()]);
+        locations = await getAvailableVMLocations(computeClient, getVirtualMachineSize(testAccount.getSubscriptionContext()));
     }
 });
 

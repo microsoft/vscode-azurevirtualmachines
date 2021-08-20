@@ -32,3 +32,5 @@ export { nonNullProp } from './src/utils/nonNull';
 export { ImageReferenceWithLabel } from './src/commands/createVirtualMachine/IVirtualMachineWizardContext';
 export { windowsImages, linuxImages } from './src/commands/createVirtualMachine/ImageListStep';
 export { VirtualMachineTreeItem } from "./src/tree/VirtualMachineTreeItem";
+export { getAvailableVMLocations } from "./src/commands/createVirtualMachine/getAvailableVMLocations";
+export { getVirtualMachineSize } from "./src/commands/createVirtualMachine/getVirtualMachineSize";
