@@ -28,7 +28,7 @@ export { AzureAccountTreeItem } from './src/tree/AzureAccountTreeItem';
 export { createComputeClient, createResourceClient } from './src/utils/azureClients';
 export { getRandomHexString } from './src/utils/randomUtils'
 export { createVirtualMachineAdvanced } from './src/commands/createVirtualMachine/createVirtualMachine';
-export { nonNullProp } from './src/utils/nonNull';
+export { nonNullProp, nonNullValue } from './src/utils/nonNull';
 export { ImageReferenceWithLabel } from './src/commands/createVirtualMachine/IVirtualMachineWizardContext';
 export { windowsImages, linuxImages } from './src/commands/createVirtualMachine/ImageListStep';
 export { VirtualMachineTreeItem } from "./src/tree/VirtualMachineTreeItem";

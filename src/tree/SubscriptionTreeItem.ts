@@ -5,7 +5,6 @@
 
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
-import { computeClient } from '../../test/nightly/global.resource.test';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { getVirtualMachineSize } from '../commands/createVirtualMachine/getVirtualMachineSize';
 import { ImageListStep, ubuntu1804LTSImage } from '../commands/createVirtualMachine/ImageListStep';
@@ -82,7 +81,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         });
 
         const computeProvider: string = 'Microsoft.Compute';
-        LocationListStep.setLocationSubset(wizardContext, getAvailableVMLocations(computeClient, wizardContext.size), computeProvider);
+        LocationListStep.setLocationSubset(wizardContext, getAvailableVMLocations(await createComputeClient(wizardContext), wizardContext.size), computeProvider);
 
         // By default, only prompt for VM and Location. A new RG is made for every VM
         const promptSteps: AzureWizardPromptStep<IVirtualMachineWizardContext>[] = [];

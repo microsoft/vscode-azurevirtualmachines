@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { locations } from "./global.resource.test";
+const locations = [];
 
 let locationCount: number = getStartingIndex();
 export function getRotatingLocation(): string {
