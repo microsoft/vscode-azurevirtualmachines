@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 let locationCount: number = getStartingIndex();
-const locations: string[] = ['Australia East', 'East Asia', 'East US', 'North Europe', 'South Central US', 'Southeast Asia', 'UK South', 'West Europe'];
+const locations: string[] = ["East US", "East US 2", "West US 2", "West US 3", "Australia East", "Southeast Asia", "North Europe", "UK South", "West Europe", "Central US", "South Africa North", "Central India", "Japan East", "France Central", "Germany West Central"];
 export function getRotatingLocation(): string {
     locationCount += 1;
     return locations[locationCount % locations.length];
