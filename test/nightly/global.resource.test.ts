@@ -7,7 +7,7 @@ import { ComputeManagementClient } from '@azure/arm-compute';
 import { ResourceManagementClient } from '@azure/arm-resources';
 import * as vscode from 'vscode';
 import { createTestActionContext, TestAzureAccount } from 'vscode-azureextensiondev';
-import { AzExtTreeDataProvider, AzureAccountTreeItem, createComputeClient, createResourceClient, ext, getAvailableVMLocations, getVirtualMachineSize, ISubscriptionContext } from '../../extension.bundle';
+import { AzExtLocation, AzExtTreeDataProvider, AzureAccountTreeItem, createComputeClient, createGenericClient, createResourceClient, ext, getAvailableVMLocations, getVirtualMachineSize, ISubscriptionContext } from '../../extension.bundle';
 import { longRunningTestsEnabled } from '../global.test';
 
 export let testAccount: TestAzureAccount;
@@ -23,7 +23,15 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         ext.azureAccountTreeItem = new AzureAccountTreeItem(testAccount);
         ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, 'azureDatabases.loadMore');
         computeClient = await createComputeClient([await createTestActionContext(), <ISubscriptionContext>testAccount.getSubscriptionContext()]);
-        locations = await getAvailableVMLocations(computeClient, getVirtualMachineSize(testAccount.getSubscriptionContext()));
+        const locationIds = await getAvailableVMLocations(computeClient, getVirtualMachineSize(testAccount.getSubscriptionContext()));
+        // NOTE: Using a generic client because the subscriptions sdk is pretty far behind on api-version
+        const client = await createGenericClient(await createTestActionContext(), testAccount.getSubscriptionContext());
+        const response = await client.sendRequest({
+            method: 'GET',
+            url: `/subscriptions/${testAccount.getSubscriptionContext().subscriptionId}/locations?api-version=2019-11-01`
+        });
+        const allLocations = <AzExtLocation[]>response.parsedBody.value;
+        locations = allLocations.filter((location) => locationIds.includes(location.name)).map((location) => location.displayName);
     }
 });
 
