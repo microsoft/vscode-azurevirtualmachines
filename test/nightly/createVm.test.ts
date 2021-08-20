@@ -86,9 +86,8 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
                 resourceGroup = vmNode.resourceGroup;
             });
         });
-
+        assert.notStrictEqual(resourceGroup, '');
         if (resourceGroup !== '') {
-
             resourceGroupsToDelete.push(resourceGroup);
 
             assert.strictEqual(true, true);
@@ -96,7 +95,6 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
             const virtualMachine = await computeClient.virtualMachines.get(resourceGroup, resourceName);
             assert.strictEqual(virtualMachine.name, resourceName);
             assert.strictEqual(virtualMachine.osProfile?.adminUsername, "username");
-            assert.strictEqual(virtualMachine.osProfile?.adminPassword, passwordInputs[0]);
         }
     }
 });
