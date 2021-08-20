@@ -24,3 +24,7 @@ export * from './src/utils/delay';
 export * from './src/utils/cpUtils';
 export * from './src/vsCodeConfig/extensions';
 export * from 'vscode-azureextensionui';
+export { AzureAccountTreeItem } from './src/tree/AzureAccountTreeItem';
+export { createComputeClient, createResourceClient } from './src/utils/azureClients';
+export { getRandomHexString } from './src/utils/randomUtils'
+export { createVirtualMachine } from './src/commands/createVirtualMachine/createVirtualMachine';
