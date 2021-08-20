@@ -5,7 +5,7 @@ import {
 } from "../../extension.bundle";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
-import { resourceGroupsToDelete } from "./global.resource.test";
+import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
 
 /**
  * NOTE: We have to setup the test before suiteSetup, but we can't start the test until suiteSetup. That's why we have separate callback/task properties
@@ -40,13 +40,13 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
     const parallelTests: IParallelTest[] = [];
     for (const os of ['Windows', 'Linux']) {
         const images = os === "Windows" ? windowsImages : linuxImages;
-        // for (const image of images) {
-        for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
-            parallelTests.push({
-                title: `${os} - ${images[0].label} - ${passwordInput.title}`,
-                callback: async () => await testCreateVirtualMachine(os, images[0].label, passwordInput.input)
-            });
-        // }
+        for (const image of images) {
+            for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
+                parallelTests.push({
+                    title: `${os} - ${image.label} - ${passwordInput.title}`,
+                    callback: async () => await testCreateVirtualMachine(os, image.label, passwordInput.input)
+                });
+        }
     }
 
     suiteSetup(function (this: Mocha.Context): void {
@@ -93,10 +93,10 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
 
             assert.strictEqual(true, true);
 
-            // const vms = await computeClient.virtualMachines.get(vmNode.resourceGroup, resourceName);
-            // vms.nextLink
-            // const doesVmExist = vms.find((vm) => vm.name === resourceName);
-            // assert.notStrictEqual(doesVmExist, -1);
+            const virtualMachine = await computeClient.virtualMachines.get(resourceGroup, resourceName);
+            assert.strictEqual(virtualMachine.name, resourceName);
+            assert.strictEqual(virtualMachine.osProfile?.adminUsername, "username");
+            assert.strictEqual(virtualMachine.osProfile?.adminPassword, passwordInputs[0]);
         }
     }
 });
