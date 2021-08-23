@@ -43,9 +43,9 @@ const linuxImages: ImageReferenceWithLabel[] = [
         version: 'latest'
     },
     {
-        label: 'SUSE Enterprise Linux 15 SP1 - Gen1',
+        label: 'SUSE Enterprise Linux 15 SP2 - Gen1',
         publisher: 'suse',
-        offer: 'sles-15-sp1-basic',
+        offer: 'sles-15-sp2-basic',
         sku: 'gen1',
         version: 'latest'
     },
@@ -109,9 +109,9 @@ const windowsImages: ImageReferenceWithLabel[] = [
         version: 'latest'
     },
     {
-        label: 'Windows 10 Pro, Version 1809 - Gen1',
+        label: 'Windows 10 Pro, Version 20H2 - Gen 1',
         publisher: 'MicrosoftWindowsDesktop',
         offer: 'Windows-10',
-        sku: 'rs5-pro',
+        sku: '20h2-pro',
         version: 'latest'
     }];
