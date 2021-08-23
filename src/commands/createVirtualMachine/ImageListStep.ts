@@ -45,7 +45,7 @@ export const linuxImages: ImageReferenceWithLabel[] = [
     {
         label: 'SUSE Enterprise Linux 15 SP2 - Gen1',
         publisher: 'suse',
-        offer: 'sles-15-sp2-basicgen1',
+        offer: 'sles-15-sp2-basic',
         sku: 'gen1',
         version: 'latest'
     },
