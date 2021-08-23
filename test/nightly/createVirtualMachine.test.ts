@@ -67,7 +67,7 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
     }
 
     async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
-        const resourceName: string = getRandomHexString();
+        const resourceName: string = `vm-${getRandomHexString()}`; // append vm- to ensure name isn't only numbers
         const location = getRotatingLocation();
 
         const testInputs: (string | RegExp)[] = [
