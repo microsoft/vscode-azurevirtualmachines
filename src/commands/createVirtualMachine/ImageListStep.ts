@@ -33,7 +33,7 @@ export const ubuntu1804LTSImage: ImageReferenceWithLabel = {
     version: 'latest'
 };
 
-const linuxImages: ImageReferenceWithLabel[] = [
+export const linuxImages: ImageReferenceWithLabel[] = [
     ubuntu1804LTSImage,
     {
         label: 'Red Hat Enterprise Linux 8.2 (LVM) - Gen1',
@@ -86,7 +86,7 @@ const linuxImages: ImageReferenceWithLabel[] = [
     }
 ];
 
-const windowsImages: ImageReferenceWithLabel[] = [
+export const windowsImages: ImageReferenceWithLabel[] = [
     {
         label: 'Windows Server 2019 Datacenter - Gen 1',
         publisher: 'MicrosoftWindowsServer',
