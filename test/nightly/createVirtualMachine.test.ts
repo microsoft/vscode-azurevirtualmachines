@@ -43,8 +43,7 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
 
     const parallelTests: IParallelTest[] = [];
     for (const os of ['Windows', 'Linux']) {
-        const images = os === "Windows" ? windowsImages : linuxImages;
-        for (const image of images) {
+        for (const image of os === "Windows" ? windowsImages : linuxImages) {
             for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
                 parallelTests.push({
                     title: `${os} - ${image.label} - ${passwordInput.title}`,
