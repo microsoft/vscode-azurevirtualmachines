@@ -7,7 +7,7 @@ import { ComputeManagementClient } from '@azure/arm-compute';
 import { ResourceManagementClient } from '@azure/arm-resources';
 import * as vscode from 'vscode';
 import { createTestActionContext, TestAzureAccount } from 'vscode-azureextensiondev';
-import { AzExtTreeDataProvider, AzureAccountTreeItem, createComputeClient, createResourceClient, ext, ISubscriptionContext } from '../../extension.bundle';
+import { AzExtTreeDataProvider, AzureAccountTreeItem, createAzureClient, createComputeClient, ext, ISubscriptionContext } from '../../extension.bundle';
 import { longRunningTestsEnabled } from '../global.test';
 
 export let testAccount: TestAzureAccount;
@@ -29,21 +29,21 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
     if (longRunningTestsEnabled) {
         this.timeout(10 * 60 * 1000);
-        await Promise.all(resourceGroupsToDelete.map(async resource => {
-            await beginDeleteResourceGroup(resource);
-        }));
+        deleteResourceGroups();
         ext.azureAccountTreeItem.dispose();
     }
 });
 
-export async function beginDeleteResourceGroup(resourceGroup: string): Promise<void> {
-    const client: ResourceManagementClient = await createResourceClient([await createTestActionContext(), <ISubscriptionContext>testAccount.getSubscriptionContext()]);
-    if ((await client.resourceGroups.checkExistence(resourceGroup)).body) {
-        console.log(`Started deleting resource group "${resourceGroup}"...`);
-        await client.resourceGroups.beginDeleteMethod(resourceGroup);
-        console.log(`Successfully deleted resource group "${resourceGroup}".`);
-    } else {
-        // If the test failed, the resource group might not actually exist
-        console.log(`Ignoring resource group "${resourceGroup}" because it does not exist.`);
-    }
+async function deleteResourceGroups(): Promise<void> {
+    const rgClient: ResourceManagementClient = createAzureClient([await createTestActionContext(), testAccount.getSubscriptionContext()], ResourceManagementClient);
+    await Promise.all(resourceGroupsToDelete.map(async resourceGroup => {
+        if ((await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
+            console.log(`Started deleting resource group "${resourceGroup}"...`);
+            await rgClient.resourceGroups.beginDeleteMethod(resourceGroup);
+            console.log(`Successfully deleted resource group "${resourceGroup}".`);
+        } else {
+            // If the test failed, the resource group might not actually exist
+            console.log(`Ignoring resource group "${resourceGroup}" because it does not exist.`);
+        }
+    }));
 }
