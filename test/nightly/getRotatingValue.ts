@@ -3,9 +3,8 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { locations } from "./global.resource.test";
-
 let locationCount: number = getStartingIndex();
+const locations = ["West US 2", "West Europe", "East US", "Southeast Asia"];
 export function getRotatingLocation(): string {
     locationCount += 1;
     return locations[locationCount % locations.length];

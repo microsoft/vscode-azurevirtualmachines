@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as assert from "assert";
-import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
-import { AzExtLocation, createGenericClient, createVirtualMachineAdvanced, getAvailableVMLocations, getRandomHexString, getVirtualMachineSize, linuxImages, nonNullProp, windowsImages } from "../../extension.bundle";
+import { runWithTestActionContext } from "vscode-azureextensiondev";
+import { createVirtualMachineAdvanced, getRandomHexString, linuxImages, nonNullProp, windowsImages } from "../../extension.bundle";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
-import { computeClient, resourceGroupsToDelete, testAccount } from "./global.resource.test";
+import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
 
 /**
  * NOTE: We have to setup the test before suiteSetup, but we can't start the test until suiteSetup. That's why we have separate callback/task properties
@@ -101,20 +101,3 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
         }
     }
 });
-
-
-export async function getVMLocationInputs(): Promise<string[]> {
-    const context = testAccount.getSubscriptionContext();
-    const locationIds = await getAvailableVMLocations(computeClient, getVirtualMachineSize(context));
-
-    // NOTE: Using a generic client because the subscriptions sdk is pretty far behind on api-version
-    const client = await createGenericClient(await createTestActionContext(), context);
-    const response = await client.sendRequest({
-        method: 'GET',
-        url: `/subscriptions/${context.subscriptionId}/locations?api-version=2019-11-01`
-    });
-    const allLocations = <AzExtLocation[]>response.parsedBody.value;
-
-    return allLocations.filter((location) => locationIds.includes(location.name)).map((location) => location.displayName);
-}
-

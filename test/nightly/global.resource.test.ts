@@ -9,7 +9,6 @@ import * as vscode from 'vscode';
 import { createTestActionContext, TestAzureAccount } from 'vscode-azureextensiondev';
 import { AzExtTreeDataProvider, AzureAccountTreeItem, createComputeClient, createResourceClient, ext, ISubscriptionContext } from '../../extension.bundle';
 import { longRunningTestsEnabled } from '../global.test';
-import { getVMLocationInputs } from './createVirtualMachine.test';
 
 export let testAccount: TestAzureAccount;
 export let computeClient: ComputeManagementClient;
@@ -24,7 +23,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         ext.azureAccountTreeItem = new AzureAccountTreeItem(testAccount);
         ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, 'azureDatabases.loadMore');
         computeClient = await createComputeClient([await createTestActionContext(), <ISubscriptionContext>testAccount.getSubscriptionContext()]);
-        locations = await getVMLocationInputs();
     }
 });
 
