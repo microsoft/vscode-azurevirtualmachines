@@ -55,7 +55,7 @@ export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineW
     }
 
     private validateWindowsPassword(value: string | undefined): string | undefined {
-        const passwordMinLength: number = 8;
+        const passwordMinLength: number = 12;
         const passwordMaxLength: number = 123;
 
         if (!value) {
