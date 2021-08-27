@@ -26,7 +26,7 @@ interface IPasswordInput {
 
 suite("Create virtual machine", function (this: Mocha.Suite): void {
 
-    this.timeout(6 * 60 * 1000);
+    this.timeout(8 * 60 * 1000);
 
     const password = "password123!";
     const standardPasswordInput: IPasswordInput = {

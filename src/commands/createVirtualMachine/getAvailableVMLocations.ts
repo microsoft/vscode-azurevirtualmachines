@@ -4,14 +4,17 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
+import { createComputeClient } from "../../utils/azureClients";
 import { nonNullProp } from "../../utils/nonNull";
+import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
-export async function getAvailableVMLocations(computeClient: ComputeManagementClient, size?: ComputeManagementModels.VirtualMachineSizeTypes): Promise<string[]> {
+export async function getAvailableVMLocations(context: IVirtualMachineWizardContext): Promise<string[]> {
+    const computeClient: ComputeManagementClient = await createComputeClient(context);
 
     const resourceSkus: ComputeManagementModels.ResourceSkusResult = await computeClient.resourceSkus.list();
     return resourceSkus.
         filter(sku => sku.resourceType && sku.resourceType === 'virtualMachines')
-        .filter(sku => sku.name && sku.name === size && sku.locations)
+        .filter(sku => sku.name && sku.name === context.size && sku.locations)
         .filter(sku => sku.restrictions?.length === 0 || sku.restrictions?.find(rescriction => rescriction.type !== 'Location'))
         .map(sku => nonNullProp(sku, 'locations'))
         .reduce((list, loc) => list.concat(loc));
