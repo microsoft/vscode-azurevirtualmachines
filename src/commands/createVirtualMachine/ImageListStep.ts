@@ -9,9 +9,7 @@ import { extraImagesMap } from "../../constants";
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
-
 const apiVersion = '2018-08-01-beta';
-
 
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
