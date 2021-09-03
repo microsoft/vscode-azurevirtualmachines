@@ -4,7 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
+=======
+import { ComputeManagementModels } from "@azure/arm-compute";
+import { AzExtRequestPrepareOptions, AzureWizardPromptStep, IActionContext, IAzureQuickPickItem, sendRequestWithTimeout } from "vscode-azureextensionui";
+import { extraImagesMap } from "../../constants";
+>>>>>>> Stashed changes
 import { localize } from '../../localize';
 import { ImageReferenceWithLabel, IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from "./OSListStep";
@@ -37,6 +43,19 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
 
     private getAvailableImages(context: IVirtualMachineWizardContext): ImageReferenceWithLabel[] {
         return context.os === VirtualMachineOS.windows ? windowsImages : linuxImages;
+    }
+
+    private getExtraImageQuickPicks(context: IVirtualMachineWizardContext): IAzureQuickPickItem[] {
+        if (context.os === 'Linux') {
+            return [
+                {
+                    label: 'Data Science Virtual Machine - Ubuntu 18.04 - Gen1',
+                    data: undefined
+                }
+            ];
+        } else {
+            return [];
+        }
     }
 
     private getExtraImageQuickPicks(context: IVirtualMachineWizardContext): IAzureQuickPickItem[] {
