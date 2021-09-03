@@ -25,7 +25,7 @@ interface IPasswordInput {
     input: string[];
 }
 
-suite("Create virtual machine", function (this: Mocha.Suite): void {
+suite("Create virtual machine", async function (this: Mocha.Suite): Promise<void> {
 
     this.timeout(8 * 60 * 1000);
 

@@ -300,7 +300,7 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@azure/arm-compute": "^15.0.0",
+        "@azure/arm-compute": "^16.4.0",
         "@azure/arm-network": "^23.2.0",
         "@azure/arm-network-profile-2020-09-01-hybrid": "^1.0.0",
         "@azure/arm-resources": "^4.0.0",
