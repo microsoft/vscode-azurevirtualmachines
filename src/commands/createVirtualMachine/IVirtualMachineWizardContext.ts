@@ -7,7 +7,6 @@ import { ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
 import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
 
-export type ImageReferenceWithLabel = ComputeManagementModels.ImageReference & { label: string };
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
     /**
      * The newly created Virtual Machine

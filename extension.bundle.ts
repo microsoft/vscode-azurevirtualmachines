@@ -13,7 +13,6 @@
 export * from 'vscode-azureextensionui';
 export { createVirtualMachineAdvanced } from './src/commands/createVirtualMachine/createVirtualMachine';
 export { ImageListStep } from './src/commands/createVirtualMachine/ImageListStep';
-export { ImageReferenceWithLabel } from './src/commands/createVirtualMachine/IVirtualMachineWizardContext';
 export { activateInternal, deactivateInternal } from './src/extension';
 // Exports for tests
 // The tests are not packaged with the webpack bundle and therefore only have access to code exported from this file.
@@ -30,6 +29,4 @@ export * from './src/utils/delay';
 export { nonNullProp, nonNullValue } from './src/utils/nonNull';
 export { getRandomHexString } from './src/utils/randomUtils';
 export * from './src/vsCodeConfig/extensions';
-export * from './src/vsCodeConfig/settings';
-
 

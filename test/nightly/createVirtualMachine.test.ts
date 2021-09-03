@@ -25,11 +25,11 @@ interface IPasswordInput {
     input: string[];
 }
 
-suite("Create virtual machine", async function (this: Mocha.Suite): Promise<void> {
+suite("Create virtual machine", function (this: Mocha.Suite): void {
 
     this.timeout(8 * 60 * 1000);
 
-    const password = "password123!";
+    const password = `${getRandomHexString(10)}123!`;
     const standardPasswordInput: IPasswordInput = {
         title: "standard password",
         input: [password, password]
