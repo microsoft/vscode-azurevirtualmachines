@@ -113,7 +113,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
 }
 
 
-type FeaturedImage = {
+export type FeaturedImage = {
     displayName: string,
     freeTierEligible: boolean,
     id: string,

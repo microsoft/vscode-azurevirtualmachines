@@ -5,9 +5,9 @@
 
 import { ComputeManagementModels } from "@azure/arm-compute";
 import * as assert from "assert";
-import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
-import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep, nonNullProp } from "../../extension.bundle";
-import { longRunningTestsEnabled } from "../global.test";
+import { runWithTestActionContext } from "vscode-azureextensiondev";
+import { createVirtualMachineAdvanced, getRandomHexString, nonNullProp } from "../../extension.bundle";
+import { linuxImages, longRunningTestsEnabled, windowsImages } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
 
@@ -25,7 +25,7 @@ interface IPasswordInput {
     input: string[];
 }
 
-suite("Create virtual machine", async function (this: Mocha.Suite): Promise<void> {
+suite("Create virtual machine", function (this: Mocha.Suite): void {
 
     this.timeout(8 * 60 * 1000);
 
@@ -46,9 +46,7 @@ suite("Create virtual machine", async function (this: Mocha.Suite): Promise<void
     const oss: ComputeManagementModels.OperatingSystemType[] = ['Linux', 'Windows'];
 
     for (const os of oss) {
-        const context = await createTestActionContext();
-        const images = await new ImageListStep().getFeaturedImages(context, os);
-        for (const image of images) {
+        for (const image of os === 'Windows' ? windowsImages : linuxImages) {
             for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
                 parallelTests.push({
                     title: `${os} - ${image.displayName} - ${passwordInput.title}`,

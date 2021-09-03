@@ -12,7 +12,7 @@
 // Export activate/deactivate for main.js
 export * from 'vscode-azureextensionui';
 export { createVirtualMachineAdvanced } from './src/commands/createVirtualMachine/createVirtualMachine';
-export { ImageListStep } from './src/commands/createVirtualMachine/ImageListStep';
+export { FeaturedImage, ImageListStep } from './src/commands/createVirtualMachine/ImageListStep';
 export { activateInternal, deactivateInternal } from './src/extension';
 // Exports for tests
 // The tests are not packaged with the webpack bundle and therefore only have access to code exported from this file.

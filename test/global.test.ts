@@ -4,11 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { TestOutputChannel, TestUserInput } from 'vscode-azureextensiondev';
+import { createTestActionContext, TestOutputChannel, TestUserInput } from 'vscode-azureextensiondev';
 import { } from 'vscode-azureextensionui';
-import { ext, registerOnActionStartHandler } from '../extension.bundle';
+import { ext, FeaturedImage, ImageListStep, registerOnActionStartHandler } from '../extension.bundle';
 
 export let longRunningTestsEnabled: boolean;
+export let linuxImages: FeaturedImage[] = [];
+export let windowsImages: FeaturedImage[] = [];
 
 // Runs before all tests
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
@@ -23,6 +25,11 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     });
 
     longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
+    if (longRunningTestsEnabled) {
+        const context = await createTestActionContext();
+        linuxImages = await new ImageListStep().getFeaturedImages(context, 'Linux');
+        windowsImages = await new ImageListStep().getFeaturedImages(context, 'Windows');
+    }
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
