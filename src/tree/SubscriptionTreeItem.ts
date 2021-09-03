@@ -6,11 +6,11 @@
 import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
 import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
-import { ImageListStep, ubuntu1804LTSImage } from '../commands/createVirtualMachine/ImageListStep';
+import { ImageListStep } from '../commands/createVirtualMachine/ImageListStep';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { NetworkInterfaceCreateStep } from '../commands/createVirtualMachine/NetworkInterfaceCreateStep';
 import { NetworkSecurityGroupCreateStep } from '../commands/createVirtualMachine/NetworkSecurityGroupCreateStep';
-import { OSListStep, VirtualMachineOS } from '../commands/createVirtualMachine/OSListStep';
+import { OSListStep } from '../commands/createVirtualMachine/OSListStep';
 import { PassphrasePromptStep } from '../commands/createVirtualMachine/PassphrasePromptStep';
 import { PublicIpCreateStep } from '../commands/createVirtualMachine/PublicIpCreateStep';
 import { SubnetCreateStep } from '../commands/createVirtualMachine/SubnetCreateStep';
@@ -88,7 +88,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         promptSteps.push(new VirtualMachineNameStep());
         promptSteps.push(new OSListStep());
-        promptSteps.push(new ImageListStep());
+        const imageListStep = new ImageListStep();
+        promptSteps.push(imageListStep);
 
         promptSteps.push(new UsernamePromptStep());
         promptSteps.push(new PassphrasePromptStep());
@@ -107,8 +108,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         if (!context.advancedCreation) {
             // for basic create, default to image Ubuntu 18.04 LTS
-            wizardContext.os = VirtualMachineOS.linux;
-            wizardContext.image = ubuntu1804LTSImage;
+            wizardContext.os = 'Linux';
+            wizardContext.imageTask = imageListStep.getDefaultImageReference(wizardContext);
             wizardContext.adminUsername = 'azureuser';
         }
 

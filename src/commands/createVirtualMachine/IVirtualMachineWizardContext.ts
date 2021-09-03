@@ -6,7 +6,6 @@
 import { ComputeManagementModels } from '@azure/arm-compute';
 import { NetworkManagementModels } from '@azure/arm-network';
 import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
-import { VirtualMachineOS } from './OSListStep';
 
 export type ImageReferenceWithLabel = ComputeManagementModels.ImageReference & { label: string };
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
@@ -30,12 +29,16 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     /**
      * The OS of the VM.  The default is `Linux`.
      */
-    os?: VirtualMachineOS;
+    os?: ComputeManagementModels.OperatingSystemTypes;
 
+    /**
+     * The image task used to retrieve the image.  Because the task can take a while, we should retrieve it in parallel while users answer prompts.
+     */
+    imageTask?: Promise<ComputeManagementModels.ImageReference>;
     /**
      * The image used to create the VM.  The default is `Ubuntu Server 18.04 LTS`.
      */
-    image?: ImageReferenceWithLabel;
+    image?: ComputeManagementModels.ImageReference;
 
     /**
      * The network interface of the new VM.  This contains all the ipConfigurations such as public IP and subnet

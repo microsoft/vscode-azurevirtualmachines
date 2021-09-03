@@ -14,7 +14,6 @@ import { createComputeClient } from '../../utils/azureClients';
 import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { createSshKey } from '../../utils/sshUtils';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
-import { VirtualMachineOS } from './OSListStep';
 
 export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 260;
@@ -23,7 +22,6 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const location: string = (await LocationListStep.getLocation(context)).name;
 
         context.telemetry.properties.os = context.os;
-        context.telemetry.properties.image = context.image?.label;
         context.telemetry.properties.location = location;
         context.telemetry.properties.size = context.size;
 
@@ -31,6 +29,8 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size };
 
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
+        context.image = await context.imageTask;
+
         const storageProfile: ComputeManagementModels.StorageProfile = {
             imageReference: context.image,
             osDisk: {
@@ -44,7 +44,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const networkProfile: ComputeManagementModels.NetworkProfile = { networkInterfaces: [{ id: networkInterface.id }] };
 
         const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
-        if (context.os === VirtualMachineOS.linux) {
+        if (context.os === 'Linux') {
             const { sshKeyName, keyData } = await createSshKey(context, vmName, context.passphrase || '');
             context.sshKeyName = sshKeyName;
             const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
