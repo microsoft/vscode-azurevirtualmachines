@@ -15,7 +15,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
         const placeHolder: string = localize('selectImage', 'Select an image');
         const featuredImages: IAzureQuickPickItem<FeaturedImage | undefined>[] = (await this.getFeaturedImages(context)).map((fi) => { return { label: fi.displayName, data: fi }; });
-        const picks = featuredImages.concat(this.getExtraImageQuickPicks(context));
+        const picks = featuredImages.concat(this.getExtraImageQuickPicks(context.os));
 
         const image = (await context.ui.showQuickPick(picks, { placeHolder }));
         context.telemetry.properties.image = image.label;
@@ -33,7 +33,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
     }
 
     public async getDefaultImageReference(context: IVirtualMachineWizardContext): Promise<ComputeManagementModels.ImageReference> {
-        const images = await this.getFeaturedImages(context);
+        const images = await this.getFeaturedImages(context, context.os);
         // if we can't find Ubuntu Server 18.04 LTS for some reason, just default to the first image
         const defaultImage = images.find(i => /UbuntuServer1804LTS18_04/.test(i.legacyPlanId)) || images[0];
 
@@ -41,7 +41,10 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return await this.getImageReference(context, plan);
     }
 
-    private async getFeaturedImages(context: IVirtualMachineWizardContext): Promise<FeaturedImage[]> {
+    public async getFeaturedImages(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType): Promise<FeaturedImage[]> {
+        // default to Linux if os is not available
+        os ||= 'Linux';
+
         const options: AzExtRequestPrepareOptions = {
             method: 'GET',
             url: 'https://catalogapi.azure.com/catalog/curationgrouplisting',
@@ -53,7 +56,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         };
 
         const images = <FeaturedImage[]>(await sendRequestWithTimeout(context, options, 5 * 1000, undefined)).parsedBody;
-        return images.filter(i => i.operatingSystem.family === context.os);
+        return images.filter(i => i.operatingSystem.family === os);
     }
 
     private async getPlanFromLegacyPlanId(context: IActionContext, featuredImage: FeaturedImage): Promise<PlanFromLegacyPlanId> {
@@ -93,16 +96,17 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return createdUiDefintion.parameters.imageReference;
     }
 
-    private getExtraImageQuickPicks(context: IVirtualMachineWizardContext): IAzureQuickPickItem[] {
-        if (context.os === 'Linux') {
+    private getExtraImageQuickPicks(os?: ComputeManagementModels.OperatingSystemType): IAzureQuickPickItem[] {
+        if (os === 'Windows') {
+            return [];
+        } else {
+            // defaults to Linux
             return [
                 {
                     label: 'Data Science Virtual Machine - Ubuntu 18.04 - Gen1',
                     data: undefined
                 }
             ];
-        } else {
-            return [];
         }
     }
 }
