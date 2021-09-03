@@ -3,17 +3,32 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+<<<<<<< Updated upstream
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
 import { localize } from '../../localize';
 import { ImageReferenceWithLabel, IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { VirtualMachineOS } from "./OSListStep";
+=======
+import { ComputeManagementModels } from "@azure/arm-compute";
+import { AzExtRequestPrepareOptions, AzureWizardPromptStep, IActionContext, IAzureQuickPickItem, sendRequestWithTimeout } from "vscode-azureextensionui";
+import { extraImagesMap } from "../../constants";
+>>>>>>> Stashed changes
 
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
         const placeHolder: string = localize('selectImage', 'Select an image');
-        context.image = (await context.ui.showQuickPick(this.getAvailableImages(context).map((ir) => { return { label: ir.label, data: ir }; }), {
-            placeHolder
-        })).data;
+        const featuredImages: IAzureQuickPickItem<FeaturedImage | undefined>[] = (await this.getFeaturedImages(context)).map((fi) => { return { label: fi.displayName, data: fi }; });
+        const picks = featuredImages.concat(this.getExtraImageQuickPicks(context));
+
+        const image = (await context.ui.showQuickPick(picks, { placeHolder }));
+        context.telemetry.properties.image = image.label;
+
+        if (image.data === undefined) {
+            context.image = extraImagesMap[image.label];
+        } else {
+            const plan = await this.getPlanFromLegacyPlanId(context, image.data);
+            context.imageTask = this.getImageReference(context, plan);
+        }
     }
 
     public shouldPrompt(context: IVirtualMachineWizardContext): boolean {
@@ -23,6 +38,20 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
     private getAvailableImages(context: IVirtualMachineWizardContext): ImageReferenceWithLabel[] {
         return context.os === VirtualMachineOS.windows ? windowsImages : linuxImages;
     }
+
+    private getExtraImageQuickPicks(context: IVirtualMachineWizardContext): IAzureQuickPickItem[] {
+        if (context.os === 'Linux') {
+            return [
+                {
+                    label: 'Data Science Virtual Machine - Ubuntu 18.04 - Gen1',
+                    data: undefined
+                }
+            ];
+        } else {
+            return [];
+        }
+    }
+
 }
 
 export const ubuntu1804LTSImage: ImageReferenceWithLabel = {
