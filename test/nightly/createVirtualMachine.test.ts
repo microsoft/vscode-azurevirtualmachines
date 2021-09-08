@@ -5,8 +5,10 @@
 
 import { ComputeManagementModels } from "@azure/arm-compute";
 import * as assert from "assert";
+import * as vscode from 'vscode';
 import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
 import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
+import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
 
@@ -25,10 +27,13 @@ interface IPasswordInput {
 }
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
-    const createVmSuite = suite("Create virtual machine", () => {
-    });
+    if (!longRunningTestsEnabled) {
+        this.skip();
+    }
 
+    const createVmSuite = suite("Create virtual machine", () => { });
     createVmSuite.timeout(8 * 60 * 1000);
+
     const password = `${getRandomHexString(10)}123!`;
     const standardPasswordInput: IPasswordInput = {
         title: "standard password",
@@ -45,6 +50,8 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
     const parallelTests: IParallelTest[] = [];
     const oss: ComputeManagementModels.OperatingSystemType[] = ['Linux', 'Windows'];
 
+    // there are cases where the extension isn't activated yet
+    await vscode.commands.executeCommand('azureVirtualMachines.refresh'); // activate the extension before tests begin
     const context = await createTestActionContext();
     const images = await new ImageListStep().getFeaturedImages(context);
     const linuxImages = images.filter(i => i.operatingSystem.family === 'Linux');
