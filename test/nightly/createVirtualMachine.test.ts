@@ -6,7 +6,7 @@
 import { ComputeManagementModels } from "@azure/arm-compute";
 import * as assert from "assert";
 import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
-import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep, nonNullProp } from "../../extension.bundle";
+import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
@@ -66,14 +66,12 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
                     });
             }
         }
-        for (const t of parallelTests) {
-            t.task = t.callback();
-        }
 
         for (const t of parallelTests) {
-            it(t.title, async () => {
-                await nonNullProp(t, 'task');
-            });
+            this.addTest(test(t.title, async () => {
+                await t.callback();
+            }));
+
         }
     })
 
