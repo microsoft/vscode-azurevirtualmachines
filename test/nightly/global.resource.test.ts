@@ -13,7 +13,6 @@ import { longRunningTestsEnabled } from '../global.test';
 export let testAccount: TestAzureAccount;
 export let computeClient: ComputeManagementClient;
 export const resourceGroupsToDelete: string[] = [];
-export let locations: string[];
 
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
     if (longRunningTestsEnabled) {
@@ -21,7 +20,8 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         testAccount = new TestAzureAccount(vscode);
         await testAccount.signIn();
         ext.azureAccountTreeItem = new AzureAccountTreeItem(testAccount);
-        ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, 'azureDatabases.loadMore');
+        ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, 'azureVirtualMachines.loadMore');
+
         computeClient = await createComputeClient([await createTestActionContext(), <ISubscriptionContext>testAccount.getSubscriptionContext()]);
     }
 });

@@ -5,9 +5,9 @@
 
 import { ComputeManagementModels } from "@azure/arm-compute";
 import * as assert from "assert";
-import { runWithTestActionContext } from "vscode-azureextensiondev";
-import { createVirtualMachineAdvanced, getRandomHexString, nonNullProp } from "../../extension.bundle";
-import { linuxImages, longRunningTestsEnabled, windowsImages } from "../global.test";
+import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
+import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep, nonNullProp } from "../../extension.bundle";
+import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
 
@@ -29,47 +29,53 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
 
     this.timeout(8 * 60 * 1000);
 
-    const password = `${getRandomHexString(10)}123!`;
-    const standardPasswordInput: IPasswordInput = {
-        title: "standard password",
-        input: [password, password]
-    }
-
-    const windowsPasswordInputs: IPasswordInput[] = [standardPasswordInput];
-    const linuxPasswordInputs: IPasswordInput[] = [standardPasswordInput, {
-        title: 'no password',
-        input: [""]
-    }];
-
-
-    const parallelTests: IParallelTest[] = [];
-    const oss: ComputeManagementModels.OperatingSystemType[] = ['Linux', 'Windows'];
-
-    for (const os of oss) {
-        for (const image of os === 'Windows' ? windowsImages : linuxImages) {
-            for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
-                parallelTests.push({
-                    title: `${os} - ${image.displayName} - ${passwordInput.title}`,
-                    callback: async () => await testCreateVirtualMachine(os, image.displayName, passwordInput.input)
-                });
-        }
-    }
-
     suiteSetup(function (this: Mocha.Context): void {
         if (!longRunningTestsEnabled) {
             this.skip();
         }
+    });
 
+    test('Create Virtual Machines', async () => {
+        const password = `${getRandomHexString(10)}123!`;
+        const standardPasswordInput: IPasswordInput = {
+            title: "standard password",
+            input: [password, password]
+        }
+
+        const windowsPasswordInputs: IPasswordInput[] = [standardPasswordInput];
+        const linuxPasswordInputs: IPasswordInput[] = [standardPasswordInput, {
+            title: 'no password',
+            input: [""]
+        }];
+
+
+        const parallelTests: IParallelTest[] = [];
+        const oss: ComputeManagementModels.OperatingSystemType[] = ['Linux', 'Windows'];
+
+        const context = await createTestActionContext();
+        const images = await new ImageListStep().getFeaturedImages(context);
+        const linuxImages = images.filter(i => i.operatingSystem.family === 'Linux');
+        const windowsImages = images.filter(i => i.operatingSystem.family === 'Windows');
+
+        for (const os of oss) {
+            for (const image of os === 'Windows' ? windowsImages : linuxImages) {
+                for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
+                    parallelTests.push({
+                        title: `${os} - ${image.displayName} - ${passwordInput.title}`,
+                        callback: async () => await testCreateVirtualMachine(os, image.displayName, passwordInput.input)
+                    });
+            }
+        }
         for (const t of parallelTests) {
             t.task = t.callback();
         }
-    });
 
-    for (const t of parallelTests) {
-        test(t.title, async () => {
-            await nonNullProp(t, 'task');
-        });
-    }
+        for (const t of parallelTests) {
+            test(t.title, async () => {
+                await nonNullProp(t, 'task');
+            });
+        }
+    })
 
     async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
         const resourceName: string = `vm-${getRandomHexString()}`; // append vm- to ensure name isn't only numbers

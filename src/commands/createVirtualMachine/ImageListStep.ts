@@ -9,7 +9,7 @@ import { extraImagesMap } from "../../constants";
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
-const apiVersion = '2018-08-01-beta';
+export const apiVersion = '2018-08-01-beta';
 
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
@@ -33,8 +33,8 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return !context.image && !context.imageTask;
     }
 
-    public async getDefaultImageReference(context: IVirtualMachineWizardContext): Promise<ComputeManagementModels.ImageReference> {
-        const images = await this.getFeaturedImages(context, context.os);
+    public async getDefaultImageReference(context: IActionContext): Promise<ComputeManagementModels.ImageReference> {
+        const images = await this.getFeaturedImages(context);
         // if we can't find Ubuntu Server 18.04 LTS for some reason, just default to the first image
         const defaultImage = images.find(i => /UbuntuServer1804LTS18_04/.test(i.legacyPlanId)) || images[0];
 
