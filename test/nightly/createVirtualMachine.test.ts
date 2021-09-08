@@ -5,103 +5,34 @@
 
 import { ComputeManagementModels } from "@azure/arm-compute";
 import * as assert from "assert";
-import * as vscode from 'vscode';
 import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
-import { parseError } from "vscode-azureextensionui";
 import { createVirtualMachine, createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
-
-/**
- * NOTE: We have to setup the test before suiteSetup, but we can't start the test until suiteSetup. That's why we have separate callback/task properties
- */
-interface IParallelTest {
-    title: string;
-    task?: Promise<void>;
-    callback(): Promise<void>;
-}
 
 interface IPasswordInput {
     title: string;
     input: string[];
 }
 
-export const createVmSuite = suite("Create virtual machine", () => {
-    suiteSetup(async function (this: Mocha.Context): Promise<void> {
+let password: string;
+let standardPasswordInput: IPasswordInput;
+
+suite("Create virtual machine", () => {
+    suiteSetup(function (this: Mocha.Context): void {
         if (!longRunningTestsEnabled) {
             this.skip();
         }
 
-        createVmSuite.timeout(8 * 60 * 1000);
-
-        const password = `AzVm-${getRandomHexString(10)}123!`;
-        const standardPasswordInput: IPasswordInput = {
+        password = `AzVm-${getRandomHexString(10)}123!`;
+        standardPasswordInput = {
             title: "standard password",
             input: [password, password]
         }
-
-        const windowsPasswordInputs: IPasswordInput[] = [standardPasswordInput];
-        const linuxPasswordInputs: IPasswordInput[] = [standardPasswordInput, {
-            title: 'no password',
-            input: [""]
-        }];
-
-
-        const parallelTests: IParallelTest[] = [];
-        const oss: ComputeManagementModels.OperatingSystemType[] = ['Linux', 'Windows'];
-
-        // there are cases where the extension isn't activated yet
-        await vscode.commands.executeCommand('azureVirtualMachines.refresh'); // activate the extension before tests begin
-        const context = await createTestActionContext();
-        const images = await new ImageListStep().getFeaturedImages(context);
-        const linuxImages = images.filter(i => i.operatingSystem.family === 'Linux');
-        const windowsImages = images.filter(i => i.operatingSystem.family === 'Windows');
-
-        for (const os of oss) {
-            for (const image of os === 'Windows' ? windowsImages : linuxImages) {
-                for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs) {
-                    parallelTests.push({
-                        title: `${os} - ${image.displayName} - ${passwordInput.title}`,
-                        callback: async () => await testCreateVirtualMachine(os, image.displayName, passwordInput.input)
-                    });
-                }
-            }
-        }
-
-        for (const t of parallelTests) {
-            createVmSuite.addTest(test(t.title, async () => {
-                try { await t.callback() } catch (err) { assert.fail(parseError(err).message) }
-            }));
-        }
     });
 
-    async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
-        const resourceName: string = `vm-${getRandomHexString()}`; // append vm- to ensure name isn't only numbers
-        const location = getRotatingLocation();
-
-        const testInputs: (string | RegExp)[] = [
-            resourceName,
-            os,
-            image,
-            "username",
-            ...passwordInputs,
-            location
-        ];
-
-        let resourceGroup = '';
-
-        await runWithTestActionContext("CreateVirtualMachineAdvanced", async (context) => {
-            await context.ui.runWithInputs(testInputs, async () => {
-                const vmNode = await createVirtualMachineAdvanced(context);
-                resourceGroup = vmNode.resourceGroup;
-            });
-        });
-
-        await verifyVmCreated(resourceGroup, resourceName);
-    }
-
-    test('Virtual Machine - Basic Create', async () => {
+    test('Basic Create', async () => {
         const location = getRotatingLocation();
         const resourceName: string = `vm-${getRandomHexString()}`;
         const testInputs: (string | RegExp)[] = [
@@ -116,8 +47,69 @@ export const createVmSuite = suite("Create virtual machine", () => {
                 await verifyVmCreated(vmNode.resourceGroup, resourceName)
             });
         });
-    })
+    });
+
+    test('Advanced Create - Linux', async () => {
+        const linuxPasswordInputs: IPasswordInput[] = [standardPasswordInput, {
+            title: 'no password',
+            input: [""]
+        }];
+
+        const parallelTests: Promise<void>[] = await createVmTestsByOs('Linux', linuxPasswordInputs);
+        await Promise.all(parallelTests);
+    });
+
+    test('Advanced Create - Windows', async () => {
+        const windowsPasswordInputs: IPasswordInput[] = [standardPasswordInput];
+
+        const parallelTests: Promise<void>[] = await createVmTestsByOs('Windows', windowsPasswordInputs);
+        await Promise.all(parallelTests);
+    });
 });
+
+async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
+    const resourceName: string = `vm-${getRandomHexString()}`; // append vm- to ensure name isn't only numbers
+    const location = getRotatingLocation();
+
+    const testInputs: (string | RegExp)[] = [
+        resourceName,
+        os,
+        image,
+        "username",
+        ...passwordInputs,
+        location
+    ];
+
+    let resourceGroup = '';
+
+    await runWithTestActionContext("CreateVirtualMachineAdvanced", async (context) => {
+        await context.ui.runWithInputs(testInputs, async () => {
+            const vmNode = await createVirtualMachineAdvanced(context);
+            resourceGroup = vmNode.resourceGroup;
+        });
+    });
+
+    await verifyVmCreated(resourceGroup, resourceName);
+}
+
+async function createVmTestsByOs(os: ComputeManagementModels.OperatingSystemType, passwordInputs: IPasswordInput[]): Promise<Promise<void>[]> {
+    const parallelTests: Promise<void>[] = [];
+    const context = await createTestActionContext();
+    const images = await new ImageListStep().getQuickPicks(context, os);
+    for (const image of images) {
+        for (const passwordInput of passwordInputs) {
+            parallelTests.push(
+                new Promise((res, rej) => {
+                    console.log(`${os} - ${image.label} - ${passwordInput.title}`);
+                    testCreateVirtualMachine(os, image.label, passwordInput.input).then(() => res()).catch((err) => rej(err));
+                })
+            );
+        }
+    }
+
+    return parallelTests;
+
+}
 
 async function verifyVmCreated(resourceGroup: string, resourceName: string): Promise<void> {
     assert.notStrictEqual(resourceGroup, '');

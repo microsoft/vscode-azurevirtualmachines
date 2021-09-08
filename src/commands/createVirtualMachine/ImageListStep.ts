@@ -14,8 +14,7 @@ export const apiVersion = '2018-08-01-beta';
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
         const placeHolder: string = localize('selectImage', 'Select an image');
-        const featuredImages: IAzureQuickPickItem<FeaturedImage | undefined>[] = (await this.getFeaturedImages(context)).map((fi) => { return { label: fi.displayName, data: fi }; });
-        const picks = featuredImages.concat(this.getExtraImageQuickPicks(context.os));
+        const picks = await this.getQuickPicks(context, context.os);
 
         const image = (await context.ui.showQuickPick(picks, { placeHolder }));
         context.telemetry.properties.image = image.label;
@@ -42,7 +41,12 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return await this.getImageReference(context, plan);
     }
 
-    public async getFeaturedImages(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType): Promise<FeaturedImage[]> {
+    public async getQuickPicks(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType): Promise<IAzureQuickPickItem<FeaturedImage | undefined>[]> {
+        const featuredImages: IAzureQuickPickItem<FeaturedImage | undefined>[] = (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
+        return featuredImages.concat(this.getExtraImageQuickPicks(os));
+    }
+
+    private async getFeaturedImages(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType): Promise<FeaturedImage[]> {
         // default to Linux if os is not available
         os ||= 'Linux';
 

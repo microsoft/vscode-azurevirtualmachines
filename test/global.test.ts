@@ -11,26 +11,20 @@ import { ext, registerOnActionStartHandler } from '../extension.bundle';
 export let longRunningTestsEnabled: boolean;
 
 // Runs before all tests
-suite("Global suite", function (this: Mocha.Suite): void {
-    suiteSetup(async function (this: Mocha.Context): Promise<void> {
-        this.timeout(120 * 1000);
+suiteSetup(async function (this: Mocha.Context): Promise<void> {
+    this.timeout(120 * 1000);
 
-        await vscode.commands.executeCommand('azureVirtualMachines.refresh'); // activate the extension before tests begin
-        ext.outputChannel = new TestOutputChannel();
+    await vscode.commands.executeCommand('azureVirtualMachines.refresh'); // activate the extension before tests begin
+    ext.outputChannel = new TestOutputChannel();
 
-        registerOnActionStartHandler(context => {
-            // Use `TestUserInput` by default so we get an error if an unexpected call to `context.ui` occurs, rather than timing out
-            context.ui = new TestUserInput(vscode);
-        });
-
-        longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
+    registerOnActionStartHandler(context => {
+        // Use `TestUserInput` by default so we get an error if an unexpected call to `context.ui` occurs, rather than timing out
+        context.ui = new TestUserInput(vscode);
     });
 
-    suiteTeardown(async function (this: Mocha.Context): Promise<void> {
-        this.timeout(90 * 1000);
-    });
+    longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
+});
 
-    test('test', () => {
-        // fake test to get the mocha tests running
-    });
+suiteTeardown(async function (this: Mocha.Context): Promise<void> {
+    this.timeout(90 * 1000);
 });
