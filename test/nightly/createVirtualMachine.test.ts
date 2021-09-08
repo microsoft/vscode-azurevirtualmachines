@@ -29,7 +29,7 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
 
     this.timeout(8 * 60 * 1000);
 
-    suiteSetup(function (this: Mocha.Context): void {
+    suiteSetup(async function (this: Mocha.Context): Promise<void> {
         if (!longRunningTestsEnabled) {
             this.skip();
         }
@@ -71,7 +71,7 @@ suite("Create virtual machine", function (this: Mocha.Suite): void {
         }
 
         for (const t of parallelTests) {
-            test(t.title, async () => {
+            it(t.title, async () => {
                 await nonNullProp(t, 'task');
             });
         }
