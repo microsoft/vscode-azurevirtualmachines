@@ -19,7 +19,9 @@ interface IPasswordInput {
 let password: string;
 let standardPasswordInput: IPasswordInput;
 
-suite("Create virtual machine", () => {
+suite("Create virtual machine", function (this: Mocha.Suite) {
+    this.timeout(8 * 60 * 1000);
+
     suiteSetup(function (this: Mocha.Context): void {
         if (!longRunningTestsEnabled) {
             this.skip();
