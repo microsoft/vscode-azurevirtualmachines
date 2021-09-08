@@ -7,6 +7,7 @@ import { ComputeManagementModels } from "@azure/arm-compute";
 import * as assert from "assert";
 import * as vscode from 'vscode';
 import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
+import { parseError } from "vscode-azureextensionui";
 import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
@@ -69,7 +70,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 
     for (const t of parallelTests) {
         createVmSuite.addTest(test(t.title, async () => {
-            await t.callback();
+            try { await t.callback() } catch (err) { assert.fail(parseError(err).message) }
         }));
     }
 });
