@@ -5,7 +5,6 @@
 
 import { ComputeManagementModels } from "@azure/arm-compute";
 import { AzExtRequestPrepareOptions, AzureWizardPromptStep, IActionContext, IAzureQuickPickItem, sendRequestWithTimeout } from "vscode-azureextensionui";
-import { extraImagesMap } from "../../constants";
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
@@ -20,11 +19,11 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         context.telemetry.properties.image = image.label;
 
         // if there was no data, it is not a featured image and we have a constant map for these
-        if (image.data === undefined) {
-            context.image = extraImagesMap[image.label];
-        } else {
+        if ('legacyPlanId' in image.data) {
             const plan = await this.getPlanFromLegacyPlanId(context, image.data);
             context.imageTask = this.getImageReference(context, plan);
+        } else {
+            context.image = image.data;
         }
     }
 
@@ -41,14 +40,21 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return await this.getImageReference(context, plan);
     }
 
-    public async getQuickPicks(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType): Promise<IAzureQuickPickItem<FeaturedImage | undefined>[]> {
-        const featuredImages: IAzureQuickPickItem<FeaturedImage | undefined>[] = (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
+    public async getQuickPicks(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType):
+        Promise<IAzureQuickPickItem<FeaturedImage | ComputeManagementModels.ImageReference>[]> {
+        const featuredImages: IAzureQuickPickItem<FeaturedImage | ComputeManagementModels.ImageReference>[] = (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
         return featuredImages.concat(this.getExtraImageQuickPicks(os));
     }
 
     private async getFeaturedImages(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType): Promise<FeaturedImage[]> {
         // default to Linux if os is not available
         os ||= 'Linux';
+
+        /*
+        ** the url the portal uses to get the featured images is the following so model request off that
+        ** https://catalogapi.azure.com/catalog/curationgrouplisting?api-version=2018-08-01-beta&
+        ** group=Marketplace.FeaturedItems&returnedProperties=operatingSystem.family,id,image,freeTierEligible,legacyPlanId
+        */
 
         const options: AzExtRequestPrepareOptions = {
             method: 'GET',
@@ -101,7 +107,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return createdUiDefintion.parameters.imageReference;
     }
 
-    private getExtraImageQuickPicks(os?: ComputeManagementModels.OperatingSystemType): IAzureQuickPickItem[] {
+    private getExtraImageQuickPicks(os?: ComputeManagementModels.OperatingSystemType): IAzureQuickPickItem<ComputeManagementModels.ImageReference>[] {
         if (os === 'Windows') {
             return [];
         } else {
@@ -109,13 +115,17 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
             return [
                 {
                     label: 'Data Science Virtual Machine - Ubuntu 18.04 - Gen1',
-                    data: undefined
+                    data: {
+                        publisher: 'microsoft-dsvm',
+                        offer: 'ubuntu-1804',
+                        sku: '1804',
+                        version: 'latest'
+                    }
                 }
             ];
         }
     }
 }
-
 
 export type FeaturedImage = {
     displayName: string,
@@ -148,6 +158,5 @@ type UiDefinition = {
         osPlatform: ComputeManagementModels.OperatingSystemTypes,
         recommendedSizes: ComputeManagementModels.VirtualMachineSizeTypes[],
         imageReference: ComputeManagementModels.ImageReference
-
     }
 };
