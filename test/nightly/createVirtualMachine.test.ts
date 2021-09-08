@@ -21,7 +21,7 @@ let password: string;
 let standardPasswordInput: IPasswordInput;
 
 suite("Create virtual machine", function (this: Mocha.Suite) {
-    this.timeout(8 * 60 * 1000);
+    this.timeout(16 * 60 * 1000);
 
     suiteSetup(function (this: Mocha.Context): void {
         if (!longRunningTestsEnabled) {
@@ -100,7 +100,7 @@ async function createVmTestsByOs(os: ComputeManagementModels.OperatingSystemType
     const context = await createTestActionContext();
     const images = await new ImageListStep().getQuickPicks(context, os);
 
-    let count = 1;
+    let count = 0;
     for (const image of images) {
         for (const passwordInput of passwordInputs) {
             count++;
@@ -109,10 +109,12 @@ async function createVmTestsByOs(os: ComputeManagementModels.OperatingSystemType
                 new Promise((res, rej) => {
                     const title: string = `${os} - ${image.label} - ${passwordInput.title}`;
                     console.log(`${count}. ${title}`);
-                    testCreateVirtualMachine(os, image.label, passwordInput.input).then(() => res()).catch((err) => {
-                        console.error(`Failed: ${title}`);
-                        rej(err)
-                    });
+                    testCreateVirtualMachine(os, image.label, passwordInput.input)
+                        .then(() => res())
+                        .catch((err) => {
+                            console.error(`Failed: ${title}`);
+                            rej(err);
+                        });
                 })
             );
         }
