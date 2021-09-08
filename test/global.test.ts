@@ -32,7 +32,7 @@ suite("Global suite", function (this: Mocha.Suite): void {
     });
 
     test('test', () => {
-        if (!longRunningTestsEnabled) {
+        if (longRunningTestsEnabled) {
             createVmSuite.run();
         }
         // fake test to get the mocha tests running

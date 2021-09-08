@@ -8,6 +8,7 @@ import * as assert from "assert";
 import * as vscode from 'vscode';
 import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
 import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
+import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
 
@@ -27,9 +28,9 @@ interface IPasswordInput {
 
 export const createVmSuite = suite("Create virtual machine", () => { });
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
-    // if (!longRunningTestsEnabled) {
-    //     this.skip();
-    // }
+    if (!longRunningTestsEnabled) {
+        this.skip();
+    }
 
     createVmSuite.timeout(8 * 60 * 1000);
 
