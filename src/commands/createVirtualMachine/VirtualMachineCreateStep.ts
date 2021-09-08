@@ -29,7 +29,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size };
 
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
-        context.image = await context.imageTask;
+        context.image ||= await context.imageTask;
 
         const storageProfile: ComputeManagementModels.StorageProfile = {
             imageReference: context.image,

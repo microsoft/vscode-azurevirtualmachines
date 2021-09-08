@@ -16,6 +16,7 @@ interface IPasswordInput {
     input: string[];
 }
 
+const username: string = 'azureuser';
 let password: string;
 let standardPasswordInput: IPasswordInput;
 
@@ -77,7 +78,7 @@ async function testCreateVirtualMachine(os: string, image: string, passwordInput
         resourceName,
         os,
         image,
-        "username",
+        username,
         ...passwordInputs,
         location
     ];
@@ -98,12 +99,20 @@ async function createVmTestsByOs(os: ComputeManagementModels.OperatingSystemType
     const parallelTests: Promise<void>[] = [];
     const context = await createTestActionContext();
     const images = await new ImageListStep().getQuickPicks(context, os);
+
+    let count = 1;
     for (const image of images) {
         for (const passwordInput of passwordInputs) {
+            count++;
+
             parallelTests.push(
                 new Promise((res, rej) => {
-                    console.log(`${os} - ${image.label} - ${passwordInput.title}`);
-                    testCreateVirtualMachine(os, image.label, passwordInput.input).then(() => res()).catch((err) => rej(err));
+                    const title: string = `${os} - ${image.label} - ${passwordInput.title}`;
+                    console.log(`${count}. ${title}`);
+                    testCreateVirtualMachine(os, image.label, passwordInput.input).then(() => res()).catch((err) => {
+                        console.error(`Failed: ${title}`);
+                        rej(err)
+                    });
                 })
             );
         }
@@ -122,8 +131,6 @@ async function verifyVmCreated(resourceGroup: string, resourceName: string): Pro
 
         const virtualMachine = await computeClient.virtualMachines.get(resourceGroup, resourceName);
         assert.strictEqual(virtualMachine.name, resourceName);
-        assert.strictEqual(virtualMachine.osProfile?.adminUsername, "username");
+        assert.strictEqual(virtualMachine.osProfile?.adminUsername, username);
     }
 }
-
-
