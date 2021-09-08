@@ -55,7 +55,8 @@
                 "MOCHA_grep": "", // RegExp of tests to run (empty for all)
                 "MOCHA_timeout": "0", // Disable time-outs
                 "DEBUGTELEMETRY": "v",
-                "NODE_DEBUG": ""
+                "NODE_DEBUG": "",
+                "ENABLE_LONG_RUNNING_TESTS": ""
             }
         },
         {

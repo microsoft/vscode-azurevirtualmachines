@@ -25,86 +25,84 @@ interface IPasswordInput {
     input: string[];
 }
 
-suite("Create virtual machine", function (this: Mocha.Suite): void {
-
+export const createVmSuite = suite("Create virtual machine", function (this: Mocha.Suite) {
     this.timeout(8 * 60 * 1000);
+});
 
-    suiteSetup(async function (this: Mocha.Context): Promise<void> {
-        if (!longRunningTestsEnabled) {
-            this.skip();
-        }
-    });
+suiteSetup(async function (this: Mocha.Context): Promise<void> {
+    if (!longRunningTestsEnabled) {
+        this.skip();
+    }
 
-    test('Create Virtual Machines', async () => {
-        const password = `${getRandomHexString(10)}123!`;
-        const standardPasswordInput: IPasswordInput = {
-            title: "standard password",
-            input: [password, password]
-        }
+    const password = `${getRandomHexString(10)}123!`;
+    const standardPasswordInput: IPasswordInput = {
+        title: "standard password",
+        input: [password, password]
+    }
 
-        const windowsPasswordInputs: IPasswordInput[] = [standardPasswordInput];
-        const linuxPasswordInputs: IPasswordInput[] = [standardPasswordInput, {
-            title: 'no password',
-            input: [""]
-        }];
+    const windowsPasswordInputs: IPasswordInput[] = [standardPasswordInput];
+    const linuxPasswordInputs: IPasswordInput[] = [standardPasswordInput, {
+        title: 'no password',
+        input: [""]
+    }];
 
 
-        const parallelTests: IParallelTest[] = [];
-        const oss: ComputeManagementModels.OperatingSystemType[] = ['Linux', 'Windows'];
+    const parallelTests: IParallelTest[] = [];
+    const oss: ComputeManagementModels.OperatingSystemType[] = ['Linux', 'Windows'];
 
-        const context = await createTestActionContext();
-        const images = await new ImageListStep().getFeaturedImages(context);
-        const linuxImages = images.filter(i => i.operatingSystem.family === 'Linux');
-        const windowsImages = images.filter(i => i.operatingSystem.family === 'Windows');
+    const context = await createTestActionContext();
+    const images = await new ImageListStep().getFeaturedImages(context);
+    const linuxImages = images.filter(i => i.operatingSystem.family === 'Linux');
+    const windowsImages = images.filter(i => i.operatingSystem.family === 'Windows');
 
-        for (const os of oss) {
-            for (const image of os === 'Windows' ? windowsImages : linuxImages) {
-                for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
-                    parallelTests.push({
-                        title: `${os} - ${image.displayName} - ${passwordInput.title}`,
-                        callback: async () => await testCreateVirtualMachine(os, image.displayName, passwordInput.input)
-                    });
-            }
-        }
-
-        for (const t of parallelTests) {
-            this.addTest(test(t.title, async () => {
-                await t.callback();
-            }));
-
-        }
-    })
-
-    async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
-        const resourceName: string = `vm-${getRandomHexString()}`; // append vm- to ensure name isn't only numbers
-        const location = getRotatingLocation();
-
-        const testInputs: (string | RegExp)[] = [
-            resourceName,
-            os,
-            image,
-            "username",
-            ...passwordInputs,
-            location
-        ];
-
-        let resourceGroup = '';
-
-        await runWithTestActionContext("CreateVirtualMachineAdvanced", async (context) => {
-            await context.ui.runWithInputs(testInputs, async () => {
-                const vmNode = await createVirtualMachineAdvanced(context);
-                resourceGroup = vmNode.resourceGroup;
-            });
-        });
-        assert.notStrictEqual(resourceGroup, '');
-        if (resourceGroup !== '') {
-            resourceGroupsToDelete.push(resourceGroup);
-
-            assert.strictEqual(true, true);
-
-            const virtualMachine = await computeClient.virtualMachines.get(resourceGroup, resourceName);
-            assert.strictEqual(virtualMachine.name, resourceName);
-            assert.strictEqual(virtualMachine.osProfile?.adminUsername, "username");
+    for (const os of oss) {
+        for (const image of os === 'Windows' ? windowsImages : linuxImages) {
+            for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
+                parallelTests.push({
+                    title: `${os} - ${image.displayName} - ${passwordInput.title}`,
+                    callback: async () => await testCreateVirtualMachine(os, image.displayName, passwordInput.input)
+                });
         }
     }
+
+    for (const t of parallelTests) {
+        createVmSuite.addTest(test(t.title, async () => {
+            await t.callback();
+        }));
+    }
+
+    createVmSuite.run();
 });
+
+async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
+    const resourceName: string = `vm-${getRandomHexString()}`; // append vm- to ensure name isn't only numbers
+    const location = getRotatingLocation();
+
+    const testInputs: (string | RegExp)[] = [
+        resourceName,
+        os,
+        image,
+        "username",
+        ...passwordInputs,
+        location
+    ];
+
+    let resourceGroup = '';
+
+    await runWithTestActionContext("CreateVirtualMachineAdvanced", async (context) => {
+        await context.ui.runWithInputs(testInputs, async () => {
+            const vmNode = await createVirtualMachineAdvanced(context);
+            resourceGroup = vmNode.resourceGroup;
+        });
+    });
+    assert.notStrictEqual(resourceGroup, '');
+    if (resourceGroup !== '') {
+        resourceGroupsToDelete.push(resourceGroup);
+
+        assert.strictEqual(true, true);
+
+        const virtualMachine = await computeClient.virtualMachines.get(resourceGroup, resourceName);
+        assert.strictEqual(virtualMachine.name, resourceName);
+        assert.strictEqual(virtualMachine.osProfile?.adminUsername, "username");
+    }
+}
