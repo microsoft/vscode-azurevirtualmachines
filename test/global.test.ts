@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { TestOutputChannel, TestUserInput } from 'vscode-azureextensiondev';
 import { } from 'vscode-azureextensionui';
 import { ext, registerOnActionStartHandler } from '../extension.bundle';
+import { createVmSuite } from './nightly/createVirtualMachine.test';
 
 export let longRunningTestsEnabled: boolean;
 
@@ -31,6 +32,9 @@ suite("Global suite", function (this: Mocha.Suite): void {
     });
 
     test('test', () => {
+        if (!longRunningTestsEnabled) {
+            createVmSuite.run();
+        }
         // fake test to get the mocha tests running
     });
 });

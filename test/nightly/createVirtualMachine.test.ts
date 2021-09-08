@@ -8,7 +8,6 @@ import * as assert from "assert";
 import * as vscode from 'vscode';
 import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
 import { createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
-import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
 
@@ -26,15 +25,15 @@ interface IPasswordInput {
     input: string[];
 }
 
+export const createVmSuite = suite("Create virtual machine", () => { });
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
-    if (!longRunningTestsEnabled) {
-        this.skip();
-    }
+    // if (!longRunningTestsEnabled) {
+    //     this.skip();
+    // }
 
-    const createVmSuite = suite("Create virtual machine", () => { });
     createVmSuite.timeout(8 * 60 * 1000);
 
-    const password = `${getRandomHexString(10)}123!`;
+    const password = `AzVm-${getRandomHexString(10)}123!`;
     const standardPasswordInput: IPasswordInput = {
         title: "standard password",
         input: [password, password]
@@ -72,8 +71,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
             await t.callback();
         }));
     }
-
-    createVmSuite.run();
 });
 
 async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
