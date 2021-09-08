@@ -27,7 +27,7 @@ interface IPasswordInput {
     input: string[];
 }
 
-const createVmSuite = suite("Create virtual machine", () => {
+export const createVmSuite = suite("Create virtual machine", () => {
     suiteSetup(async function (this: Mocha.Context): Promise<void> {
         if (!longRunningTestsEnabled) {
             this.skip();
@@ -60,11 +60,12 @@ const createVmSuite = suite("Create virtual machine", () => {
 
         for (const os of oss) {
             for (const image of os === 'Windows' ? windowsImages : linuxImages) {
-                for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs)
+                for (const passwordInput of os === "Windows" ? windowsPasswordInputs : linuxPasswordInputs) {
                     parallelTests.push({
                         title: `${os} - ${image.displayName} - ${passwordInput.title}`,
                         callback: async () => await testCreateVirtualMachine(os, image.displayName, passwordInput.input)
                     });
+                }
             }
         }
 
@@ -73,8 +74,6 @@ const createVmSuite = suite("Create virtual machine", () => {
                 try { await t.callback() } catch (err) { assert.fail(parseError(err).message) }
             }));
         }
-
-        createVmSuite.run();
     });
 
     async function testCreateVirtualMachine(os: string, image: string, passwordInputs: string[]): Promise<void> {
