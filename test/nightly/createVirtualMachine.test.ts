@@ -21,7 +21,8 @@ let password: string;
 let standardPasswordInput: IPasswordInput;
 
 suite("Create virtual machine", function (this: Mocha.Suite) {
-    this.timeout(16 * 60 * 1000);
+    // creating VMs can take a pretty long time, seems to be pretty variable
+    this.timeout(45 * 60 * 1000);
 
     suiteSetup(function (this: Mocha.Context): void {
         if (!longRunningTestsEnabled) {
