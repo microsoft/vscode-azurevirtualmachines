@@ -46,10 +46,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return featuredImages.concat(this.getExtraImageQuickPicks(os));
     }
 
-    private async getFeaturedImages(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType): Promise<FeaturedImage[]> {
-        // default to Linux if os is not available
-        os ||= 'Linux';
-
+    private async getFeaturedImages(context: IActionContext, os: ComputeManagementModels.OperatingSystemType = 'Linux'): Promise<FeaturedImage[]> {
         /*
         ** the url the portal uses to get the featured images is the following so model request off that
         ** https://catalogapi.azure.com/catalog/curationgrouplisting?api-version=2018-08-01-beta&
