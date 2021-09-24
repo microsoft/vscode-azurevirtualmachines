@@ -76,7 +76,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         const size: ComputeManagementModels.VirtualMachineSizeTypes = this.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.subscription, {
             addressPrefix: '10.1.0.0/24',
-            size
+            size,
+            includeExtendedLocations: true
         });
 
         const computeProvider: string = 'Microsoft.Compute';

@@ -18,12 +18,21 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
 
-        const location: string = (await LocationListStep.getLocation(context)).name
+        const newLocation = await LocationListStep.getLocation(context, undefined, true);
+        let location: string = newLocation.name;
+        let extendedLocation: NetworkManagementModels.ExtendedLocation | undefined;
+        if (newLocation.type === 'EdgeZone') {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            location = newLocation.metadata!.homeLocation!;
+            extendedLocation = <NetworkManagementModels.ExtendedLocation>newLocation;
+        }
+
         const publicIpProps: NetworkManagementModels.PublicIPAddress = {
             publicIPAddressVersion: 'IPv4',
             sku: { name: context.isCustomCloud ? 'Basic' : 'Standard' },
             publicIPAllocationMethod: 'Static',
-            location
+            location,
+            extendedLocation
         };
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');

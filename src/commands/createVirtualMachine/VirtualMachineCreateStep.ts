@@ -20,7 +20,14 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public priority: number = 260;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const location: string = (await LocationListStep.getLocation(context)).name;
+        const newLocation = await LocationListStep.getLocation(context, undefined, true);
+        let location: string = newLocation.name;
+        let extendedLocation: ComputeManagementModels.ExtendedLocation | undefined;
+        if (newLocation.type === 'EdgeZone') {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            location = newLocation.metadata!.homeLocation!;
+            extendedLocation = <ComputeManagementModels.ExtendedLocation>newLocation;
+        }
 
         context.telemetry.properties.os = context.os;
         context.telemetry.properties.image = context.image?.label;
@@ -63,7 +70,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
             osProfile.windowsConfiguration = windowConfiguration;
         }
 
-        const virtualMachineProps: ComputeManagementModels.VirtualMachine = { location, hardwareProfile, storageProfile, networkProfile, osProfile };
+        const virtualMachineProps: ComputeManagementModels.VirtualMachine = { location, extendedLocation, hardwareProfile, storageProfile, networkProfile, osProfile };
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 

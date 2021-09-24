@@ -17,7 +17,17 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
-        const location: string = (await LocationListStep.getLocation(context)).name
+
+        // TODO: Can we share some of this location code so that it's not duplicated in each 'Create' step
+        const newLocation = await LocationListStep.getLocation(context, undefined, true);
+        let location: string = newLocation.name;
+        let extendedLocation: NetworkManagementModels.ExtendedLocation | undefined;
+        if (newLocation.type === 'EdgeZone') {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            location = newLocation.metadata!.homeLocation!;
+            extendedLocation = <NetworkManagementModels.ExtendedLocation>newLocation;
+        }
+
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
 
         // this is the naming convention used by the portal
@@ -27,7 +37,7 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         const subnet: NetworkManagementModels.Subnet = nonNullProp(context, 'subnet');
 
         const networkInterfaceProps: NetworkManagementModels.NetworkInterface = {
-            location, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
+            location, extendedLocation, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
         };
 
         const creatingNi: string = localize('creatingNi', `Creating new network interface "${context.newNetworkInterfaceName}"...`);
