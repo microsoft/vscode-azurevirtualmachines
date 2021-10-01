@@ -37,37 +37,31 @@
     "preview": true,
     "activationEvents": [
         "azureVirtualMachines.selectSubscriptions",
-        "onCommand:azureVirtualMachines.refresh",
-        "onCommand:azureVirtualMachines.loadMore",
+        "onCommand:azureVirtualMachines.addSshKey",
         "onCommand:azureVirtualMachines.createVirtualMachine",
         "onCommand:azureVirtualMachines.createVirtualMachineAdvanced",
-        "onCommand:azureVirtualMachines.startVirtualMachine",
-        "onCommand:azureVirtualMachines.restartVirtualMachine",
-        "onCommand:azureVirtualMachines.stopVirtualMachine",
-        "onCommand:azureVirtualMachines.addSshKey",
         "onCommand:azureVirtualMachines.deleteVirtualMachine",
+        "onCommand:azureVirtualMachines.loadMore",
         "onCommand:azureVirtualMachines.openInPortal",
-        "onCommand:azureVirtualMachines.viewProperties",
+        "onCommand:azureVirtualMachines.refresh",
         "onCommand:azureVirtualMachines.reportIssue",
+        "onCommand:azureVirtualMachines.restartVirtualMachine",
+        "onCommand:azureVirtualMachines.startVirtualMachine",
+        "onCommand:azureVirtualMachines.stopVirtualMachine",
+        "onCommand:azureVirtualMachines.viewProperties",
         "onView:azVmTree"
     ],
     "main": "./main.js",
     "contributes": {
         "commands": [
             {
-                "command": "azureVirtualMachines.selectSubscriptions",
-                "title": "Select Subscriptions...",
-                "icon": "$(filter)"
+                "command": "azureVirtualMachines.addSshKey",
+                "title": "%azureVirtualMachines.addSshKey%",
+                "category": "Azure Virtual Machines"
             },
             {
-                "command": "azureVirtualMachines.refresh",
-                "title": "%azureVirtualMachines.refresh%",
-                "category": "Azure Virtual Machines",
-                "icon": "$(refresh)"
-            },
-            {
-                "command": "azureVirtualMachines.loadMore",
-                "title": "%azureVirtualMachines.loadMore%",
+                "command": "azureVirtualMachines.copyIpAddress",
+                "title": "%azureVirtualMachines.copyIpAddress%",
                 "category": "Azure Virtual Machines"
             },
             {
@@ -82,28 +76,13 @@
                 "category": "Azure Virtual Machines"
             },
             {
-                "command": "azureVirtualMachines.startVirtualMachine",
-                "title": "%azureVirtualMachines.startVirtualMachine%",
-                "category": "Azure Virtual Machines"
-            },
-            {
-                "command": "azureVirtualMachines.restartVirtualMachine",
-                "title": "%azureVirtualMachines.restartVirtualMachine%",
-                "category": "Azure Virtual Machines"
-            },
-            {
-                "command": "azureVirtualMachines.stopVirtualMachine",
-                "title": "%azureVirtualMachines.stopVirtualMachine%",
-                "category": "Azure Virtual Machines"
-            },
-            {
-                "command": "azureVirtualMachines.addSshKey",
-                "title": "%azureVirtualMachines.addSshKey%",
-                "category": "Azure Virtual Machines"
-            },
-            {
                 "command": "azureVirtualMachines.deleteVirtualMachine",
                 "title": "%azureVirtualMachines.deleteVirtualMachine%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.loadMore",
+                "title": "%azureVirtualMachines.loadMore%",
                 "category": "Azure Virtual Machines"
             },
             {
@@ -112,23 +91,44 @@
                 "category": "Azure Virtual Machines"
             },
             {
-                "command": "azureVirtualMachines.copyIpAddress",
-                "title": "%azureVirtualMachines.copyIpAddress%",
-                "category": "Azure Virtual Machines"
-            },
-            {
-                "command": "azureVirtualMachines.viewProperties",
-                "title": "%azureVirtualMachines.viewProperties%",
-                "category": "Azure Virtual Machines"
-            },
-            {
                 "command": "azureVirtualMachines.openInRemoteSsh",
                 "title": "%azureVirtualMachines.openInRemoteSsh%",
                 "category": "Azure Virtual Machines"
             },
             {
+                "command": "azureVirtualMachines.refresh",
+                "title": "%azureVirtualMachines.refresh%",
+                "category": "Azure Virtual Machines",
+                "icon": "$(refresh)"
+            },
+            {
                 "command": "azureVirtualMachines.reportIssue",
                 "title": "%azureVirtualMachines.reportIssue%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.restartVirtualMachine",
+                "title": "%azureVirtualMachines.restartVirtualMachine%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.selectSubscriptions",
+                "title": "Select Subscriptions...",
+                "icon": "$(filter)"
+            },
+            {
+                "command": "azureVirtualMachines.startVirtualMachine",
+                "title": "%azureVirtualMachines.startVirtualMachine%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.stopVirtualMachine",
+                "title": "%azureVirtualMachines.stopVirtualMachine%",
+                "category": "Azure Virtual Machines"
+            },
+            {
+                "command": "azureVirtualMachines.viewProperties",
+                "title": "%azureVirtualMachines.viewProperties%",
                 "category": "Azure Virtual Machines"
             }
         ],
@@ -228,7 +228,7 @@
             "explorer/context": [],
             "commandPalette": [
                 {
-                    "command": "azureVirtualMachines.selectSubscriptions",
+                    "command": "azureVirtualMachines.loadMore",
                     "when": "never"
                 },
                 {
@@ -236,7 +236,7 @@
                     "when": "never"
                 },
                 {
-                    "command": "azureVirtualMachines.loadMore",
+                    "command": "azureVirtualMachines.selectSubscriptions",
                     "when": "never"
                 }
             ],
