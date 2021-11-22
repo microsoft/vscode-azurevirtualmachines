@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { ComputeManagementModels } from "@azure/arm-compute";
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
 import { localize } from "../../localize";
 import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
-import { VirtualMachineOS } from "./OSListStep";
 
 const reservedWords: string[] = ['admin', 'administrator', 'root', 'test', 'user'];
 
@@ -16,7 +16,7 @@ export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWiz
         const prompt: string = localize('usernamePrompt', 'Enter a username');
         context.adminUsername = (await context.ui.showInputBox({
             prompt,
-            value: context.os === VirtualMachineOS.linux ? 'azureuser' : '',
+            value: context.os === 'Linux' ? 'azureuser' : '',
             validateInput: async (value: string | undefined): Promise<string | undefined> => this.validateUsername(nonNullProp(context, 'os'), value)
         }));
         context.valuesToMask.push(context.adminUsername);
@@ -26,17 +26,17 @@ export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWiz
         return !context.adminUsername;
     }
 
-    private validateUsername(os: VirtualMachineOS, value: string | undefined): string | undefined {
+    private validateUsername(os: ComputeManagementModels.OperatingSystemTypes, value: string | undefined): string | undefined {
         const usernameMinLength: number = 1;
-        const usernameMaxLength: number = os === VirtualMachineOS.linux ? 64 : 20;
-        const invalidCharsRegExp: RegExp = os === VirtualMachineOS.linux ? /^[0-9|-]|[^a-zA-Z0-9\_\-]/g : /[\\\/\"\[\]\:\|\<\>\+\=\;\,\?\*\@\&]|\.$/g;
+        const usernameMaxLength: number = os === 'Linux' ? 64 : 20;
+        const invalidCharsRegExp: RegExp = os === 'Linux' ? /^[0-9|-]|[^a-zA-Z0-9\_\-]/g : /[\\\/\"\[\]\:\|\<\>\+\=\;\,\?\*\@\&]|\.$/g;
 
         if (!value) {
             return localize('nonEmpty', 'The username must not be empty');
         } else if (value.length < usernameMinLength || value.length > usernameMaxLength) {
             return localize('invalidLength', 'The username must be between {0} and {1} characters long', usernameMinLength, usernameMaxLength);
         } else if (invalidCharsRegExp.test(value)) {
-            return os === VirtualMachineOS.linux ?
+            return os === 'Linux' ?
                 localize('invalidLinuxUsername', 'Username must only contain letters, numbers, hyphens, and underscores and may not start with a hyphen or number.') :
                 localize('invalidWindowUsername', `Username cannot contain special characters \/""[]:|<>+=;,?*@& or end with '.'`);
         } else if (reservedWords.includes(value.toLowerCase())) {

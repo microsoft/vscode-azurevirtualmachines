@@ -8,11 +8,10 @@ import { localize } from "../../localize";
 import { getWorkspaceSetting } from "../../vsCodeConfig/settings";
 import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
-import { VirtualMachineOS } from "./OSListStep";
 
 export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
-        const isWindows: boolean = context.os === VirtualMachineOS.windows;
+        const isWindows: boolean = context.os === 'Windows';
         const prompt: string = !isWindows ? localize('passphrasePrompt', 'Enter a passphrase for connecting to this virtual machine') : localize('passwordPrompt', 'Enter an admin password');
         const placeHolder: string = !isWindows ? localize('enterPassphrase', '(empty for no passphrase)') : '';
 
@@ -27,7 +26,7 @@ export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineW
 
     public shouldPrompt(context: IVirtualMachineWizardContext): boolean {
         const promptForPassphrase: boolean | undefined = getWorkspaceSetting('promptForPassphrase');
-        return !context.passphrase && !(!promptForPassphrase && context.os === VirtualMachineOS.linux);
+        return !context.passphrase && !(!promptForPassphrase && context.os === 'Linux');
     }
 
     public async getSubWizard(context: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
