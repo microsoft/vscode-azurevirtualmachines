@@ -5,7 +5,7 @@
 
 import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
 import { Progress } from "vscode";
-import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
+import { AzExtLocation, AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
@@ -18,15 +18,8 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
 
-        // TODO: Can we share some of this location code so that it's not duplicated in each 'Create' step
-        const newLocation = await LocationListStep.getLocation(context, undefined, true);
-        let location: string = newLocation.name;
-        let extendedLocation: NetworkManagementModels.ExtendedLocation | undefined;
-        if (newLocation.type === 'EdgeZone') {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            location = newLocation.metadata!.homeLocation!;
-            extendedLocation = <NetworkManagementModels.ExtendedLocation>newLocation;
-        }
+        const newLocation: AzExtLocation = await LocationListStep.getLocation(context, undefined, true);
+        const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
 
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
 

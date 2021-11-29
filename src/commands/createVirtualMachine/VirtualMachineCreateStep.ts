@@ -20,13 +20,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const newLocation = await LocationListStep.getLocation(context, undefined, true);
-        let location: string = newLocation.name;
-        let extendedLocation: ComputeManagementModels.ExtendedLocation | undefined;
-        if (newLocation.type === 'EdgeZone') {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            location = newLocation.metadata!.homeLocation!;
-            extendedLocation = <ComputeManagementModels.ExtendedLocation>newLocation;
-        }
+        const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
 
         context.telemetry.properties.os = context.os;
         context.telemetry.properties.location = location;

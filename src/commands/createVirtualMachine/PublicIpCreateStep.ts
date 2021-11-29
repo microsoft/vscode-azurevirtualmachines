@@ -19,13 +19,7 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
 
         const newLocation = await LocationListStep.getLocation(context, undefined, true);
-        let location: string = newLocation.name;
-        let extendedLocation: NetworkManagementModels.ExtendedLocation | undefined;
-        if (newLocation.type === 'EdgeZone') {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            location = newLocation.metadata!.homeLocation!;
-            extendedLocation = <NetworkManagementModels.ExtendedLocation>newLocation;
-        }
+        const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
 
         const publicIpProps: NetworkManagementModels.PublicIPAddress = {
             publicIPAddressVersion: 'IPv4',
