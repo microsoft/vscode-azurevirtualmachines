@@ -17,9 +17,11 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
-        const location: string = (await LocationListStep.getLocation(context)).name;
 
-        const virtualNetworkProps: NetworkManagementModels.VirtualNetwork = { location, addressSpace: { addressPrefixes: [nonNullProp(context, 'addressPrefix')] } };
+        const newLocation = await LocationListStep.getLocation(context, undefined, true);
+        const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
+
+        const virtualNetworkProps: NetworkManagementModels.VirtualNetwork = { location, extendedLocation, addressSpace: { addressPrefixes: [nonNullProp(context, 'addressPrefix')] } };
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
         // network names can't be 1 character and will fail the creation

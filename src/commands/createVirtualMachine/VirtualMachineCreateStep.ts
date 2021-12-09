@@ -19,7 +19,8 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
     public priority: number = 260;
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-        const location: string = (await LocationListStep.getLocation(context)).name;
+        const newLocation = await LocationListStep.getLocation(context, undefined, true);
+        const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
 
         context.telemetry.properties.os = context.os;
         context.telemetry.properties.location = location;
@@ -63,7 +64,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
             osProfile.windowsConfiguration = windowConfiguration;
         }
 
-        const virtualMachineProps: ComputeManagementModels.VirtualMachine = { location, hardwareProfile, storageProfile, networkProfile, osProfile };
+        const virtualMachineProps: ComputeManagementModels.VirtualMachine = { location, extendedLocation, hardwareProfile, storageProfile, networkProfile, osProfile };
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 

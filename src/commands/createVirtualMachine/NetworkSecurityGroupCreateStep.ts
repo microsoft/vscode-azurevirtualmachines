@@ -28,6 +28,7 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
             { name: 'HTTP', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '80', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 300, direction: 'Inbound' }
         ] : [{ name: 'RDP', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '3389', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 300, direction: 'Inbound' }];
 
+        // NSGs cannot be created in Edge Zones
         const networkSecurityGroupProps: NetworkManagementModels.NetworkSecurityGroup = {
             name: nsgName, location, securityRules
         };
