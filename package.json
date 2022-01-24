@@ -310,7 +310,7 @@
         "open": "^8.0.4",
         "semver": "^5.7.0",
         "ssh-config": "^4.0.5",
-        "vscode-azureextensionui": "^0.49.0",
+        "vscode-azureextensionui": "^0.49.3",
         "vscode-nls": "^4.1.0",
         "which": "^2.0.2"
     },
