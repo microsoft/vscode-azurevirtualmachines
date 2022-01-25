@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.5.0 - 2022-01-25
+
+## Added
+- Support for creating Virtual Machines in extended regions using Advanced create.
+
 ## 0.4.1 - 2021-08-24
 
 ### Changed
