@@ -38,7 +38,14 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         progress.report({ message: creatingIp });
         ext.outputChannel.appendLog(creatingIp);
 
-        context.publicIpAddress = await networkClient.publicIPAddresses.createOrUpdate(rgName, ipName, publicIpProps);
+        try {
+            context.publicIpAddress = await networkClient.publicIPAddresses.createOrUpdate(rgName, ipName, publicIpProps);
+        } catch (e) {
+            if (extendedLocation) {
+                throw new Error(localize('mayNotBeSupportedInEdgeZones', 'Failed to create Virtual Machine. This image may not be supported in Edge Zones.'))
+            }
+            throw e;
+        }
         ext.outputChannel.appendLog(localize('creatingIp', `Created new public IP addresss "${ipName}".`));
     }
 
