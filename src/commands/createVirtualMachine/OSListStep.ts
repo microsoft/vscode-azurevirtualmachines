@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementModels } from '@azure/arm-compute';
+import { OperatingSystemTypes } from '@azure/arm-compute';
 import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from 'vscode-azureextensionui';
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
@@ -11,7 +11,7 @@ import { ValidateWindowsNameStep } from './ValidateWindowsNameStep';
 
 export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
-        const picks: IAzureQuickPickItem<ComputeManagementModels.OperatingSystemTypes>[] = [
+        const picks: IAzureQuickPickItem<OperatingSystemTypes>[] = [
             { label: 'Linux', data: 'Linux' },
             { label: 'Windows', data: 'Windows' }
         ];

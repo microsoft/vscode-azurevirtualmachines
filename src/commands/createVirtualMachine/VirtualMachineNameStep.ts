@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
-import { AzureNameStep, IAzureNamingRules, ResourceGroupListStep, resourceGroupNamingRules } from "vscode-azureextensionui";
+import { ComputeManagementClient, VirtualMachine } from "@azure/arm-compute";
+import { AzureNameStep, IAzureNamingRules, ResourceGroupListStep, resourceGroupNamingRules, uiUtils } from "vscode-azureextensionui";
 import { localize } from "../../localize";
 import { createComputeClient } from "../../utils/azureClients";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
@@ -58,8 +58,8 @@ export class VirtualMachineNameStep extends AzureNameStep<IVirtualMachineWizardC
     private async isNameAvailableInRG(context: IVirtualMachineWizardContext, rgName: string, name: string): Promise<boolean> {
         // Virtual machine names must be unique to the current resource group.
         const computeClient: ComputeManagementClient = await createComputeClient(context);
-        const vmsInRg: ComputeManagementModels.VirtualMachineListResult = await computeClient.virtualMachines.list(rgName);
-        if (vmsInRg.find((vm: ComputeManagementModels.VirtualMachine) => vm.name === name)) {
+        const vmsInRg: VirtualMachine[] = await uiUtils.listAllIterator(computeClient.virtualMachines.list(rgName));
+        if (vmsInRg.find((vm: VirtualMachine) => vm.name === name)) {
             return false;
         }
 

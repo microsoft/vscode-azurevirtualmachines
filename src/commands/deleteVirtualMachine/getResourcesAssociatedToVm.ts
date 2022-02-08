@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { NetworkManagementClient, NetworkManagementModels } from "@azure/arm-network";
+import { NetworkInterface, NetworkManagementClient, Subnet } from "@azure/arm-network";
 import { IActionContext } from "vscode-azureextensionui";
 import { networkInterfaceLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
@@ -32,10 +32,10 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
         // if we fail to get a resource, we keep trying to get all associated resources we can rather than erroring out
         try {
 
-            const networkInterface: NetworkManagementModels.NetworkInterface = await networkClient.networkInterfaces.get(networkRef.rgName, networkRef.name);
+            const networkInterface: NetworkInterface = await networkClient.networkInterfaces.get(networkRef.rgName, networkRef.name);
             associatedResources.push({
                 resourceName: networkRef.name, resourceType: networkInterfaceLabel,
-                deleteMethod: async (): Promise<void> => { await networkClient.networkInterfaces.deleteMethod(networkRef.rgName, networkRef.name); }
+                deleteMethod: async (): Promise<void> => { await networkClient.networkInterfaces.beginDeleteAndWait(networkRef.rgName, networkRef.name); }
             });
 
             if (networkInterface.ipConfigurations) {
@@ -45,7 +45,7 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
                         const publicIpRg: string = getResourceGroupFromId(ipConfigurations.publicIPAddress.id);
                         associatedResources.push({
                             resourceName: publicIpName, resourceType: localize('publicip', 'public IP address'),
-                            deleteMethod: async (): Promise<void> => { await networkClient.publicIPAddresses.deleteMethod(publicIpRg, publicIpName); }
+                            deleteMethod: async (): Promise<void> => { await networkClient.publicIPAddresses.beginDeleteAndWait(publicIpRg, publicIpName); }
                         });
 
                     }
@@ -57,18 +57,18 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
                         const virtualNetworkName: string = subnetId.split('/')[8];
                         associatedResources.push({
                             resourceName: virtualNetworkName, resourceType: virtualNetworkLabel,
-                            deleteMethod: async (): Promise<void> => { await networkClient.virtualNetworks.deleteMethod(subnetRg, virtualNetworkName); }
+                            deleteMethod: async (): Promise<void> => { await networkClient.virtualNetworks.beginDeleteAndWait(subnetRg, virtualNetworkName); }
                         });
 
                         const subnetName: string = getNameFromId(subnetId);
                         try {
-                            const subnet: NetworkManagementModels.Subnet = await networkClient.subnets.get(subnetRg, virtualNetworkName, subnetName);
+                            const subnet: Subnet = await networkClient.subnets.get(subnetRg, virtualNetworkName, subnetName);
                             if (subnet.networkSecurityGroup?.id) {
                                 const nsgName: string = getNameFromId(subnet.networkSecurityGroup.id);
                                 const nsgRg: string = getResourceGroupFromId(subnet.networkSecurityGroup.id);
                                 associatedResources.push({
                                     resourceName: nsgName, resourceType: localize('networkSecurityGroup', 'network security group'),
-                                    deleteMethod: async (): Promise<void> => { await networkClient.networkSecurityGroups.deleteMethod(nsgRg, nsgName); }
+                                    deleteMethod: async (): Promise<void> => { await networkClient.networkSecurityGroups.beginDeleteAndWait(nsgRg, nsgName); }
                                 });
                             }
                         } catch (err) {
@@ -89,7 +89,7 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
         const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
         associatedResources.push({
             resourceName: diskName, resourceType: localize('disk', 'disk'),
-            deleteMethod: async (): Promise<void> => { await computeClient.disks.deleteMethod(diskRg, diskName); }
+            deleteMethod: async (): Promise<void> => { await computeClient.disks.beginDeleteAndWait(diskRg, diskName); }
         });
 
     }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementModels } from "@azure/arm-compute";
+import { OperatingSystemTypes } from "@azure/arm-compute";
 import { AzureWizardPromptStep } from "vscode-azureextensionui";
 import { localize } from "../../localize";
 import { nonNullProp } from "../../utils/nonNull";
@@ -26,7 +26,7 @@ export class UsernamePromptStep extends AzureWizardPromptStep<IVirtualMachineWiz
         return !context.adminUsername;
     }
 
-    private validateUsername(os: ComputeManagementModels.OperatingSystemTypes, value: string | undefined): string | undefined {
+    private validateUsername(os: OperatingSystemTypes, value: string | undefined): string | undefined {
         const usernameMinLength: number = 1;
         const usernameMaxLength: number = os === 'Linux' ? 64 : 20;
         const invalidCharsRegExp: RegExp = os === 'Linux' ? /^[0-9|-]|[^a-zA-Z0-9\_\-]/g : /[\\\/\"\[\]\:\|\<\>\+\=\;\,\?\*\@\&]|\.$/g;

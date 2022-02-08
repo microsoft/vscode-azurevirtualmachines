@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementModels } from "@azure/arm-compute";
+import { ImageReference, OperatingSystemType, OperatingSystemTypes, VirtualMachineSizeTypes } from "@azure/arm-compute";
 import { AzExtRequestPrepareOptions, AzureWizardPromptStep, IActionContext, IAzureQuickPickItem, sendRequestWithTimeout } from "vscode-azureextensionui";
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
@@ -31,7 +31,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return !context.image && !context.imageTask;
     }
 
-    public async getDefaultImageReference(context: IActionContext): Promise<ComputeManagementModels.ImageReference> {
+    public async getDefaultImageReference(context: IActionContext): Promise<ImageReference> {
         const images = await this.getFeaturedImages(context);
         // if we can't find Ubuntu Server 18.04 LTS for some reason, just default to the first image
         const defaultImage = images.find(i => /UbuntuServer1804LTS18_04/.test(i.legacyPlanId)) || images[0];
@@ -40,13 +40,13 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return await this.getImageReference(context, plan);
     }
 
-    public async getQuickPicks(context: IActionContext, os?: ComputeManagementModels.OperatingSystemType):
-        Promise<IAzureQuickPickItem<FeaturedImage | ComputeManagementModels.ImageReference>[]> {
-        const featuredImages: IAzureQuickPickItem<FeaturedImage | ComputeManagementModels.ImageReference>[] = (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
+    public async getQuickPicks(context: IActionContext, os?: OperatingSystemType):
+        Promise<IAzureQuickPickItem<FeaturedImage | ImageReference>[]> {
+        const featuredImages: IAzureQuickPickItem<FeaturedImage | ImageReference>[] = (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
         return featuredImages.concat(this.getExtraImageQuickPicks(os));
     }
 
-    private async getFeaturedImages(context: IActionContext, os: ComputeManagementModels.OperatingSystemType = 'Linux'): Promise<FeaturedImage[]> {
+    private async getFeaturedImages(context: IActionContext, os: OperatingSystemType = 'Linux'): Promise<FeaturedImage[]> {
         /*
         ** the url the portal uses to get the featured images is the following so model request off that
         ** https://catalogapi.azure.com/catalog/curationgrouplisting?api-version=2018-08-01-beta&
@@ -86,7 +86,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return plan;
     }
 
-    private async getImageReference(context: IActionContext, plan: PlanFromLegacyPlanId): Promise<ComputeManagementModels.ImageReference> {
+    private async getImageReference(context: IActionContext, plan: PlanFromLegacyPlanId): Promise<ImageReference> {
         const uiDefUri: string | undefined = plan.artifacts.find(art => art.name === 'createuidefinition')?.uri
         if (!uiDefUri) {
             throw new Error(localize('noUiDefUri', 'Could not find image reference from featured offer.'))
@@ -104,7 +104,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return createdUiDefintion.parameters.imageReference;
     }
 
-    private getExtraImageQuickPicks(os?: ComputeManagementModels.OperatingSystemType): IAzureQuickPickItem<ComputeManagementModels.ImageReference>[] {
+    private getExtraImageQuickPicks(os?: OperatingSystemType): IAzureQuickPickItem<ImageReference>[] {
         if (os === 'Windows') {
             return [];
         } else {
@@ -129,7 +129,7 @@ export type FeaturedImage = {
     freeTierEligible: boolean,
     id: string,
     legacyPlanId: string,
-    operatingSystem: { family: ComputeManagementModels.OperatingSystemTypes }
+    operatingSystem: { family: OperatingSystemTypes }
 };
 
 /*
@@ -152,8 +152,8 @@ type PlanArtifacts = {
 
 type UiDefinition = {
     parameters: {
-        osPlatform: ComputeManagementModels.OperatingSystemTypes,
-        recommendedSizes: ComputeManagementModels.VirtualMachineSizeTypes[],
-        imageReference: ComputeManagementModels.ImageReference
+        osPlatform: OperatingSystemTypes,
+        recommendedSizes: VirtualMachineSizeTypes[],
+        imageReference: ImageReference
     }
 };

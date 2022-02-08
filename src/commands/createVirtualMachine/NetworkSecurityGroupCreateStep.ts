@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
+import { NetworkManagementClient, NetworkSecurityGroup, SecurityRule } from '@azure/arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
@@ -22,14 +22,14 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
         // when creating a VM on the portal, this is the suffix that is added to the network security group
         const nsgName: string = nonNullProp(context, 'newVirtualMachineName') + '-nsg';
 
-        const securityRules: NetworkManagementModels.SecurityRule[] = context.os !== 'Windows' ? [
+        const securityRules: SecurityRule[] = context.os !== 'Windows' ? [
             { name: 'SSH', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '22', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 340, direction: 'Inbound' },
             { name: 'HTTPS', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '443', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 320, direction: 'Inbound' },
             { name: 'HTTP', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '80', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 300, direction: 'Inbound' }
         ] : [{ name: 'RDP', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '3389', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 300, direction: 'Inbound' }];
 
         // NSGs cannot be created in Edge Zones
-        const networkSecurityGroupProps: NetworkManagementModels.NetworkSecurityGroup = {
+        const networkSecurityGroupProps: NetworkSecurityGroup = {
             name: nsgName, location, securityRules
         };
 
@@ -40,7 +40,9 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
         ext.outputChannel.appendLog(creatingNsg);
         progress.report({ message: creatingNsg });
 
-        context.networkSecurityGroup = await networkClient.networkSecurityGroups.createOrUpdate(rgName, nsgName, networkSecurityGroupProps);
+        await networkClient.networkSecurityGroups.beginCreateOrUpdateAndWait(rgName, nsgName, networkSecurityGroupProps);
+        // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
+        context.networkSecurityGroup = await networkClient.networkSecurityGroups.get(rgName, nsgName);
         ext.outputChannel.appendLog(localize('createdNsg', `Created new network security group "${nsgName}".`));
     }
 

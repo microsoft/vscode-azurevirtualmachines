@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
-import { NetworkManagementModels } from '@azure/arm-network';
+import { ComputeManagementClient, HardwareProfile, LinuxConfiguration, NetworkProfile, OSProfile, StorageProfile, VirtualMachine, WindowsConfiguration } from '@azure/arm-compute';
+import { NetworkInterface } from '@azure/arm-network';
 import { MessageItem, Progress, window } from "vscode";
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext, LocationListStep } from "vscode-azureextensionui";
 import { viewOutput } from '../../constants';
@@ -27,12 +27,12 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         context.telemetry.properties.size = context.size;
 
         const computeClient: ComputeManagementClient = await createComputeClient(context);
-        const hardwareProfile: ComputeManagementModels.HardwareProfile = { vmSize: context.size };
+        const hardwareProfile: HardwareProfile = { vmSize: context.size };
 
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
         context.image ||= await context.imageTask;
 
-        const storageProfile: ComputeManagementModels.StorageProfile = {
+        const storageProfile: StorageProfile = {
             imageReference: context.image,
             osDisk: {
                 name: vmName,
@@ -41,14 +41,14 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
             }
         };
 
-        const networkInterface: NetworkManagementModels.NetworkInterface = nonNullProp(context, 'networkInterface');
-        const networkProfile: ComputeManagementModels.NetworkProfile = { networkInterfaces: [{ id: networkInterface.id }] };
+        const networkInterface: NetworkInterface = nonNullProp(context, 'networkInterface');
+        const networkProfile: NetworkProfile = { networkInterfaces: [{ id: networkInterface.id }] };
 
-        const osProfile: ComputeManagementModels.OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
+        const osProfile: OSProfile = { computerName: vmName, adminUsername: context.adminUsername };
         if (context.os === 'Linux') {
             const { sshKeyName, keyData } = await createSshKey(context, vmName, context.passphrase || '');
             context.sshKeyName = sshKeyName;
-            const linuxConfiguration: ComputeManagementModels.LinuxConfiguration = {
+            const linuxConfiguration: LinuxConfiguration = {
                 disablePasswordAuthentication: true, ssh: {
                     publicKeys: [{
                         keyData,
@@ -60,11 +60,11 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
             osProfile.linuxConfiguration = linuxConfiguration;
         } else {
             osProfile.adminPassword = context.passphrase;
-            const windowConfiguration: ComputeManagementModels.WindowsConfiguration = {};
+            const windowConfiguration: WindowsConfiguration = {};
             osProfile.windowsConfiguration = windowConfiguration;
         }
 
-        const virtualMachineProps: ComputeManagementModels.VirtualMachine = { location, extendedLocation, hardwareProfile, storageProfile, networkProfile, osProfile };
+        const virtualMachineProps: VirtualMachine = { location, extendedLocation, hardwareProfile, storageProfile, networkProfile, osProfile };
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 
@@ -80,7 +80,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
 
         ext.outputChannel.appendLog(creatingVmDetails);
         progress.report({ message: creatingVm });
-        context.virtualMachine = await computeClient.virtualMachines.createOrUpdate(rgName, vmName, virtualMachineProps);
+        context.virtualMachine = await computeClient.virtualMachines.beginCreateOrUpdateAndWait(rgName, vmName, virtualMachineProps);
         ext.outputChannel.appendLog(createdVm);
 
         // Note: intentionally not waiting for the result of this before returning

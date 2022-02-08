@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, parseError, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from 'vscode-azureextensionui';
+import { ComputeManagementClient, VirtualMachine, VirtualMachineInstanceView, VirtualMachineSizeTypes } from '@azure/arm-compute';
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, uiUtils, VerifyProvidersStep } from 'vscode-azureextensionui';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { ImageListStep } from '../commands/createVirtualMachine/ImageListStep';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
@@ -41,39 +41,22 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         }
 
         const client: ComputeManagementClient = await createComputeClient([context, this]);
-        let virtualMachines: ComputeManagementModels.VirtualMachineListResult;
-
-        try {
-            virtualMachines = this._nextLink === undefined ?
-                await client.virtualMachines.listAll() :
-                await client.virtualMachines.listNext(this._nextLink);
-        } catch (error) {
-            if (parseError(error).errorType.toLowerCase() === 'notfound') {
-                // This error type means the 'Microsoft.Web' provider has not been registered in this subscription
-                // In that case, we know there are no web apps, so we can return an empty array
-                // (The provider will be registered automatically if the user creates a new web app)
-                return [];
-            } else {
-                throw error;
-            }
-        }
-
-        this._nextLink = virtualMachines.nextLink;
+        const virtualMachines: VirtualMachine[] = await uiUtils.listAllIterator(client.virtualMachines.listAll());
 
         return await this.createTreeItemsWithErrorHandling(
             virtualMachines,
             'invalidVirtualMachine',
-            async (vm: ComputeManagementModels.VirtualMachine) => {
-                const instanceView: ComputeManagementModels.VirtualMachineInstanceView = await client.virtualMachines.instanceView(getResourceGroupFromId(nonNullProp(vm, 'id')), nonNullProp(vm, 'name'));
+            async (vm: VirtualMachine) => {
+                const instanceView: VirtualMachineInstanceView = await client.virtualMachines.instanceView(getResourceGroupFromId(nonNullProp(vm, 'id')), nonNullProp(vm, 'name'));
                 return new VirtualMachineTreeItem(this, vm, instanceView);
             },
-            (vm: ComputeManagementModels.VirtualMachine) => {
+            (vm: VirtualMachine) => {
                 return vm.name;
             }
         );
     }
     public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
-        const size: ComputeManagementModels.VirtualMachineSizeTypes = this.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
+        const size: VirtualMachineSizeTypes = this.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.subscription, {
             addressPrefix: '10.1.0.0/24',
             size,
@@ -123,7 +106,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         await wizard.execute();
 
-        const virtualMachine: ComputeManagementModels.VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
+        const virtualMachine: VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
 
         const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine, undefined /* assume all newly created VMs are running */);
         if (newVm.contextValue === VirtualMachineTreeItem.linuxContextValue) {

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
+import { NetworkManagementClient, Subnet } from '@azure/arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
@@ -24,12 +24,14 @@ export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWiza
         const subnetName: string = 'default';
 
         const creatingSubnet: string = localize('creatingSubnet', `Creating new subnet "${subnetName}"...`);
-        const subnetProps: NetworkManagementModels.Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName, networkSecurityGroup: context.networkSecurityGroup };
+        const subnetProps: Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName, networkSecurityGroup: context.networkSecurityGroup };
 
         progress.report({ message: creatingSubnet });
         ext.outputChannel.appendLog(creatingSubnet);
 
-        context.subnet = await networkClient.subnets.createOrUpdate(rgName, vnetName, subnetName, subnetProps);
+        await networkClient.subnets.beginCreateOrUpdateAndWait(rgName, vnetName, subnetName, subnetProps);
+        // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
+        context.subnet = await networkClient.subnets.get(rgName, vnetName, subnetName);
         ext.outputChannel.appendLog(localize('createdSubnet', `Created new subnet "${subnetName}".`));
     }
 

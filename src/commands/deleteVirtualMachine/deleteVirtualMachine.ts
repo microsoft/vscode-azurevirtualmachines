@@ -56,7 +56,7 @@ async function getQuickPicks(context: IActionContext, node: VirtualMachineTreeIt
         resourceName: node.name, resourceType: virtualMachineLabel, picked: true,
         deleteMethod: async (): Promise<void> => {
             const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
-            await computeClient.virtualMachines.deleteMethod(node.resourceGroup, node.name);
+            await computeClient.virtualMachines.beginDeleteAndWait(node.resourceGroup, node.name);
         }
     });
 

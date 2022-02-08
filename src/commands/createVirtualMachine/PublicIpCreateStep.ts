@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
+import { NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
@@ -21,7 +21,7 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         const newLocation = await LocationListStep.getLocation(context, undefined, true);
         const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
 
-        const publicIpProps: NetworkManagementModels.PublicIPAddress = {
+        const publicIpProps: PublicIPAddress = {
             publicIPAddressVersion: 'IPv4',
             sku: { name: context.isCustomCloud ? 'Basic' : 'Standard' },
             publicIPAllocationMethod: 'Static',
@@ -39,7 +39,9 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         ext.outputChannel.appendLog(creatingIp);
 
         try {
-            context.publicIpAddress = await networkClient.publicIPAddresses.createOrUpdate(rgName, ipName, publicIpProps);
+            await networkClient.publicIPAddresses.beginCreateOrUpdateAndWait(rgName, ipName, publicIpProps);
+            // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
+            context.publicIpAddress = await networkClient.publicIPAddresses.get(rgName, ipName);
         } catch (e) {
             if (extendedLocation) {
                 throw new Error(localize('mayNotBeSupportedInEdgeZones', 'Failed to create Virtual Machine. This image may not be supported in Edge Zones.'))

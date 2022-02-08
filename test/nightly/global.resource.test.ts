@@ -39,7 +39,7 @@ async function deleteResourceGroups(): Promise<void> {
     await Promise.all(resourceGroupsToDelete.map(async resourceGroup => {
         if ((await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
             console.log(`Started deleting resource group "${resourceGroup}"...`);
-            await rgClient.resourceGroups.beginDeleteMethod(resourceGroup);
+            await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
             console.log(`Successfully deleted resource group "${resourceGroup}".`);
         } else {
             // If the test failed, the resource group might not actually exist
