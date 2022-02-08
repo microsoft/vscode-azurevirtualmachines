@@ -5,8 +5,9 @@
 
 import { ComputeManagementClient, HardwareProfile, LinuxConfiguration, NetworkProfile, OSProfile, StorageProfile, VirtualMachine, WindowsConfiguration } from '@azure/arm-compute';
 import { NetworkInterface } from '@azure/arm-network';
+import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext } from "@microsoft/vscode-azext-utils";
 import { MessageItem, Progress, window } from "vscode";
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext, LocationListStep } from "vscode-azureextensionui";
 import { viewOutput } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';

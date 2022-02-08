@@ -5,7 +5,7 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { NetworkInterface, NetworkManagementClient, Subnet } from "@azure/arm-network";
-import { IActionContext } from "vscode-azureextensionui";
+import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { networkInterfaceLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";

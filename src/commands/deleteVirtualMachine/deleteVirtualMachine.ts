@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { DialogResponses, IActionContext, IAzureQuickPickItem, UserCancelledError } from "vscode-azureextensionui";
+import { DialogResponses, IActionContext, IAzureQuickPickItem, UserCancelledError } from "@microsoft/vscode-azext-utils";
 import { virtualMachineLabel } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";

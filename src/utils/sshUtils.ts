@@ -4,10 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, SshPublicKeyGenerateKeyPairResult } from '@azure/arm-compute';
+import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
+import { callWithMaskHandling, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
-import { callWithMaskHandling, IActionContext, LocationListStep } from 'vscode-azureextensionui';
 import * as which from 'which';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { sshFsPath } from '../constants';
@@ -17,6 +18,7 @@ import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { createComputeClient } from './azureClients';
 import { cpUtils } from "./cpUtils";
 import { nonNullValueAndProp } from './nonNull';
+
 
 export async function createSshKey(context: IVirtualMachineWizardContext, vmName: string, passphrase: string): Promise<{ sshKeyName: string; keyData: string }> {
     return await callWithMaskHandling(

@@ -10,7 +10,8 @@
  */
 
 // Export activate/deactivate for main.js
-export * from 'vscode-azureextensionui';
+export { createAzureClient } from '@microsoft/vscode-azext-azureutils';
+export * from '@microsoft/vscode-azext-utils';
 export { createVirtualMachine, createVirtualMachineAdvanced } from './src/commands/createVirtualMachine/createVirtualMachine';
 export { FeaturedImage, ImageListStep } from './src/commands/createVirtualMachine/ImageListStep';
 export { activateInternal, deactivateInternal } from './src/extension';
