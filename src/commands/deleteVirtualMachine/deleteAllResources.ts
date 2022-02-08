@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ResourceManagementClient, ResourceManagementModels } from "@azure/arm-resources";
-import { IActionContext, ISubscriptionContext } from "vscode-azureextensionui";
+import { GenericResourceExpanded, ResourceManagementClient } from "@azure/arm-resources";
+import { IActionContext, ISubscriptionContext, uiUtils } from "vscode-azureextensionui";
 import { networkInterfaceLabel, virtualMachineLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { createResourceClient } from "../../utils/azureClients";
@@ -34,13 +34,12 @@ export async function deleteAllResources(context: IActionContext, subscription: 
 
     const resourceClient: ResourceManagementClient = await createResourceClient([context, subscription]);
 
-    const resources: ResourceManagementModels.ResourceListResult = await resourceClient.resources.listByResourceGroup(resourceGroupName);
-    // It's unlikely "nextLink" will be defined if the first batch returned no resources, but technically possible. We'll just skip deleting in that case
-    if (resources.length === 0 && !resources.nextLink) {
+    const resources: GenericResourceExpanded[] = await uiUtils.listAllIterator(resourceClient.resources.listByResourceGroup(resourceGroupName));
+    if (resources.length === 0) {
         await deleteWithOutput(
             {
                 resourceName: resourceGroupName, resourceType: localize('resourceGroup', 'resource group'),
-                deleteMethod: async (): Promise<void> => { await resourceClient.resourceGroups.deleteMethod(resourceGroupName); }
+                deleteMethod: async (): Promise<void> => { await resourceClient.resourceGroups.beginDeleteAndWait(resourceGroupName); }
             },
             failedResources);
     }

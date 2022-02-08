@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
-import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
+import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
+import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
 import * as vscode from 'vscode';
 import { AzExtErrorButton, AzExtParentTreeItem, AzExtTreeItem, IActionContext } from 'vscode-azureextensionui';
 import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
@@ -44,7 +44,7 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
         return this._state?.toLowerCase() !== 'running' ? this._state : undefined;
     }
 
-    public get data(): ComputeManagementModels.VirtualMachine {
+    public get data(): VirtualMachine {
         return this.virtualMachine;
     }
 
@@ -53,10 +53,10 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
     public static allOSContextValue: RegExp = /VirtualMachine$/;
 
     public contextValue: string;
-    public virtualMachine: ComputeManagementModels.VirtualMachine;
+    public virtualMachine: VirtualMachine;
     private _state?: string;
 
-    public constructor(parent: AzExtParentTreeItem, vm: ComputeManagementModels.VirtualMachine, instanceView?: ComputeManagementModels.VirtualMachineInstanceView) {
+    public constructor(parent: AzExtParentTreeItem, vm: VirtualMachine, instanceView?: VirtualMachineInstanceView) {
         super(parent);
         this.virtualMachine = vm;
         this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
@@ -71,19 +71,19 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
         const networkClient: NetworkManagementClient = await createNetworkClient([context, this]);
         const rgName: string = getResourceGroupFromId(this.id);
 
-        const networkInterfaces: ComputeManagementModels.NetworkInterfaceReference[] = nonNullValueAndProp(this.virtualMachine.networkProfile, 'networkInterfaces');
+        const networkInterfaces: NetworkInterfaceReference[] = nonNullValueAndProp(this.virtualMachine.networkProfile, 'networkInterfaces');
         if (networkInterfaces.length === 0) {
             throw new Error(localize('noNicConfigs', 'No network interfaces are associated with "{0}"', this.name));
         }
 
         const networkInterfaceName: string = getNameFromId(nonNullProp(networkInterfaces[0], 'id'));
-        const networkInterface: NetworkManagementModels.NetworkInterface = await networkClient.networkInterfaces.get(rgName, networkInterfaceName);
+        const networkInterface: NetworkInterface = await networkClient.networkInterfaces.get(rgName, networkInterfaceName);
         if (!networkInterface.ipConfigurations || networkInterface.ipConfigurations.length === 0) {
             throw new Error(localize('noIpConfigs', 'No IP configurations are associated with network interface "{0}"', networkInterface.name));
         }
 
         const publicIPAddressName: string = getNameFromId(nonNullValueAndProp(networkInterface.ipConfigurations[0].publicIPAddress, 'id'));
-        const ip: NetworkManagementModels.PublicIPAddress = await networkClient.publicIPAddresses.get(rgName, publicIPAddressName);
+        const ip: PublicIPAddress = await networkClient.publicIPAddresses.get(rgName, publicIPAddressName);
         return nonNullProp(ip, 'ipAddress');
     }
 
@@ -140,8 +140,8 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
         return this.getStateFromInstanceView(await computeClient.virtualMachines.instanceView(this.resourceGroup, this.name));
     }
 
-    private getStateFromInstanceView(instanceView: ComputeManagementModels.VirtualMachineInstanceView): string | undefined {
-        const powerState: ComputeManagementModels.InstanceViewStatus | undefined = instanceView.statuses && instanceView.statuses.find((status): boolean => status.code && status.code.toLowerCase().includes('powerstate') ? true : false);
+    private getStateFromInstanceView(instanceView: VirtualMachineInstanceView): string | undefined {
+        const powerState: InstanceViewStatus | undefined = instanceView.statuses && instanceView.statuses.find((status): boolean => status.code && status.code.toLowerCase().includes('powerstate') ? true : false);
         return powerState && powerState.displayStatus ? powerState.displayStatus.replace(/vm/i, '').trim() : undefined;
     }
 }

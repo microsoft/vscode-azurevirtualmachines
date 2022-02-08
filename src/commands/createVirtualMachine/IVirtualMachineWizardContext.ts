@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementModels } from '@azure/arm-compute';
-import { NetworkManagementModels } from '@azure/arm-network';
+import { ImageReference, OperatingSystemTypes, VirtualMachine, VirtualMachineSizeTypes } from '@azure/arm-compute';
+import { NetworkInterface, NetworkSecurityGroup, PublicIPAddress, Subnet, VirtualNetwork } from '@azure/arm-network';
 import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
 
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
@@ -12,7 +12,7 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      * The newly created Virtual Machine
      * This will be defined after `VirtualMachineCreateStep.execute` occurs.
      */
-    virtualMachine?: ComputeManagementModels.VirtualMachine;
+    virtualMachine?: VirtualMachine;
 
     /**
      * The name of the new VM.
@@ -23,27 +23,27 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
     /**
      * The size of the VM.  The default value is `Standard_D2s_v3`.
      */
-    size?: ComputeManagementModels.VirtualMachineSizeTypes;
+    size?: VirtualMachineSizeTypes;
 
     /**
      * The OS of the VM.  The default is `Linux`.
      */
-    os?: ComputeManagementModels.OperatingSystemTypes;
+    os?: OperatingSystemTypes;
 
     /**
      * The image task used to retrieve the image.  Because the task can take a while, we should retrieve it in parallel while users answer prompts.
      */
-    imageTask?: Promise<ComputeManagementModels.ImageReference>;
+    imageTask?: Promise<ImageReference>;
     /**
      * The image used to create the VM.  The default is `Ubuntu Server 18.04 LTS`.
      */
-    image?: ComputeManagementModels.ImageReference;
+    image?: ImageReference;
 
     /**
      * The network interface of the new VM.  This contains all the ipConfigurations such as public IP and subnet
      * This will be defined after `NetworkInterfaceCreateStep.execute`
      */
-    networkInterface?: NetworkManagementModels.NetworkInterface;
+    networkInterface?: NetworkInterface;
 
     /**
      * The name to use for the new network interface.
@@ -56,25 +56,25 @@ export interface IVirtualMachineWizardContext extends IResourceGroupWizardContex
      * The network security group for the new VM.  It contains the security rules that control opening ports for SSH/HTTP/HTTPS.
      * This will be defined after `NetworkSecurityGroupCreateStep.execute`
      */
-    networkSecurityGroup?: NetworkManagementModels.NetworkSecurityGroup;
+    networkSecurityGroup?: NetworkSecurityGroup;
 
     /**
      * The public IP address for the new VM. This is the public IP address that the user connects to.
      * This will be defined after `PublicIpCreateStep.execute`
      */
-    publicIpAddress?: NetworkManagementModels.PublicIPAddress;
+    publicIpAddress?: PublicIPAddress;
 
     /**
      * The subnet for the new VM.
      * This will be defined after `SubnetCreateStep.execute`
      */
-    subnet?: NetworkManagementModels.Subnet;
+    subnet?: Subnet;
 
     /**
      * The virtual network for the new VM.
      * This will be defined after `VirtualNetworkCreateStep.execute`
      */
-    virtualNetwork?: NetworkManagementModels.VirtualNetwork;
+    virtualNetwork?: VirtualNetwork;
 
     /**
      * The username to connect to the VM via SSH.  It defaults to `azureuser`

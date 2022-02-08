@@ -3,7 +3,8 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
+import { ComputeManagementClient, ResourceSku } from "@azure/arm-compute";
+import { uiUtils } from "vscode-azureextensionui";
 import { createComputeClient } from "../../utils/azureClients";
 import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
@@ -11,7 +12,7 @@ import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 export async function getAvailableVMLocations(context: IVirtualMachineWizardContext): Promise<string[]> {
     const computeClient: ComputeManagementClient = await createComputeClient(context);
 
-    const resourceSkus: ComputeManagementModels.ResourceSkusResult = await computeClient.resourceSkus.list();
+    const resourceSkus: ResourceSku[] = await uiUtils.listAllIterator(computeClient.resourceSkus.list());
     return resourceSkus.
         filter(sku => sku.resourceType && sku.resourceType === 'virtualMachines')
         .filter(sku => sku.name && sku.name === context.size && sku.locations)

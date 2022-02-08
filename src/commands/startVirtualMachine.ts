@@ -21,7 +21,7 @@ export async function startVirtualMachine(context: IActionContext, node?: Virtua
     await node.runWithTemporaryDescription(context, localize('starting', 'Starting...'), async () => {
         const vmti: VirtualMachineTreeItem = nonNullValue(node);
         ext.outputChannel.appendLog(localize('startingVm', `Starting "${vmti.name}"...`));
-        await computeClient.virtualMachines.start(vmti.resourceGroup, vmti.name);
+        await computeClient.virtualMachines.beginStartAndWait(vmti.resourceGroup, vmti.name);
         ext.outputChannel.appendLog(localize('startedVm', `"${vmti.name}" has been started.`));
     });
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
+import { NetworkManagementClient, VirtualNetwork } from '@azure/arm-network';
 import { Progress } from "vscode";
 import { AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
@@ -21,7 +21,7 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const newLocation = await LocationListStep.getLocation(context, undefined, true);
         const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
 
-        const virtualNetworkProps: NetworkManagementModels.VirtualNetwork = { location, extendedLocation, addressSpace: { addressPrefixes: [nonNullProp(context, 'addressPrefix')] } };
+        const virtualNetworkProps: VirtualNetwork = { location, extendedLocation, addressSpace: { addressPrefixes: [nonNullProp(context, 'addressPrefix')] } };
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const vmName: string = nonNullProp(context, 'newVirtualMachineName');
         // network names can't be 1 character and will fail the creation
@@ -30,8 +30,9 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
         const creatingVn: string = localize('creatingVn', `Creating new virtual network "${vnName}"...`);
         ext.outputChannel.appendLog(creatingVn);
         progress.report({ message: creatingVn });
-
-        context.virtualNetwork = await networkClient.virtualNetworks.createOrUpdate(rgName, vnName, virtualNetworkProps);
+        await networkClient.virtualNetworks.beginCreateOrUpdateAndWait(rgName, vnName, virtualNetworkProps);
+        // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
+        context.virtualNetwork = await networkClient.virtualNetworks.get(rgName, vnName);
         ext.outputChannel.appendLog(localize('creatingVn', `Created new virtual network "${vnName}".`));
     }
 

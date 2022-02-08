@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from '@azure/arm-compute';
+import { ComputeManagementClient, SshPublicKeyGenerateKeyPairResult } from '@azure/arm-compute';
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
@@ -59,12 +59,12 @@ export async function createSshKey(context: IVirtualMachineWizardContext, vmName
                     const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
                     await client.sshPublicKeys.create(rgName, vmName, { location: (await LocationListStep.getLocation(context)).name });
 
-                    const keyPair: ComputeManagementModels.SshPublicKeyGenerateKeyPairResult = await client.sshPublicKeys.generateKeyPair(rgName, vmName);
+                    const keyPair: SshPublicKeyGenerateKeyPairResult = await client.sshPublicKeys.generateKeyPair(rgName, vmName);
                     await fse.writeFile(`${sshKeyPath}.pub`, keyPair.publicKey);
                     await fse.writeFile(sshKeyPath, keyPair.privateKey);
 
                     // delete because there's no purpose once we locally download the key pair
-                    await client.sshPublicKeys.deleteMethod(rgName, vmName);
+                    await client.sshPublicKeys.delete(rgName, vmName);
                     ext.outputChannel.appendLog(generatedKey);
                 }
             }

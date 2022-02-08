@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementModels } from "@azure/arm-compute";
+import { OperatingSystemType } from "@azure/arm-compute";
 import * as assert from "assert";
 import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
 import { createVirtualMachine, createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
@@ -96,7 +96,7 @@ async function testCreateVirtualMachine(os: string, image: string, passwordInput
     await verifyVmCreated(resourceGroup, resourceName);
 }
 
-async function createVmTestsByOs(os: ComputeManagementModels.OperatingSystemType, passwordInputs: IPasswordInput[]): Promise<Promise<void>[]> {
+async function createVmTestsByOs(os: OperatingSystemType, passwordInputs: IPasswordInput[]): Promise<Promise<void>[]> {
     const parallelTests: Promise<void>[] = [];
     const context = await createTestActionContext();
     const images = await new ImageListStep().getQuickPicks(context, os);

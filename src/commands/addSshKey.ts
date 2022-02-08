@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ComputeManagementModels } from "@azure/arm-compute";
+import { ComputeManagementClient, VirtualMachine, VirtualMachineExtension } from "@azure/arm-compute";
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
 import { IActionContext, parseError } from "vscode-azureextensionui";
@@ -21,7 +21,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     }
 
     const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
-    const vm: ComputeManagementModels.VirtualMachine = node.virtualMachine;
+    const vm: VirtualMachine = node.virtualMachine;
 
     const sshPublicKey: Uri = (await context.ui.showOpenDialog({
         defaultUri: Uri.file(sshFsPath),
@@ -29,7 +29,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
     }))[0];
 
     const extensionName: string = 'enablevmaccess';
-    let vmExtension: ComputeManagementModels.VirtualMachineExtension;
+    let vmExtension: VirtualMachineExtension;
 
     try {
         // the VMAccessForLinux extension is necessary to configure more SSH keys
@@ -39,7 +39,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
             throw e;
         }
 
-        vmExtension = { location: vm.location, publisher: 'Microsoft.OSTCExtensions', virtualMachineExtensionType: 'VMAccessForLinux', type: 'Microsoft.Compute/virtualMachines/extensions', typeHandlerVersion: '1.4', autoUpgradeMinorVersion: true };
+        vmExtension = { location: vm.location, publisher: 'Microsoft.OSTCExtensions', typePropertiesType: 'VMAccessForLinux', type: 'Microsoft.Compute/virtualMachines/extensions', typeHandlerVersion: '1.4', autoUpgradeMinorVersion: true };
     }
 
     vmExtension.protectedSettings = {
@@ -52,7 +52,7 @@ export async function addSshKey(context: IActionContext, node?: VirtualMachineTr
 
     await window.withProgress({ location: ProgressLocation.Notification, title: addingSshKey }, async (): Promise<void> => {
         ext.outputChannel.appendLog(addingSshKey);
-        await computeClient.virtualMachineExtensions.createOrUpdate(nonNullValueAndProp(node, 'resourceGroup'), nonNullValueAndProp(node, 'name'), extensionName, vmExtension);
+        await computeClient.virtualMachineExtensions.beginCreateOrUpdateAndWait(nonNullValueAndProp(node, 'resourceGroup'), nonNullValueAndProp(node, 'name'), extensionName, vmExtension);
         void window.showInformationMessage(addingSshKeySucceeded);
         ext.outputChannel.appendLog(addingSshKeySucceeded);
     });

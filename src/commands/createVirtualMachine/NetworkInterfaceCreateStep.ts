@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkManagementClient, NetworkManagementModels } from '@azure/arm-network';
+import { NetworkInterface, NetworkManagementClient, PublicIPAddress, Subnet } from '@azure/arm-network';
 import { Progress } from "vscode";
 import { AzExtLocation, AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
@@ -26,10 +26,10 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         // this is the naming convention used by the portal
         context.newNetworkInterfaceName = context.newNetworkInterfaceName || this.formatNetworkInterfaceName(vmName);
 
-        const publicIpAddress: NetworkManagementModels.PublicIPAddress = nonNullProp(context, 'publicIpAddress');
-        const subnet: NetworkManagementModels.Subnet = nonNullProp(context, 'subnet');
+        const publicIpAddress: PublicIPAddress = nonNullProp(context, 'publicIpAddress');
+        const subnet: Subnet = nonNullProp(context, 'subnet');
 
-        const networkInterfaceProps: NetworkManagementModels.NetworkInterface = {
+        const networkInterfaceProps: NetworkInterface = {
             location, extendedLocation, ipConfigurations: [{ name: context.newNetworkInterfaceName, publicIPAddress: publicIpAddress, subnet: subnet }]
         };
 
@@ -38,7 +38,9 @@ export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualM
         ext.outputChannel.appendLog(creatingNi);
 
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
-        context.networkInterface = await networkClient.networkInterfaces.createOrUpdate(rgName, context.newNetworkInterfaceName, networkInterfaceProps);
+        await networkClient.networkInterfaces.beginCreateOrUpdateAndWait(rgName, context.newNetworkInterfaceName, networkInterfaceProps);
+        // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
+        context.networkInterface = await networkClient.networkInterfaces.get(rgName, context.newNetworkInterfaceName);
         ext.outputChannel.appendLog(localize('createdNi', `Created new network interface "${context.newNetworkInterfaceName}".`));
     }
 
