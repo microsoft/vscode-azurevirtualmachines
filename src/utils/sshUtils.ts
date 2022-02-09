@@ -19,7 +19,6 @@ import { createComputeClient } from './azureClients';
 import { cpUtils } from "./cpUtils";
 import { nonNullValueAndProp } from './nonNull';
 
-
 export async function createSshKey(context: IVirtualMachineWizardContext, vmName: string, passphrase: string): Promise<{ sshKeyName: string; keyData: string }> {
     return await callWithMaskHandling(
         async () => {
