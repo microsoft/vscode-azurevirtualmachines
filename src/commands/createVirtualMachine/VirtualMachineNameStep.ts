@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, VirtualMachine } from "@azure/arm-compute";
-import { AzureNameStep, IAzureNamingRules, ResourceGroupListStep, resourceGroupNamingRules, uiUtils } from "vscode-azureextensionui";
+import { ResourceGroupListStep, resourceGroupNamingRules, uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { AzureNameStep, IAzureNamingRules } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../localize";
 import { createComputeClient } from "../../utils/azureClients";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";

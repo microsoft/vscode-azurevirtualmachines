@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
 import { commands } from 'vscode';
-import { IActionContext } from 'vscode-azureextensionui';
 import { sshFsPath } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';

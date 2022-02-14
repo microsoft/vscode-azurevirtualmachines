@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ImageReference, OperatingSystemType, OperatingSystemTypes, VirtualMachineSizeTypes } from "@azure/arm-compute";
-import { AzExtRequestPrepareOptions, AzureWizardPromptStep, IActionContext, IAzureQuickPickItem, sendRequestWithTimeout } from "vscode-azureextensionui";
+import { AzExtRequestPrepareOptions, sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardPromptStep, IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from '../../localize';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 

@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { IActionContext } from "vscode-azureextensionui";
+import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";

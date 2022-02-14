@@ -5,8 +5,8 @@
 
 import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
+import { AzExtErrorButton, AzExtParentTreeItem, AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { AzExtErrorButton, AzExtParentTreeItem, AzExtTreeItem, IActionContext } from 'vscode-azureextensionui';
 import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
 import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { viewOutput, virtualMachineLabel } from '../constants';

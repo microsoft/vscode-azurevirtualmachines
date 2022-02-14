@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, ResourceSku } from "@azure/arm-compute";
-import { uiUtils } from "vscode-azureextensionui";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { createComputeClient } from "../../utils/azureClients";
 import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";

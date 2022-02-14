@@ -295,7 +295,7 @@
         "ts-node": "^7.0.1",
         "typescript": "^4.3.5",
         "vsce": "^1.87.1",
-        "vscode-azureextensiondev": "0.10.3",
+        "vscode-azureextensiondev": "^0.10.4",
         "vscode-test": "^1.5.2",
         "webpack": "^5.28.0",
         "webpack-cli": "^4.6.0"
@@ -306,11 +306,12 @@
         "@azure/arm-network-profile-2020-09-01-hybrid": "^1.0.0",
         "@azure/arm-resources": "^5.0.0",
         "@azure/arm-resources-profile-2020-09-01-hybrid": "^1.0.0",
+        "@microsoft/vscode-azext-azureutils": "^0.0.2",
+        "@microsoft/vscode-azext-utils": "^0.0.2",
         "fs-extra": "^8.1.0",
         "open": "^8.0.4",
         "semver": "^5.7.0",
         "ssh-config": "^4.0.5",
-        "vscode-azureextensionui": "^0.50.0",
         "vscode-nls": "^4.1.0",
         "which": "^2.0.2"
     },

@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { GenericResourceExpanded, ResourceManagementClient } from "@azure/arm-resources";
-import { IActionContext, ISubscriptionContext, uiUtils } from "vscode-azureextensionui";
+import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { IActionContext, ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { networkInterfaceLabel, virtualMachineLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { createResourceClient } from "../../utils/azureClients";

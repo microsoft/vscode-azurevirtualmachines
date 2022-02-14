@@ -5,7 +5,7 @@
 
 import { ImageReference, OperatingSystemTypes, VirtualMachine, VirtualMachineSizeTypes } from '@azure/arm-compute';
 import { NetworkInterface, NetworkSecurityGroup, PublicIPAddress, Subnet, VirtualNetwork } from '@azure/arm-network';
-import { IResourceGroupWizardContext } from 'vscode-azureextensionui';
+import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
     /**

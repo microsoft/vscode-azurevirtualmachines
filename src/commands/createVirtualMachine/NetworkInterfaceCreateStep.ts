@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress, Subnet } from '@azure/arm-network';
+import { AzExtLocation, LocationListStep } from '@microsoft/vscode-azext-azureutils';
+import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
-import { AzExtLocation, AzureWizardExecuteStep, LocationListStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';

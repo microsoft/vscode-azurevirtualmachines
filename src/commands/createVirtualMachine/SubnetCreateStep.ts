@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { NetworkManagementClient, Subnet } from '@azure/arm-network';
+import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
-import { AzureWizardExecuteStep } from "vscode-azureextensionui";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
