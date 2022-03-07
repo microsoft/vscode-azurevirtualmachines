@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OperatingSystemType } from "@azure/arm-compute";
+import { createTestActionContext, runWithTestActionContext } from "@microsoft/vscode-azext-dev";
 import * as assert from "assert";
-import { createTestActionContext, runWithTestActionContext } from "vscode-azureextensiondev";
 import { createVirtualMachine, createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
