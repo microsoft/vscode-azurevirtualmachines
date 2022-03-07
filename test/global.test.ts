@@ -23,7 +23,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         context.ui = new TestUserInput(vscode);
     });
 
-    longRunningTestsEnabled = true //!/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
+    longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
