@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { } from '@microsoft/vscode-azext-azureutils';
+import { TestOutputChannel, TestUserInput } from '@microsoft/vscode-azext-dev';
 import { } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { TestOutputChannel, TestUserInput } from 'vscode-azureextensiondev';
 import { ext, registerOnActionStartHandler } from '../extension.bundle';
 
 export let longRunningTestsEnabled: boolean;
@@ -23,7 +23,7 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         context.ui = new TestUserInput(vscode);
     });
 
-    longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
+    longRunningTestsEnabled = true //!/^(false|0)?$/i.test(process.env.ENABLE_LONG_RUNNING_TESTS || '');
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
