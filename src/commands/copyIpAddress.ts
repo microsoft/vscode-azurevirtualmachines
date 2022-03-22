@@ -14,6 +14,10 @@ export async function copyIpAddress(context: IActionContext, node?: VirtualMachi
         node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
     }
 
+    if (!node) {
+        return;
+    }
+
     await vscode.env.clipboard.writeText(await node.getIpAddress(context));
     const message: string = localize('copiedIpAddress', '"{0}"\'s IP address has been copied to the clipboard', node.name);
     void vscode.window.showInformationMessage(message);

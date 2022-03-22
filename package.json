@@ -49,7 +49,8 @@
         "onCommand:azureVirtualMachines.startVirtualMachine",
         "onCommand:azureVirtualMachines.stopVirtualMachine",
         "onCommand:azureVirtualMachines.viewProperties",
-        "onView:azVmTree"
+        "onView:azVmTree",
+        "x-onAzNodeTypeFetch:microsoft.compute/virtualmachines"
     ],
     "main": "./main.js",
     "contributes": {
@@ -181,47 +182,47 @@
                 },
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/ && viewItem =~ /VirtualMachine$/",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.viewProperties",
-                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
                     "group": "3@1"
                 },
                 {
                     "command": "azureVirtualMachines.openInPortal",
-                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
                     "group": "3@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view == azVmTree && viewItem =~ /VirtualMachine$/",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
                     "group": "2@4"
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azVmTree && viewItem == linuxVirtualMachine",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem == linuxVirtualMachine",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azVmTree && viewItem == linuxVirtualMachine",
+                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem == linuxVirtualMachine",
                     "group": "1@3"
                 }
             ],

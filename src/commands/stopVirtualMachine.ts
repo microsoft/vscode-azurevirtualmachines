@@ -7,19 +7,19 @@ import { ComputeManagementClient } from "@azure/arm-compute";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
-import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
 import { nonNullValue } from "../utils/nonNull";
 
-export async function stopVirtualMachine(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function stopVirtualMachine(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.allOSContextValue), context);
     }
 
-    const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
+    const computeClient: ComputeManagementClient = await createComputeClient([context, node?.subscription]);
 
     await node.runWithTemporaryDescription(context, localize('deallocating', 'Deallocating...'), async () => {
-        const vmti: VirtualMachineTreeItem = nonNullValue(node);
+        const vmti: ResolvedVirtualMachineTreeItem = nonNullValue(node);
         ext.outputChannel.appendLog(localize('deallocatingVm', `Deallocating "${vmti.name}"...`));
         await computeClient.virtualMachines.beginDeallocateAndWait(vmti.resourceGroup, vmti.name);
         ext.outputChannel.appendLog(localize('deallocatedVm', `"${vmti.name}" has been deallocated.`));

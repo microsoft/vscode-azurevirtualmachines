@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, VirtualMachine, VirtualMachineInstanceView, VirtualMachineSizeTypes } from '@azure/arm-compute';
-import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, uiUtils, VerifyProvidersStep } from '@microsoft/vscode-azext-azureutils';
+import { VirtualMachine, VirtualMachineSizeTypes } from '@azure/arm-compute';
+import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from '@microsoft/vscode-azext-azureutils';
 import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { ImageListStep } from '../commands/createVirtualMachine/ImageListStep';
@@ -20,8 +20,6 @@ import { VirtualMachineCreateStep } from '../commands/createVirtualMachine/Virtu
 import { VirtualMachineNameStep } from '../commands/createVirtualMachine/VirtualMachineNameStep';
 import { VirtualNetworkCreateStep } from '../commands/createVirtualMachine/VirtualNetworkCreateStep';
 import { localize } from '../localize';
-import { createComputeClient } from '../utils/azureClients';
-import { getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp } from '../utils/nonNull';
 import { configureSshConfig } from '../utils/sshUtils';
 import { VirtualMachineTreeItem } from './VirtualMachineTreeItem';
@@ -36,27 +34,28 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         return this._nextLink !== undefined;
     }
 
-    public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
+    public async loadMoreChildrenImpl(clearCache: boolean, _context: IActionContext): Promise<AzExtTreeItem[]> {
         if (clearCache) {
             this._nextLink = undefined;
         }
 
-        const client: ComputeManagementClient = await createComputeClient([context, this]);
-        const virtualMachines: VirtualMachine[] = await uiUtils.listAllIterator(client.virtualMachines.listAll());
+        // const client: ComputeManagementClient = await createComputeClient([context, this]);
+        // const virtualMachines: VirtualMachine[] = await uiUtils.listAllIterator(client.virtualMachines.listAll());
 
-        return await this.createTreeItemsWithErrorHandling(
-            virtualMachines,
-            'invalidVirtualMachine',
-            async (vm: VirtualMachine) => {
-                const instanceView: VirtualMachineInstanceView = await client.virtualMachines.instanceView(getResourceGroupFromId(nonNullProp(vm, 'id')), nonNullProp(vm, 'name'));
-                return new VirtualMachineTreeItem(this, vm, instanceView);
-            },
-            (vm: VirtualMachine) => {
-                return vm.name;
-            }
-        );
+        // return await this.createTreeItemsWithErrorHandling(
+        //     virtualMachines,
+        //     'invalidVirtualMachine',
+        //     async (vm: VirtualMachine) => {
+        //         const instanceView: VirtualMachineInstanceView = await client.virtualMachines.instanceView(getResourceGroupFromId(nonNullProp(vm, 'id')), nonNullProp(vm, 'name'));
+        //         return new VirtualMachineTreeItem(this, vm, instanceView);
+        //     },
+        //     (vm: VirtualMachine) => {
+        //         return vm.name;
+        //     }
+        // );
+        return [];
     }
-    public async createChildImpl(context: ICreateChildImplContext): Promise<AzExtTreeItem> {
+    public async createChildImpl2(context: ICreateChildImplContext): Promise<void> {
         const size: VirtualMachineSizeTypes = this.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.subscription, {
             addressPrefix: '10.1.0.0/24',
@@ -109,11 +108,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         const virtualMachine: VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
 
-        const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this, virtualMachine, undefined /* assume all newly created VMs are running */);
-        if (newVm.contextValue === VirtualMachineTreeItem.linuxContextValue) {
+        const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(this.subscription, virtualMachine, undefined /* assume all newly created VMs are running */);
+        if (newVm.contextValuesToAdd.includes(VirtualMachineTreeItem.linuxContextValue)) {
             await configureSshConfig(context, newVm, `~/.ssh/${wizardContext.sshKeyName}`);
         }
-
-        return newVm;
     }
 }

@@ -10,18 +10,22 @@ import { ProgressLocation, Uri, window } from "vscode";
 import { sshFsPath } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
-import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
 import { nonNullValueAndProp } from "../utils/nonNull";
 import { configureSshConfig } from "../utils/sshUtils";
 
-export async function addSshKey(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function addSshKey(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.linuxContextValue, context);
+        node = await ext.rgApi.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.linuxContextValue), context);
     }
 
-    const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
-    const vm: VirtualMachine = node.virtualMachine;
+    if (!node) {
+        return;
+    }
+
+    const computeClient: ComputeManagementClient = await createComputeClient([context, node.subscription]);
+    const vm: VirtualMachine = node.data;
 
     const sshPublicKey: Uri = (await context.ui.showOpenDialog({
         defaultUri: Uri.file(sshFsPath),

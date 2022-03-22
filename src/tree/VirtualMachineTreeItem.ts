@@ -5,8 +5,9 @@
 
 import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
-import { AzExtErrorButton, AzExtParentTreeItem, AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzExtErrorButton, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '../api';
 import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
 import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { viewOutput, virtualMachineLabel } from '../constants';
@@ -17,7 +18,17 @@ import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
-export class VirtualMachineTreeItem extends AzExtTreeItem {
+export interface ResolvedVirtualMachine extends ResolvedAppResourceBase {
+    data: VirtualMachine;
+    resourceGroup: string;
+    getIpAddress(context: IActionContext): Promise<string>;
+    getUser(): string;
+    label: string;
+}
+
+export type ResolvedVirtualMachineTreeItem = ResolvedAppResourceTreeItem<ResolvedVirtualMachine>;
+
+export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
     public get label(): string {
         return `${this.name}`;
     }
@@ -25,6 +36,8 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
     public get iconPath(): treeUtils.IThemedIconPath {
         return treeUtils.getThemedIconPath('Virtual-Machine');
     }
+
+    public readonly collapsibleState = vscode.TreeItemCollapsibleState.None;
 
     public get id(): string {
         // https://github.com/microsoft/vscode-azurevirtualmachines/issues/70
@@ -52,15 +65,15 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
     public static windowsContextValue: string = 'windowsVirtualMachine';
     public static allOSContextValue: RegExp = /VirtualMachine$/;
 
-    public contextValue: string;
+    public contextValuesToAdd: string[] = [];
     public virtualMachine: VirtualMachine;
+
     private _state?: string;
 
-    public constructor(parent: AzExtParentTreeItem, vm: VirtualMachine, instanceView?: VirtualMachineInstanceView) {
-        super(parent);
+    public constructor(private readonly _subscription: ISubscriptionContext, vm: VirtualMachine, instanceView?: VirtualMachineInstanceView) {
         this.virtualMachine = vm;
         this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
-        this.contextValue = vm.osProfile?.linuxConfiguration ? VirtualMachineTreeItem.linuxContextValue : VirtualMachineTreeItem.windowsContextValue;
+        this.contextValuesToAdd = vm.osProfile?.linuxConfiguration ? [VirtualMachineTreeItem.linuxContextValue] : [VirtualMachineTreeItem.windowsContextValue];
     }
 
     public getUser(): string {
@@ -68,7 +81,7 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
     }
 
     public async getIpAddress(context: IActionContext): Promise<string> {
-        const networkClient: NetworkManagementClient = await createNetworkClient([context, this]);
+        const networkClient: NetworkManagementClient = await createNetworkClient([context, this._subscription]);
         const rgName: string = getResourceGroupFromId(this.id);
 
         const networkInterfaces: NetworkInterfaceReference[] = nonNullValueAndProp(this.virtualMachine.networkProfile, 'networkInterfaces');
@@ -97,7 +110,7 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
         await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${deleting} Check the [output channel](command:${ext.prefix}.showOutputChannel) for status.` }, async (): Promise<void> => {
             if (multiDelete) { ext.outputChannel.appendLog(deleting); }
 
-            const failedResources: ResourceToDelete[] = await deleteAllResources(context, this.subscription, this.resourceGroup, resourcesToDelete);
+            const failedResources: ResourceToDelete[] = await deleteAllResources(context, this._subscription, this.resourceGroup, resourcesToDelete);
             const failedResourceList: string = failedResources.map(r => `"${r.resourceName}"`).join(', ');
 
             const messageDeleteWithErrors: string = localize(
@@ -136,7 +149,7 @@ export class VirtualMachineTreeItem extends AzExtTreeItem {
     }
 
     public async getState(context: IActionContext): Promise<string | undefined> {
-        const computeClient: ComputeManagementClient = await createComputeClient([context, this]);
+        const computeClient: ComputeManagementClient = await createComputeClient([context, this._subscription]);
         return this.getStateFromInstanceView(await computeClient.virtualMachines.instanceView(this.resourceGroup, this.name));
     }
 

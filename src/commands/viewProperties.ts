@@ -5,11 +5,11 @@
 
 import { IActionContext, openReadOnlyJson } from '@microsoft/vscode-azext-utils';
 import { ext } from '../extensionVariables';
-import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
-export async function viewProperties(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function viewProperties(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.allOSContextValue), context);
     }
 
     await openReadOnlyJson(node, node.data);

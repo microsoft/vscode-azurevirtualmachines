@@ -9,6 +9,7 @@ import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-az
 import { AzExtTreeDataProvider, AzExtTreeItem, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
 import * as vscode from 'vscode';
+import { AzureResourceGroupsExtensionApi } from './api';
 import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
 import { copyIpAddress } from './commands/copyIpAddress';
@@ -22,7 +23,9 @@ import { stopVirtualMachine } from './commands/stopVirtualMachine';
 import { viewProperties } from './commands/viewProperties';
 import { remoteSshExtensionId } from './constants';
 import { ext } from './extensionVariables';
+import { getApiExport } from './getExtensionApi';
 import { AzureAccountTreeItem } from './tree/AzureAccountTreeItem';
+import { VirtualMachineResolver } from './VirtualMachineTreeItemResolver';
 
 export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
     ext.context = context;
@@ -63,6 +66,15 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         // Suppress "Report an Issue" button for all errors in favor of the command
         registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
         registerReportIssueCommand('azureVirtualMachines.reportIssue');
+
+        const rgApiProvider = await getApiExport<AzureExtensionApiProvider>('ms-azuretools.vscode-azureresourcegroups');
+        if (rgApiProvider) {
+            const api = rgApiProvider.getApi<AzureResourceGroupsExtensionApi>('0.0.1');
+            ext.rgApi = api;
+            api.registerApplicationResourceResolver('Microsoft.Compute/virtualMachines', new VirtualMachineResolver());
+        } else {
+            throw new Error('Could not find the Azure Resource Groups extension');
+        }
     });
 
     return createApiProvider([<AzureExtensionApi>{

@@ -14,7 +14,7 @@ import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/I
 import { sshFsPath } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
-import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { createComputeClient } from './azureClients';
 import { cpUtils } from "./cpUtils";
 import { nonNullValueAndProp } from './nonNull';
@@ -76,7 +76,7 @@ export async function createSshKey(context: IVirtualMachineWizardContext, vmName
         passphrase);
 }
 
-export async function configureSshConfig(context: IActionContext, vmti: VirtualMachineTreeItem, sshKeyPath: string): Promise<void> {
+export async function configureSshConfig(context: IActionContext, vmti: ResolvedVirtualMachineTreeItem | VirtualMachineTreeItem, sshKeyPath: string): Promise<void> {
     const sshConfigPath: string = join(sshFsPath, 'config');
     await fse.ensureFile(sshConfigPath);
 

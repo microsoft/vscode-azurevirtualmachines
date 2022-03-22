@@ -8,14 +8,14 @@ import { DialogResponses, IActionContext, IAzureQuickPickItem, UserCancelledErro
 import { virtualMachineLabel } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
-import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../../utils/azureClients";
 import { IDeleteChildImplContext, ResourceToDelete } from "./deleteConstants";
 import { getResourcesAssociatedToVm } from "./getResourcesAssociatedToVm";
 
-export async function deleteVirtualMachine(context: IActionContext & Partial<IDeleteChildImplContext>, node?: VirtualMachineTreeItem): Promise<void> {
+export async function deleteVirtualMachine(context: IActionContext & Partial<IDeleteChildImplContext>, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, { ...context, suppressCreatePick: true });
+        node = await ext.rgApi.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.allOSContextValue), { ...context, suppressCreatePick: true });
     }
 
     context.telemetry.properties.cancelStep = 'prompt';
@@ -48,14 +48,14 @@ export async function deleteVirtualMachine(context: IActionContext & Partial<IDe
 
 }
 
-async function getQuickPicks(context: IActionContext, node: VirtualMachineTreeItem): Promise<IAzureQuickPickItem<ResourceToDelete>[]> {
+async function getQuickPicks(context: IActionContext, node: ResolvedVirtualMachineTreeItem): Promise<IAzureQuickPickItem<ResourceToDelete>[]> {
     const resources: ResourceToDelete[] = await getResourcesAssociatedToVm(context, node);
 
     // add the vm to the resources to delete since it is not an associated resource
     resources.unshift({
         resourceName: node.name, resourceType: virtualMachineLabel, picked: true,
         deleteMethod: async (): Promise<void> => {
-            const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
+            const computeClient: ComputeManagementClient = await createComputeClient([context, node?.subscription]);
             await computeClient.virtualMachines.beginDeleteAndWait(node.resourceGroup, node.name);
         }
     });
