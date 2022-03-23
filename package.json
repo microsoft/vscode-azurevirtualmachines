@@ -49,11 +49,17 @@
         "onCommand:azureVirtualMachines.startVirtualMachine",
         "onCommand:azureVirtualMachines.stopVirtualMachine",
         "onCommand:azureVirtualMachines.viewProperties",
-        "onView:azVmTree",
-        "x-onAzNodeTypeFetch:microsoft.compute/virtualmachines"
+        "onView:azVmTree"
     ],
     "main": "./main.js",
     "contributes": {
+        "x-azResources": {
+            "activation": {
+                "onFetch": [
+                    "microsoft.compute/virtualmachines"
+                ]
+            }
+        },
         "commands": [
             {
                 "command": "azureVirtualMachines.addSshKey",
