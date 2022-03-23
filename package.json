@@ -58,7 +58,14 @@
                 "onFetch": [
                     "microsoft.compute/virtualmachines"
                 ]
-            }
+            },
+            "commands": [
+                {
+                    "command": "azureVirtualMachines.createVirtualMachine",
+                    "title": "%azureVirtualMachines.createVirtualMachine%",
+                    "type": "microsoft.compute/virtualmachines"
+                }
+            ]
         },
         "commands": [
             {

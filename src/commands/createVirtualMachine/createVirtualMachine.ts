@@ -6,16 +6,16 @@
 import { IActionContext, ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { SubscriptionTreeItem } from '../../tree/SubscriptionTreeItem';
-import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
+import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 
-export async function createVirtualMachine(context: IActionContext & Partial<ICreateChildImplContext>, node?: SubscriptionTreeItem | undefined): Promise<ResolvedVirtualMachineTreeItem> {
+export async function createVirtualMachine(context: IActionContext & Partial<ICreateChildImplContext>, node?: SubscriptionTreeItem | undefined): Promise<VirtualMachineTreeItem> {
     if (!node) {
         node = await ext.tree.showTreeItemPicker<SubscriptionTreeItem>(SubscriptionTreeItem.contextValue, context);
     }
 
-    return await node.createChild(context);
+    return await node.createChildImpl2(context);
 }
 
-export async function createVirtualMachineAdvanced(context: IActionContext, node?: SubscriptionTreeItem | undefined): Promise<ResolvedVirtualMachineTreeItem> {
+export async function createVirtualMachineAdvanced(context: IActionContext, node?: SubscriptionTreeItem | undefined): Promise<VirtualMachineTreeItem> {
     return await createVirtualMachine({ ...context, advancedCreation: true }, node);
 }

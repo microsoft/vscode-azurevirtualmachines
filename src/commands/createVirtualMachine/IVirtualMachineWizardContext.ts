@@ -8,6 +8,7 @@ import { NetworkInterface, NetworkSecurityGroup, PublicIPAddress, Subnet, Virtua
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
 
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
+    advancedCreation?: boolean;
     /**
      * The newly created Virtual Machine
      * This will be defined after `VirtualMachineCreateStep.execute` occurs.

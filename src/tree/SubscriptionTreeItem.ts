@@ -5,7 +5,7 @@
 
 import { VirtualMachine, VirtualMachineSizeTypes } from '@azure/arm-compute';
 import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from '@microsoft/vscode-azext-azureutils';
-import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { getAvailableVMLocations } from '../commands/createVirtualMachine/getAvailableVMLocations';
 import { ImageListStep } from '../commands/createVirtualMachine/ImageListStep';
 import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
@@ -55,7 +55,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         // );
         return [];
     }
-    public async createChildImpl2(context: ICreateChildImplContext): Promise<void> {
+    public async createChildImpl2(context: IActionContext & Partial<IVirtualMachineWizardContext>): Promise<VirtualMachineTreeItem> {
         const size: VirtualMachineSizeTypes = this.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
         const wizardContext: IVirtualMachineWizardContext = Object.assign(context, this.subscription, {
             addressPrefix: '10.1.0.0/24',
@@ -101,7 +101,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
         await wizard.prompt();
 
-        context.showCreatingTreeItem(nonNullProp(wizardContext, 'newVirtualMachineName'));
+        // context.showCreatingTreeItem(nonNullProp(wizardContext, 'newVirtualMachineName'));
         wizardContext.newResourceGroupName = await wizardContext.relatedNameTask;
 
         await wizard.execute();
@@ -112,5 +112,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         if (newVm.contextValuesToAdd.includes(VirtualMachineTreeItem.linuxContextValue)) {
             await configureSshConfig(context, newVm, `~/.ssh/${wizardContext.sshKeyName}`);
         }
+        return newVm;
     }
 }
