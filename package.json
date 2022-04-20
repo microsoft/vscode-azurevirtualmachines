@@ -36,20 +36,17 @@
     ],
     "preview": true,
     "activationEvents": [
-        "azureVirtualMachines.selectSubscriptions",
         "onCommand:azureVirtualMachines.addSshKey",
         "onCommand:azureVirtualMachines.createVirtualMachine",
         "onCommand:azureVirtualMachines.createVirtualMachineAdvanced",
         "onCommand:azureVirtualMachines.deleteVirtualMachine",
-        "onCommand:azureVirtualMachines.loadMore",
         "onCommand:azureVirtualMachines.openInPortal",
         "onCommand:azureVirtualMachines.refresh",
         "onCommand:azureVirtualMachines.reportIssue",
         "onCommand:azureVirtualMachines.restartVirtualMachine",
         "onCommand:azureVirtualMachines.startVirtualMachine",
         "onCommand:azureVirtualMachines.stopVirtualMachine",
-        "onCommand:azureVirtualMachines.viewProperties",
-        "onView:azVmTree"
+        "onCommand:azureVirtualMachines.viewProperties"
     ],
     "main": "./main.js",
     "contributes": {
