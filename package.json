@@ -95,25 +95,9 @@
                 "category": "Azure Virtual Machines"
             },
             {
-                "command": "azureVirtualMachines.loadMore",
-                "title": "%azureVirtualMachines.loadMore%",
-                "category": "Azure Virtual Machines"
-            },
-            {
-                "command": "azureVirtualMachines.openInPortal",
-                "title": "%azureVirtualMachines.openInPortal%",
-                "category": "Azure Virtual Machines"
-            },
-            {
                 "command": "azureVirtualMachines.openInRemoteSsh",
                 "title": "%azureVirtualMachines.openInRemoteSsh%",
                 "category": "Azure Virtual Machines"
-            },
-            {
-                "command": "azureVirtualMachines.refresh",
-                "title": "%azureVirtualMachines.refresh%",
-                "category": "Azure Virtual Machines",
-                "icon": "$(refresh)"
             },
             {
                 "command": "azureVirtualMachines.reportIssue",
@@ -126,11 +110,6 @@
                 "category": "Azure Virtual Machines"
             },
             {
-                "command": "azureVirtualMachines.selectSubscriptions",
-                "title": "Select Subscriptions...",
-                "icon": "$(filter)"
-            },
-            {
                 "command": "azureVirtualMachines.startVirtualMachine",
                 "title": "%azureVirtualMachines.startVirtualMachine%",
                 "category": "Azure Virtual Machines"
@@ -139,111 +118,57 @@
                 "command": "azureVirtualMachines.stopVirtualMachine",
                 "title": "%azureVirtualMachines.stopVirtualMachine%",
                 "category": "Azure Virtual Machines"
-            },
-            {
-                "command": "azureVirtualMachines.viewProperties",
-                "title": "%azureVirtualMachines.viewProperties%",
-                "category": "Azure Virtual Machines"
             }
         ],
-        "views": {
-            "azure": [
-                {
-                    "id": "azVmTree",
-                    "name": "Virtual Machines"
-                }
-            ]
-        },
         "menus": {
-            "view/title": [
-                {
-                    "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azVmTree",
-                    "group": "navigation@1"
-                },
-                {
-                    "command": "azureVirtualMachines.refresh",
-                    "when": "view == azVmTree",
-                    "group": "navigation@2"
-                }
-            ],
             "view/item/context": [
                 {
-                    "command": "azureVirtualMachines.selectSubscriptions",
-                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
-                    "group": "inline"
-                },
-                {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
+                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
+                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
                     "group": "1@2"
                 },
                 {
-                    "command": "azureVirtualMachines.openInPortal",
-                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
-                    "group": "2@1"
-                },
-                {
-                    "command": "azureVirtualMachines.refresh",
-                    "when": "view == azVmTree && viewItem == azureextensionui.azureSubscription",
-                    "group": "3@2"
-                },
-                {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/ && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
                     "group": "2@4"
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem == linuxVirtualMachine",
+                    "when": "view == azureResourceGroups  && viewItem == linuxVirtualMachine",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem == linuxVirtualMachine",
+                    "when": "view == azureResourceGroups  && viewItem == linuxVirtualMachine",
                     "group": "1@3"
                 }
             ],
             "explorer/context": [],
-            "commandPalette": [
-                {
-                    "command": "azureVirtualMachines.loadMore",
-                    "when": "never"
-                },
-                {
-                    "command": "azureVirtualMachines.refresh",
-                    "when": "never"
-                },
-                {
-                    "command": "azureVirtualMachines.selectSubscriptions",
-                    "when": "never"
-                }
-            ],
             "editor/context": []
         },
         "configuration": [

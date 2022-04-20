@@ -26,7 +26,10 @@
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azureresourcegroups"
+                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azureresourcegroups",
+                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azureappservice",
+                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azurefunctions",
+                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azurestaticwebapps"
             ],
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"
