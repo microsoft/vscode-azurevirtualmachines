@@ -7,11 +7,11 @@ import { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
-import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
-export async function copyIpAddress(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function copyIpAddress(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
     }
 
     if (!node) {

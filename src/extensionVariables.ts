@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AzExtTreeDataProvider, AzExtTreeItem, IAzExtOutputChannel } from "@microsoft/vscode-azext-utils";
+import { AzureHostExtensionApi } from "@microsoft/vscode-azext-utils/hostapi";
 import { ExtensionContext, TreeView } from "vscode";
-import { AzureResourceGroupsExtensionApi } from "./api";
 import { AzureAccountTreeItem } from "./tree/AzureAccountTreeItem";
 
 /**
@@ -21,5 +21,5 @@ export namespace ext {
     export let ignoreBundle: boolean | undefined;
     export const prefix: string = 'azureVirtualMachines';
 
-    export let rgApi: AzureResourceGroupsExtensionApi;
+    export let rgApi: AzureHostExtensionApi;
 }

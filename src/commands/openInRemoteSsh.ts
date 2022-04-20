@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
@@ -15,9 +15,9 @@ import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/
 import { addSshKey } from './addSshKey';
 import { verifyRemoteSshExtension } from './verifyRemoteSshExtension';
 
-export async function openInRemoteSsh(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
+export async function openInRemoteSsh(context: IActionContext & { canPickMany: false }, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.rgApi.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.linuxContextValue), context);
+        node = await ext.rgApi.appResourceTree.showTreeItemPicker<ResolvedVirtualMachineTreeItem & AzExtTreeItem>(new RegExp(VirtualMachineTreeItem.linuxContextValue), context);
     }
 
     await verifyRemoteSshExtension(context);

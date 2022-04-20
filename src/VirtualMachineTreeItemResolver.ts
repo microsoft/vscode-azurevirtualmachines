@@ -5,7 +5,7 @@
 
 import { ComputeManagementClient, VirtualMachine } from "@azure/arm-compute";
 import { callWithTelemetryAndErrorHandling, IActionContext, ISubscriptionContext, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { AppResource, AppResourceResolver } from "./api";
+import { AppResource, AppResourceResolver } from "@microsoft/vscode-azext-utils/hostapi";
 import { ResolvedVirtualMachine, VirtualMachineTreeItem } from './tree/VirtualMachineTreeItem';
 import { createComputeClient } from "./utils/azureClients";
 import { getResourceGroupFromId } from "./utils/azureUtils";

@@ -8,8 +8,8 @@
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { AzExtTreeDataProvider, AzExtTreeItem, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
+import { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
-import { AzureResourceGroupsExtensionApi } from './api';
 import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
 import { copyIpAddress } from './commands/copyIpAddress';
@@ -69,7 +69,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
 
         const rgApiProvider = await getApiExport<AzureExtensionApiProvider>('ms-azuretools.vscode-azureresourcegroups');
         if (rgApiProvider) {
-            const api = rgApiProvider.getApi<AzureResourceGroupsExtensionApi>('0.0.1');
+            const api = rgApiProvider.getApi<AzureHostExtensionApi>('0.0.1');
             ext.rgApi = api;
             api.registerApplicationResourceResolver('Microsoft.Compute/virtualMachines', new VirtualMachineResolver());
         } else {

@@ -199,16 +199,6 @@
                     "group": "1@2"
                 },
                 {
-                    "command": "azureVirtualMachines.viewProperties",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
-                    "group": "3@1"
-                },
-                {
-                    "command": "azureVirtualMachines.openInPortal",
-                    "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
-                    "group": "3@2"
-                },
-                {
                     "command": "azureVirtualMachines.startVirtualMachine",
                     "when": "view =~ /(azVmTree|azureResourceGroups)/  && viewItem =~ /VirtualMachine$/",
                     "group": "2@1"
@@ -320,8 +310,8 @@
         "@azure/arm-network-profile-2020-09-01-hybrid": "^1.0.0",
         "@azure/arm-resources": "^5.0.0",
         "@azure/arm-resources-profile-2020-09-01-hybrid": "^1.0.0",
-        "@microsoft/vscode-azext-azureutils": "^0.0.2",
-        "@microsoft/vscode-azext-utils": "^0.0.2",
+        "@microsoft/vscode-azext-azureutils": "^0.2.0",
+        "@microsoft/vscode-azext-utils": "^0.2.0",
         "fs-extra": "^8.1.0",
         "open": "^8.0.4",
         "semver": "^5.7.0",

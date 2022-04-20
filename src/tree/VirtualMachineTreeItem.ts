@@ -5,9 +5,9 @@
 
 import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
-import { AzExtErrorButton, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { AzExtErrorButton, AzExtTreeItem, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
-import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '../api';
 import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
 import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { viewOutput, virtualMachineLabel } from '../constants';
@@ -24,9 +24,10 @@ export interface ResolvedVirtualMachine extends ResolvedAppResourceBase {
     getIpAddress(context: IActionContext): Promise<string>;
     getUser(): string;
     label: string;
+    name: string;
 }
 
-export type ResolvedVirtualMachineTreeItem = ResolvedAppResourceTreeItem<ResolvedVirtualMachine>;
+export type ResolvedVirtualMachineTreeItem = ResolvedAppResourceTreeItem<ResolvedVirtualMachine> & AzExtTreeItem;
 
 export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
     public get label(): string {
