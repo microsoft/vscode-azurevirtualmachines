@@ -17,12 +17,12 @@ export interface IDeleteChildImplContext extends IActionContext {
     /**
      * Resources to be deleted
      */
-    resourcesToDelete: ResourceToDelete[];
+    resourcesToDelete?: ResourceToDelete[];
 
     /**
      * String of resources that are being deleted used for output
      */
-    resourceList: string;
+    resourceList?: string;
 
     /**
      * Flag to determine if the virtual machine is in the resourcesToDelete

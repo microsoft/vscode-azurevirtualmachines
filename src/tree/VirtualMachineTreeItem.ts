@@ -5,14 +5,16 @@
 
 import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
-import { AzExtErrorButton, AzExtTreeItem, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
-import { deleteAllResources } from '../commands/deleteVirtualMachine/deleteAllResources';
-import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
-import { viewOutput, virtualMachineLabel } from '../constants';
-import { ext } from '../extensionVariables';
+import { ConfirmDeleteStep } from '../commands/deleteVirtualMachine/ConfirmDeleteStep';
+import { ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
+import { DeleteVirtualMachineStep } from '../commands/deleteVirtualMachine/DeleteVirtualMachineStep';
+import { DeleteVirtualMachineWizardContext } from '../commands/deleteVirtualMachine/DeleteVirtualMachineWizardContext';
+import { SelectResourcesToDeleteStep } from '../commands/deleteVirtualMachine/SelectResourcesToDeleteStep';
 import { localize } from '../localize';
+import { createActivityContext } from '../utils/activityUtils';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
 import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
 import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
@@ -101,43 +103,30 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
         return nonNullProp(ip, 'ipAddress');
     }
 
-    public async deleteTreeItemImpl(context: IDeleteChildImplContext): Promise<void> {
-        const multiDelete: boolean = context.resourcesToDelete.length > 1;
-        const resourcesToDelete: ResourceToDelete[] = context.resourcesToDelete;
+    public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
 
-        const deleting: string = multiDelete ? localize('Deleting', 'Deleting {0}...', context.resourceList) :
-            localize('Deleting', 'Deleting {0} "{1}"...', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
-
-        await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `${deleting} Check the [output channel](command:${ext.prefix}.showOutputChannel) for status.` }, async (): Promise<void> => {
-            if (multiDelete) { ext.outputChannel.appendLog(deleting); }
-
-            const failedResources: ResourceToDelete[] = await deleteAllResources(context, this._subscription, this.resourceGroup, resourcesToDelete);
-            const failedResourceList: string = failedResources.map(r => `"${r.resourceName}"`).join(', ');
-
-            const messageDeleteWithErrors: string = localize(
-                'messageDeleteWithErrors',
-                'Failed to delete the following resources: {0}.', failedResourceList);
-
-            const deleteSucceeded: string = multiDelete ? localize('DeleteSucceeded', 'Successfully deleted {0}.', context.resourceList) :
-                localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
-
-            // single resources are already displayed in the output channel
-            if (multiDelete) { ext.outputChannel.appendLog(failedResources.length > 0 ? messageDeleteWithErrors : deleteSucceeded); }
-            if (failedResources.length > 0) {
-                context.telemetry.properties.failedResources = failedResources.length.toString();
-                // if the vm failed to delete or was not being deleted, we want to throw an error to make sure that the node is not removed from the tree
-                if (failedResources.some(r => r.resourceType === virtualMachineLabel) || !context.deleteVm) {
-                    // tslint:disable-next-line: no-floating-promises
-                    const viewOutputAzureButton: AzExtErrorButton = { title: viewOutput.title, callback: async (): Promise<void> => ext.outputChannel.show() };
-                    context.errorHandling.buttons = [viewOutputAzureButton];
-                    throw new Error(messageDeleteWithErrors);
-                }
-
-                void context.ui.showWarningMessage(`${messageDeleteWithErrors} Check the [output channel](command:${ext.prefix}.showOutputChannel) for more information.`);
-            } else {
-                void vscode.window.showInformationMessage(deleteSucceeded);
-            }
+        const wizardContext: DeleteVirtualMachineWizardContext = Object.assign(context, {
+            node: this as ResolvedVirtualMachineTreeItem,
+            ...(await createActivityContext()),
         });
+
+        const wizard = new AzureWizard<DeleteVirtualMachineWizardContext>(wizardContext, {
+            promptSteps: [new SelectResourcesToDeleteStep(), new ConfirmDeleteStep()],
+            executeSteps: [new DeleteVirtualMachineStep()],
+        });
+
+        await wizard.prompt();
+
+
+        const resourcesToDelete: ResourceToDelete[] = nonNullProp(wizardContext, 'resourcesToDelete');
+        const multiDelete: boolean = resourcesToDelete.length > 1;
+
+        const activityTitle: string = multiDelete ? localize('delete', 'Delete {0}...', wizardContext.resourceList) :
+            localize('delete', 'Delete {0} "{1}"...', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
+
+        wizardContext.activityTitle = activityTitle;
+
+        await wizard.execute();
     }
 
     public async refreshImpl(context: IActionContext): Promise<void> {

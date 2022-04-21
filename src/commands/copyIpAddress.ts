@@ -11,7 +11,7 @@ import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/
 
 export async function copyIpAddress(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.rgApi.appResourceTree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
     }
 
     if (!node) {
