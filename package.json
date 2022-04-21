@@ -121,12 +121,12 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
                     "group": "1@2"
                 },
                 {
