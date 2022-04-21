@@ -6,10 +6,10 @@
 import { AzureWizardPromptStep, DialogResponses, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { virtualMachineLabel } from "../../constants";
 import { localize } from "../../localize";
-import { DeleteVirtualMachineWizardContext } from "./DeleteVirtualMachineWizardContext";
+import { IDeleteChildImplContext } from "./deleteConstants";
 
-export class ConfirmDeleteStep extends AzureWizardPromptStep<DeleteVirtualMachineWizardContext> {
-    public async prompt(context: DeleteVirtualMachineWizardContext): Promise<void> {
+export class ConfirmDeleteStep extends AzureWizardPromptStep<IDeleteChildImplContext> {
+    public async prompt(context: IDeleteChildImplContext): Promise<void> {
         const resourcesToDelete = nonNullProp(context, 'resourcesToDelete');
 
         const multiDelete: boolean = resourcesToDelete.length > 1;

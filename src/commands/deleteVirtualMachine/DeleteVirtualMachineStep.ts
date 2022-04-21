@@ -9,13 +9,12 @@ import { viewOutput, virtualMachineLabel } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { deleteAllResources } from "./deleteAllResources";
-import { ResourceToDelete } from "./deleteConstants";
-import { DeleteVirtualMachineWizardContext } from "./DeleteVirtualMachineWizardContext";
+import { IDeleteChildImplContext, ResourceToDelete } from "./deleteConstants";
 
-export class DeleteVirtualMachineStep extends AzureWizardExecuteStep<DeleteVirtualMachineWizardContext> {
+export class DeleteVirtualMachineStep extends AzureWizardExecuteStep<IDeleteChildImplContext> {
     public priority: number = 100;
 
-    public async execute(context: DeleteVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined; }>): Promise<void> {
+    public async execute(context: IDeleteChildImplContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined; }>): Promise<void> {
 
         const node = nonNullProp(context, 'node');
         const resourcesToDelete = nonNullProp(context, 'resourcesToDelete');

@@ -9,12 +9,11 @@ import { virtualMachineLabel } from "../../constants";
 import { localize } from "../../localize";
 import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../../utils/azureClients";
-import { ResourceToDelete } from "./deleteConstants";
-import { DeleteVirtualMachineWizardContext } from "./DeleteVirtualMachineWizardContext";
+import { IDeleteChildImplContext, ResourceToDelete } from "./deleteConstants";
 import { getResourcesAssociatedToVm } from "./getResourcesAssociatedToVm";
 
-export class SelectResourcesToDeleteStep extends AzureWizardPromptStep<DeleteVirtualMachineWizardContext> {
-    public async prompt(context: DeleteVirtualMachineWizardContext): Promise<void> {
+export class SelectResourcesToDeleteStep extends AzureWizardPromptStep<IDeleteChildImplContext> {
+    public async prompt(context: IDeleteChildImplContext): Promise<void> {
         const resourcesToDelete: IAzureQuickPickItem<ResourceToDelete>[] = await context.ui.showQuickPick(getQuickPicks(context, nonNullProp(context, 'node')), { placeHolder: localize('selectResources', 'Select resources to delete'), canPickMany: true });
         if (resourcesToDelete.length === 0) {
             // if nothing is checked, it should be considered a cancel

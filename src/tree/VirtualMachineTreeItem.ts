@@ -9,9 +9,8 @@ import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext } from
 import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
 import { ConfirmDeleteStep } from '../commands/deleteVirtualMachine/ConfirmDeleteStep';
-import { ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
+import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { DeleteVirtualMachineStep } from '../commands/deleteVirtualMachine/DeleteVirtualMachineStep';
-import { DeleteVirtualMachineWizardContext } from '../commands/deleteVirtualMachine/DeleteVirtualMachineWizardContext';
 import { SelectResourcesToDeleteStep } from '../commands/deleteVirtualMachine/SelectResourcesToDeleteStep';
 import { localize } from '../localize';
 import { createActivityContext } from '../utils/activityUtils';
@@ -105,26 +104,23 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
 
     public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
 
-        const wizardContext: DeleteVirtualMachineWizardContext = Object.assign(context, {
+        const wizardContext: IDeleteChildImplContext = Object.assign(context, {
             node: this as ResolvedVirtualMachineTreeItem,
             ...(await createActivityContext()),
         });
 
-        const wizard = new AzureWizard<DeleteVirtualMachineWizardContext>(wizardContext, {
+        const wizard = new AzureWizard<IDeleteChildImplContext>(wizardContext, {
             promptSteps: [new SelectResourcesToDeleteStep(), new ConfirmDeleteStep()],
             executeSteps: [new DeleteVirtualMachineStep()],
         });
 
         await wizard.prompt();
 
-
         const resourcesToDelete: ResourceToDelete[] = nonNullProp(wizardContext, 'resourcesToDelete');
         const multiDelete: boolean = resourcesToDelete.length > 1;
 
-        const activityTitle: string = multiDelete ? localize('delete', 'Delete {0}...', wizardContext.resourceList) :
+        wizardContext.activityTitle = multiDelete ? localize('delete', 'Delete {0}...', wizardContext.resourceList) :
             localize('delete', 'Delete {0} "{1}"...', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
-
-        wizardContext.activityTitle = activityTitle;
 
         await wizard.execute();
     }
@@ -135,7 +131,6 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
         } catch {
             this._state = undefined;
         }
-
     }
 
     public async getState(context: IActionContext): Promise<string | undefined> {
