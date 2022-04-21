@@ -6,8 +6,9 @@
 import { ImageReference, OperatingSystemTypes, VirtualMachine, VirtualMachineSizeTypes } from '@azure/arm-compute';
 import { NetworkInterface, NetworkSecurityGroup, PublicIPAddress, Subnet, VirtualNetwork } from '@azure/arm-network';
 import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import { ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
 
-export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext {
+export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext, ExecuteActivityContext {
     advancedCreation?: boolean;
     /**
      * The newly created Virtual Machine

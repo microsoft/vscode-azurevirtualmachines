@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { ExecuteActivityContext, IActionContext } from "@microsoft/vscode-azext-utils";
+import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 
 export type ResourceToDelete = {
     resourceName: string;
@@ -12,20 +13,21 @@ export type ResourceToDelete = {
     deleteMethod(): Promise<void>; // an async wrapper for the deleteMethod to be called
 };
 
-export interface IDeleteChildImplContext extends IActionContext {
-
+export interface IDeleteChildImplContext extends IActionContext, ExecuteActivityContext {
     /**
      * Resources to be deleted
      */
-    resourcesToDelete: ResourceToDelete[];
+    resourcesToDelete?: ResourceToDelete[];
 
     /**
      * String of resources that are being deleted used for output
      */
-    resourceList: string;
+    resourceList?: string;
 
     /**
      * Flag to determine if the virtual machine is in the resourcesToDelete
      */
     deleteVm?: boolean;
+
+    node?: ResolvedVirtualMachineTreeItem;
 }

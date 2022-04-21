@@ -7,7 +7,9 @@ import { VirtualMachine, VirtualMachineSizeTypes } from "@azure/arm-compute";
 import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
+import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
+import { createActivityContext } from "../../utils/activityUtils";
 import { configureSshConfig } from "../../utils/sshUtils";
 import { getAvailableVMLocations } from "./getAvailableVMLocations";
 import { ImageListStep } from "./ImageListStep";
@@ -25,14 +27,15 @@ import { VirtualNetworkCreateStep } from "./VirtualNetworkCreateStep";
 
 export async function createVirtualMachine(context: IActionContext & Partial<ICreateChildImplContext>, node?: SubscriptionTreeItemBase | undefined): Promise<VirtualMachineTreeItem> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context);
+        node = await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context);
     }
 
     const size: VirtualMachineSizeTypes = node.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
     const wizardContext: IVirtualMachineWizardContext = Object.assign(context, node.subscription, {
         addressPrefix: '10.1.0.0/24',
         size,
-        includeExtendedLocations: true
+        includeExtendedLocations: true,
+        ...(await createActivityContext())
     });
 
     const computeProvider: string = 'Microsoft.Compute';
@@ -73,8 +76,9 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
 
     await wizard.prompt();
 
-    // context.showCreatingTreeItem(nonNullProp(wizardContext, 'newVirtualMachineName'));
     wizardContext.newResourceGroupName = await wizardContext.relatedNameTask;
+
+    wizardContext.activityTitle = localize('createVirtualMachine', 'Create virtual machine "{0}"', nonNullProp(wizardContext, 'newVirtualMachineName'));
 
     await wizard.execute();
 

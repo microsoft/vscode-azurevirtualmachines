@@ -2,7 +2,7 @@
     "name": "vscode-azurevirtualmachines",
     "displayName": "Azure Virtual Machines",
     "description": "%extension.description%",
-    "version": "0.5.1-alpha",
+    "version": "0.5.1-alpha.1",
     "publisher": "ms-azuretools",
     "icon": "resources/azure-vm.png",
     "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
@@ -121,12 +121,12 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
                     "group": "1@2"
                 },
                 {
