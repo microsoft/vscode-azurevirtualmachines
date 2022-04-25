@@ -121,12 +121,12 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azureResourceGroups && viewItem =~ /(azureextensionui.azureSubscription|(azureResourceTypeGroup.*microsoft.compute/virtualmachines))/",
+                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
                     "group": "1@2"
                 },
                 {
@@ -156,12 +156,12 @@
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azureResourceGroups  && viewItem == linuxVirtualMachine",
+                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azureResourceGroups  && viewItem == linuxVirtualMachine",
+                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@3"
                 }
             ],
