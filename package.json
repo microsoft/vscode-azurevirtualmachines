@@ -156,12 +156,12 @@
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azureResourceGroups  && viewItem == linuxVirtualMachine",
+                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azureResourceGroups  && viewItem == linuxVirtualMachine",
+                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@3"
                 }
             ],
