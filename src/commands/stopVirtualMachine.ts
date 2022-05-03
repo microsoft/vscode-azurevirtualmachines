@@ -5,6 +5,7 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { vmFilter } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
@@ -13,7 +14,10 @@ import { nonNullValue } from "../utils/nonNull";
 
 export async function stopVirtualMachine(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.rgApi.appResourceTree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.allOSContextValue), context);
+        node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>(context, {
+            filter: vmFilter,
+            expectedChildContextValue: new RegExp(VirtualMachineTreeItem.allOSContextValue)
+        });
     }
 
     const computeClient: ComputeManagementClient = await createComputeClient([context, node?.subscription]);

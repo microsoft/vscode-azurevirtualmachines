@@ -7,7 +7,7 @@ import { ComputeManagementClient, VirtualMachine, VirtualMachineExtension } from
 import { IActionContext, parseError } from "@microsoft/vscode-azext-utils";
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
-import { sshFsPath } from "../constants";
+import { sshFsPath, vmFilter } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
@@ -17,7 +17,10 @@ import { configureSshConfig } from "../utils/sshUtils";
 
 export async function addSshKey(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.rgApi.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.linuxContextValue), context);
+        node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>(context, {
+            filter: vmFilter,
+            expectedChildContextValue: new RegExp(VirtualMachineTreeItem.linuxContextValue)
+        });
     }
 
     if (!node) {

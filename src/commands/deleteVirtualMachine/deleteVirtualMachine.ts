@@ -4,13 +4,17 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { vmFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { IDeleteChildImplContext } from "./deleteConstants";
 
 export async function deleteVirtualMachine(context: IActionContext & Partial<IDeleteChildImplContext>, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.rgApi.tree.showTreeItemPicker<ResolvedVirtualMachineTreeItem>(new RegExp(VirtualMachineTreeItem.allOSContextValue), { ...context, suppressCreatePick: true });
+        node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>({ ...context, suppressCreatePick: true }, {
+            filter: vmFilter,
+            expectedChildContextValue: new RegExp(VirtualMachineTreeItem.allOSContextValue)
+        });
     }
     // context.telemetry.properties.numOfResources = resourcesToDelete.length.toString();
     // context.telemetry.properties.deleteVm = String(context.deleteVm);
