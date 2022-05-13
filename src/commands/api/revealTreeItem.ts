@@ -11,9 +11,9 @@ export async function revealTreeItem(resourceId: string): Promise<void> {
         // https://github.com/microsoft/vscode-azurevirtualmachines/issues/70
         resourceId = resourceId.toLowerCase();
 
-        const node: AzExtTreeItem | undefined = await ext.tree.findTreeItem(resourceId, { ...context, loadAll: true });
+        const node: AzExtTreeItem | undefined = await ext.rgApi.appResourceTree.findTreeItem(resourceId, { ...context, loadAll: true });
         if (node) {
-            await ext.treeView.reveal(node, { select: true, focus: true, expand: true });
+            await ext.rgApi.appResourceTreeView.reveal(node, { select: true, focus: true, expand: true });
         }
     });
 }

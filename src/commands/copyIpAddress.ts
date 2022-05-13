@@ -5,13 +5,21 @@
 
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { vmFilter } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
-import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
-export async function copyIpAddress(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function copyIpAddress(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>(context, {
+            filter: vmFilter,
+            expectedChildContextValue: new RegExp(VirtualMachineTreeItem.allOSContextValue)
+        });
+    }
+
+    if (!node) {
+        return;
     }
 
     await vscode.env.clipboard.writeText(await node.getIpAddress(context));

@@ -16,3 +16,7 @@ export const virtualMachineLabel: string = localize('virtualMachine', 'virtual m
 export const virtualNetworkLabel: string = localize('virtualNetwork', 'virtual network');
 
 export const sshFsPath: string = join(os.homedir(), '.ssh');
+
+export const vmFilter = {
+    type: 'Microsoft.Compute/virtualMachines'
+}

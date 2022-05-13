@@ -82,6 +82,13 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         ext.outputChannel.appendLog(creatingVmDetails);
         progress.report({ message: creatingVm });
         context.virtualMachine = await computeClient.virtualMachines.beginCreateOrUpdateAndWait(rgName, vmName, virtualMachineProps);
+
+        context.activityResult = {
+            id: nonNullProp(context.virtualMachine, 'id'),
+            name: nonNullProp(context.virtualMachine, 'name'),
+            type: nonNullProp(context.virtualMachine, 'type'),
+        };
+
         ext.outputChannel.appendLog(createdVm);
 
         // Note: intentionally not waiting for the result of this before returning

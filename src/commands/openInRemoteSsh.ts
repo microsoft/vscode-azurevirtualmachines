@@ -8,16 +8,19 @@ import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
 import { commands } from 'vscode';
-import { sshFsPath } from '../constants';
+import { sshFsPath, vmFilter } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
-import { VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { addSshKey } from './addSshKey';
 import { verifyRemoteSshExtension } from './verifyRemoteSshExtension';
 
-export async function openInRemoteSsh(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function openInRemoteSsh(context: IActionContext & { canPickMany: false }, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.linuxContextValue, context);
+        node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>(context, {
+            filter: vmFilter,
+            expectedChildContextValue: new RegExp(VirtualMachineTreeItem.linuxContextValue)
+        });
     }
 
     await verifyRemoteSshExtension(context);

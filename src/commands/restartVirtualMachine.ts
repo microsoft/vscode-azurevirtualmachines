@@ -5,21 +5,25 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { vmFilter } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
-import { VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
 import { nonNullValue } from "../utils/nonNull";
 
-export async function restartVirtualMachine(context: IActionContext, node?: VirtualMachineTreeItem): Promise<void> {
+export async function restartVirtualMachine(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
-        node = await ext.tree.showTreeItemPicker<VirtualMachineTreeItem>(VirtualMachineTreeItem.allOSContextValue, context);
+        node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>(context, {
+            filter: vmFilter,
+            expectedChildContextValue: new RegExp(VirtualMachineTreeItem.allOSContextValue)
+        });
     }
 
-    const computeClient: ComputeManagementClient = await createComputeClient([context, node]);
+    const computeClient: ComputeManagementClient = await createComputeClient([context, node?.subscription]);
 
     await node.runWithTemporaryDescription(context, localize('restarting', 'Restarting...'), async () => {
-        const vmti: VirtualMachineTreeItem = nonNullValue(node);
+        const vmti: ResolvedVirtualMachineTreeItem = nonNullValue(node);
         ext.outputChannel.appendLog(localize('restartingVm', `Restarting "${vmti.name}"...`));
         await computeClient.virtualMachines.beginRestartAndWait(vmti.resourceGroup, vmti.name);
         ext.outputChannel.appendLog(localize('restartedVm', `"${vmti.name}" has been restarted.`));
