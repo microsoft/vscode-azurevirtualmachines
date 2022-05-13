@@ -3,6 +3,7 @@
     "azureVirtualMachines.copyIpAddress": "Copy IP Address",
     "azureVirtualMachines.createVirtualMachine": "Create Virtual Machine...",
     "azureVirtualMachines.createVirtualMachineAdvanced": "Create Virtual Machine... (Advanced)",
+    "azureVirtualMachines.createVirtualMachineDetail": "For any workload or a remote dev box.",
     "azureVirtualMachines.deleteVirtualMachine": "Delete...",
     "azureVirtualMachines.enableOutputTimestamps": "Prepends each line displayed in the output channel with a timestamp.",
     "azureVirtualMachines.openInPortal": "Open in Portal",

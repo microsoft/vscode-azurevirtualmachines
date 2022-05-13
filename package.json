@@ -60,7 +60,8 @@
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
                     "title": "%azureVirtualMachines.createVirtualMachine%",
-                    "type": "microsoft.compute/virtualmachines"
+                    "type": "microsoft.compute/virtualmachines",
+                    "detail": "%azureVirtualMachines.createVirtualMachineDetail%"
                 }
             ]
         },
