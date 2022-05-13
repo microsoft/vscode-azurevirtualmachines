@@ -2,7 +2,7 @@
     "name": "vscode-azurevirtualmachines",
     "displayName": "Azure Virtual Machines",
     "description": "%extension.description%",
-    "version": "0.5.1-alpha.2",
+    "version": "0.5.1-alpha.3",
     "publisher": "ms-azuretools",
     "icon": "resources/azure-vm.png",
     "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
@@ -60,7 +60,8 @@
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
                     "title": "%azureVirtualMachines.createVirtualMachine%",
-                    "type": "microsoft.compute/virtualmachines"
+                    "type": "microsoft.compute/virtualmachines",
+                    "detail": "%azureVirtualMachines.createVirtualMachineDetail%"
                 }
             ]
         },
