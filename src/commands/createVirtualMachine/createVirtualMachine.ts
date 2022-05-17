@@ -81,6 +81,7 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
     wizardContext.activityTitle = localize('createVirtualMachine', 'Create virtual machine "{0}"', nonNullProp(wizardContext, 'newVirtualMachineName'));
 
     await wizard.execute();
+    await ext.rgApi.appResourceTree.refresh(context);
 
     const virtualMachine: VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
 
