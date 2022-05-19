@@ -7,7 +7,6 @@ import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference,
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
 import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
-import * as vscode from 'vscode';
 import { ConfirmDeleteStep } from '../commands/deleteVirtualMachine/ConfirmDeleteStep';
 import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { DeleteVirtualMachineStep } from '../commands/deleteVirtualMachine/DeleteVirtualMachineStep';
@@ -38,8 +37,6 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
     public get iconPath(): treeUtils.IThemedIconPath {
         return treeUtils.getThemedIconPath('Virtual-Machine');
     }
-
-    public readonly collapsibleState = vscode.TreeItemCollapsibleState.None;
 
     public get id(): string {
         // https://github.com/microsoft/vscode-azurevirtualmachines/issues/70
