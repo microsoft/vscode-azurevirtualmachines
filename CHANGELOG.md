@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.6.0 - 2022-05-24
+
+We've made some large design changes to the Azure extensions for VS Code. [View App Centric release notes](https://aka.ms/AzCode/AppCentric)
+
 ## 0.5.0 - 2022-01-25
 
 ### Added
