@@ -25,13 +25,16 @@ Create and manage Azure Virtual Machines directly from VS Code.
 
 ### Create a New Virtual Machine
 
-Once you are signed in, you can create your Azure Virutal machine by clicking the "+" button or by right-clicking your subscription.
+1. Once you are signed in, you can create your Azure Virutal machine by clicking the "+" button or by right-clicking your subscription.
 
-![CreateVirtualMachine](resources/readme/createAzureVM.png)
+![CreateVirtualMachine](resources/readme/createResource.png)
 
-1. Choose **Create Virtual Machine**
-2. Type a name for your VM.  Alphanumeric characters are all valid.
-3. Type a passphrase or leave it empty for no passphrase.
+2. Select "Create Virtual Machine..."
+
+![CreateVirtualMachine](resources/readme/createVirtualMachine.png)
+
+3. Type a name for your VM.  Alphanumeric characters are all valid.
+4. Type a passphrase or leave it empty for no passphrase.
     >For security reasons, it's _highly_ recommended that you use a passphrase for your SSH key.  It is what will be used to connect to your VM via SSH.
 
 The VM will be **Standard D2s V3** (2 CPU Cores & 8 GB of ram) with the image **Ubuntu 18.04-LTS**. An SSH key will be created and your SSH Config file (`~/.ssh/config`) will be updated so you can immediately connect via SSH (`$ ssh vm-name`) or using the [Remote-SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) extension.
@@ -45,13 +48,12 @@ Your SSH Config (`~/.ssh/config`) file will be updated so you can connect via SS
 
 > NOTE: This command is only available for Linux virtual machines.
 
-![AddSSHKey](resources/readme/AddSSHKey.png)
-
+![Add SSH Key](resources/readme/addSSHKeyMenu.png)
 ### Remote into Azure VM via SSH
 
 - Use [Visual Studio Code Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) to seamlessly connect to your Azure VM from VS Code.
 
-![ConnectToHost](resources/readme/ConnectToHost.png)
+![ConnectToHost](resources/readme/connectToHostMenu.png)
 
 
 > NOTE: This command is only available for Linux virtual machines.
