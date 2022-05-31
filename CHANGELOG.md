@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.6.1 - 2022-06-01
+
+### Changed
+- Update @vscode/extension-telemetry to 0.5.2 [#328](https://github.com/microsoft/vscode-azurevirtualmachines/pull/328)
+
 ## 0.6.0 - 2022-05-24
 
 We've made some large design changes to the Azure extensions for VS Code. [View App Centric release notes](https://aka.ms/AzCode/AppCentric)
