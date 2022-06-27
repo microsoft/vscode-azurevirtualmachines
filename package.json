@@ -2,7 +2,7 @@
     "name": "vscode-azurevirtualmachines",
     "displayName": "Azure Virtual Machines",
     "description": "%extension.description%",
-    "version": "0.6.2-alpha.1",
+    "version": "0.6.2-alpha.2",
     "publisher": "ms-azuretools",
     "icon": "resources/azure-vm.png",
     "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
