@@ -5,7 +5,7 @@
 
 import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
-import { getResourceGroupFromId, parseAzureResourceId } from '@microsoft/vscode-azext-azureutils';
+import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
 import { ConfirmDeleteStep } from '../commands/deleteVirtualMachine/ConfirmDeleteStep';
@@ -15,6 +15,7 @@ import { SelectResourcesToDeleteStep } from '../commands/deleteVirtualMachine/Se
 import { localize } from '../localize';
 import { createActivityContext } from '../utils/activityUtils';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
+import { getNameFromId } from '../utils/azureUtils';
 import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
@@ -88,13 +89,13 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
             throw new Error(localize('noNicConfigs', 'No network interfaces are associated with "{0}"', this.name));
         }
 
-        const networkInterfaceName: string = parseAzureResourceId(nonNullProp(networkInterfaces[0], 'id')).resourceName;
+        const networkInterfaceName: string = getNameFromId(nonNullProp(networkInterfaces[0], 'id'));
         const networkInterface: NetworkInterface = await networkClient.networkInterfaces.get(rgName, networkInterfaceName);
         if (!networkInterface.ipConfigurations || networkInterface.ipConfigurations.length === 0) {
             throw new Error(localize('noIpConfigs', 'No IP configurations are associated with network interface "{0}"', networkInterface.name));
         }
 
-        const publicIPAddressName: string = parseAzureResourceId(nonNullValueAndProp(networkInterface.ipConfigurations[0].publicIPAddress, 'id')).resourceName;
+        const publicIPAddressName: string = getNameFromId(nonNullValueAndProp(networkInterface.ipConfigurations[0].publicIPAddress, 'id'));
         const ip: PublicIPAddress = await networkClient.publicIPAddresses.get(rgName, publicIPAddressName);
         return nonNullProp(ip, 'ipAddress');
     }
