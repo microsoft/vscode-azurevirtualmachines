@@ -5,12 +5,12 @@
 
 import { ComputeManagementClient } from "@azure/arm-compute";
 import { NetworkInterface, NetworkManagementClient, Subnet } from "@azure/arm-network";
+import { getResourceGroupFromId, parseAzureResourceId } from "@microsoft/vscode-azext-azureutils";
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { networkInterfaceLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient, createNetworkClient } from "../../utils/azureClients";
-import { getNameFromId, getResourceGroupFromId } from "../../utils/azureUtils";
 import { ResourceToDelete } from "./deleteConstants";
 
 export async function getResourcesAssociatedToVm(context: IActionContext, node: ResolvedVirtualMachineTreeItem): Promise<ResourceToDelete[]> {
@@ -21,7 +21,7 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
     if (node.data.networkProfile?.networkInterfaces) {
         for (const networkRef of node.data.networkProfile?.networkInterfaces) {
             if (networkRef.id) {
-                networkReferences.push({ name: getNameFromId(networkRef.id), rgName: getResourceGroupFromId(networkRef.id) });
+                networkReferences.push({ name: parseAzureResourceId(networkRef.id).resourceName, rgName: getResourceGroupFromId(networkRef.id) });
             }
         }
 
@@ -41,7 +41,7 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
             if (networkInterface.ipConfigurations) {
                 for (const ipConfigurations of networkInterface.ipConfigurations) {
                     if (ipConfigurations.publicIPAddress?.id) {
-                        const publicIpName: string = getNameFromId(ipConfigurations.publicIPAddress.id);
+                        const publicIpName: string = parseAzureResourceId(ipConfigurations.publicIPAddress.id).resourceName;
                         const publicIpRg: string = getResourceGroupFromId(ipConfigurations.publicIPAddress.id);
                         associatedResources.push({
                             resourceName: publicIpName, resourceType: localize('publicip', 'public IP address'),
@@ -60,11 +60,11 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
                             deleteMethod: async (): Promise<void> => { await networkClient.virtualNetworks.beginDeleteAndWait(subnetRg, virtualNetworkName); }
                         });
 
-                        const subnetName: string = getNameFromId(subnetId);
+                        const subnetName: string = parseAzureResourceId(subnetId).resourceName;
                         try {
                             const subnet: Subnet = await networkClient.subnets.get(subnetRg, virtualNetworkName, subnetName);
                             if (subnet.networkSecurityGroup?.id) {
-                                const nsgName: string = getNameFromId(subnet.networkSecurityGroup.id);
+                                const nsgName: string = parseAzureResourceId(subnet.networkSecurityGroup.id).resourceName;
                                 const nsgRg: string = getResourceGroupFromId(subnet.networkSecurityGroup.id);
                                 associatedResources.push({
                                     resourceName: nsgName, resourceType: localize('networkSecurityGroup', 'network security group'),
@@ -84,7 +84,7 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
     }
 
     if (node.data.storageProfile?.osDisk?.managedDisk?.id) {
-        const diskName: string = getNameFromId(node.data.storageProfile.osDisk.managedDisk.id);
+        const diskName: string = parseAzureResourceId(node.data.storageProfile.osDisk.managedDisk.id).resourceName;
         const diskRg: string = getResourceGroupFromId(node.data.storageProfile.osDisk.managedDisk.id);
         const computeClient: ComputeManagementClient = await createComputeClient([context, node?.subscription]);
         associatedResources.push({
