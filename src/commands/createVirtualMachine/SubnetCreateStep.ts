@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { NetworkManagementClient, Subnet } from '@azure/arm-network';
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
-import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {

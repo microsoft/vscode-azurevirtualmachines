@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient, VirtualMachine, VirtualMachineExtension } from "@azure/arm-compute";
-import { IActionContext, parseError } from "@microsoft/vscode-azext-utils";
+import { IActionContext, nonNullValueAndProp, parseError } from "@microsoft/vscode-azext-utils";
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
 import { sshFsPath, vmFilter } from "../constants";
@@ -12,7 +12,6 @@ import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
-import { nonNullValueAndProp } from "../utils/nonNull";
 import { configureSshConfig } from "../utils/sshUtils";
 
 export async function addSshKey(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {

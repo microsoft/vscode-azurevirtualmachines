@@ -27,7 +27,6 @@ export { VirtualMachineTreeItem } from "./src/tree/VirtualMachineTreeItem";
 export { createComputeClient, createResourceClient } from './src/utils/azureClients';
 export * from './src/utils/cpUtils';
 export * from './src/utils/delay';
-export { nonNullProp, nonNullValue } from './src/utils/nonNull';
 export { getRandomHexString } from './src/utils/randomUtils';
 export * from './src/vsCodeConfig/extensions';
 

@@ -5,7 +5,7 @@
 
 import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
 import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
-import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext, nonNullProp, nonNullValueAndProp } from '@microsoft/vscode-azext-utils';
 import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
 import { ConfirmDeleteStep } from '../commands/deleteVirtualMachine/ConfirmDeleteStep';
 import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
@@ -15,7 +15,6 @@ import { localize } from '../localize';
 import { createActivityContext } from '../utils/activityUtils';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
 import { getNameFromId, getResourceGroupFromId } from '../utils/azureUtils';
-import { nonNullProp, nonNullValueAndProp } from '../utils/nonNull';
 import { treeUtils } from '../utils/treeUtils';
 
 export interface ResolvedVirtualMachine extends ResolvedAppResourceBase {

@@ -4,9 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OperatingSystemTypes } from "@azure/arm-compute";
-import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../localize";
-import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 const reservedWords: string[] = ['admin', 'administrator', 'root', 'test', 'user'];
