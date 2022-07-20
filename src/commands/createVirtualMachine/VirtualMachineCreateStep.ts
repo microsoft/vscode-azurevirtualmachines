@@ -6,13 +6,12 @@
 import { ComputeManagementClient, HardwareProfile, LinuxConfiguration, NetworkProfile, OSProfile, StorageProfile, VirtualMachine, WindowsConfiguration } from '@azure/arm-compute';
 import { NetworkInterface } from '@azure/arm-network';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { MessageItem, Progress, window } from "vscode";
 import { viewOutput } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createComputeClient } from '../../utils/azureClients';
-import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { createSshKey } from '../../utils/sshUtils';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
