@@ -5,8 +5,8 @@
 
 import { ComputeManagementClient, ResourceSku } from "@azure/arm-compute";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
+import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { createComputeClient } from "../../utils/azureClients";
-import { nonNullProp } from "../../utils/nonNull";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export async function getAvailableVMLocations(context: IVirtualMachineWizardContext): Promise<string[]> {

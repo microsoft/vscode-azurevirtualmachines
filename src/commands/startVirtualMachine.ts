@@ -4,13 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient } from "@azure/arm-compute";
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { IActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
 import { vmFilter } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
 import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
-import { nonNullValue } from "../utils/nonNull";
 
 export async function startVirtualMachine(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {

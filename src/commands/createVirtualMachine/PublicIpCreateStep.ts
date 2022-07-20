@@ -5,12 +5,11 @@
 
 import { NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardExecuteStep } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { Progress } from "vscode";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
-import { nonNullProp, nonNullValueAndProp } from '../../utils/nonNull';
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
