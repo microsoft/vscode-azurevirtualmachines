@@ -5,6 +5,7 @@
 
 import { IAzExtOutputChannel } from "@microsoft/vscode-azext-utils";
 import { AzureHostExtensionApi } from "@microsoft/vscode-azext-utils/hostapi";
+import { V2AzureResourcesApi } from "@microsoft/vscode-azext-utils/hostapi.v2";
 import { ExtensionContext } from "vscode";
 
 /**
@@ -18,4 +19,5 @@ export namespace ext {
     export const prefix: string = 'azureVirtualMachines';
 
     export let rgApi: AzureHostExtensionApi;
+    export let v2RgApi: V2AzureResourcesApi;
 }
