@@ -50,6 +50,15 @@
     ],
     "main": "./main.js",
     "contributes": {
+        "x-azResourcesV2": {
+            "application": {
+                "branches": [
+                    {
+                        "type": "VirtualMachines"
+                    }
+                ]
+            }
+        },
         "x-azResources": {
             "activation": {
                 "onFetch": [
@@ -122,47 +131,47 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
+                    "when": "view == azureResourceGroupsV2 && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
+                    "when": "view == azureResourceGroupsV2 && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroupsV2 && viewItem =~ /VirtualMachine$/",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
                     "group": "2@4"
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view == azureResourceGroupsV2  && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view == azureResourceGroupsV2  && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@3"
                 }
             ],
@@ -234,7 +243,7 @@
         "@azure/arm-resources": "^5.0.0",
         "@azure/arm-resources-profile-2020-09-01-hybrid": "^1.0.0",
         "@microsoft/vscode-azext-azureutils": "^0.3.4",
-        "@microsoft/vscode-azext-utils": "^0.3.9",
+        "@microsoft/vscode-azext-utils": "file:../vscode-azuretools/utils/microsoft-vscode-azext-utils-0.3.15.tgz",
         "fs-extra": "^8.1.0",
         "open": "^8.0.4",
         "semver": "^5.7.0",
