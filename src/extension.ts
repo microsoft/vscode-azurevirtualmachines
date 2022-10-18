@@ -6,7 +6,7 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommand, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
 import { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
@@ -37,17 +37,17 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         activateContext.telemetry.properties.isActivationEvent = 'true';
         activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
-        registerCommand('azureVirtualMachines.createVirtualMachine', createVirtualMachine);
-        registerCommand('azureVirtualMachines.createVirtualMachineAdvanced', createVirtualMachineAdvanced);
-        registerCommand('azureVirtualMachines.startVirtualMachine', startVirtualMachine);
-        registerCommand('azureVirtualMachines.restartVirtualMachine', restartVirtualMachine);
-        registerCommand('azureVirtualMachines.stopVirtualMachine', stopVirtualMachine);
-        registerCommand('azureVirtualMachines.addSshKey', addSshKey);
-        registerCommand('azureVirtualMachines.deleteVirtualMachine', deleteVirtualMachine);
-        registerCommand('azureVirtualMachines.copyIpAddress', copyIpAddress);
-        registerCommand('azureVirtualMachines.openInRemoteSsh', openInRemoteSsh);
-        registerCommand('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
-        registerCommand('azureVirtualMachines.showRemoteSshExtension', () => { void vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.createVirtualMachine', createVirtualMachine);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.createVirtualMachineAdvanced', createVirtualMachineAdvanced);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.startVirtualMachine', startVirtualMachine);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.restartVirtualMachine', restartVirtualMachine);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.stopVirtualMachine', stopVirtualMachine);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.addSshKey', addSshKey);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.deleteVirtualMachine', deleteVirtualMachine);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.copyIpAddress', copyIpAddress);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.openInRemoteSsh', openInRemoteSsh);
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
+        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.showRemoteSshExtension', () => { void vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
 
         // Suppress "Report an Issue" button for all errors in favor of the command
         registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
@@ -57,7 +57,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         if (rgApiProvider) {
             const api = rgApiProvider.getApi<AzureHostExtensionApi>('0.0.1');
             ext.rgApi = api;
-            api.registerApplicationResourceResolver('Microsoft.Compute/virtualMachines', new VirtualMachineResolver());
+            api.registerApplicationResourceResolver(AzExtResourceType.VirtualMachines, new VirtualMachineResolver());
         } else {
             throw new Error('Could not find the Azure Resource Groups extension');
         }
