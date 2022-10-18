@@ -6,7 +6,7 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getResourceGroupsApi, IActionContext, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getResourceGroupsApi, IActionContext, registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
 import * as vscode from 'vscode';
 import { addSshKey } from './commands/addSshKey';
@@ -43,8 +43,8 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.deleteVirtualMachine', deleteVirtualMachine);
         registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.copyIpAddress', copyIpAddress);
         registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.openInRemoteSsh', openInRemoteSsh);
-        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
-        registerCommandWithTreeNodeUnwrapping('azureVirtualMachines.showRemoteSshExtension', () => { void vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
+        registerCommand('azureVirtualMachines.showOutputChannel', () => { ext.outputChannel.show(); });
+        registerCommand('azureVirtualMachines.showRemoteSshExtension', () => { void vscode.commands.executeCommand('extension.open', remoteSshExtensionId); });
 
         // Suppress "Report an Issue" button for all errors in favor of the command
         registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
