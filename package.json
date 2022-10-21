@@ -131,47 +131,47 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azureResourceGroupsV2 && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azureResourceGroupsV2 && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view == azureResourceGroupsV2 && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view == azureResourceGroupsV2  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
                     "group": "2@4"
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azureResourceGroupsV2  && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view == azureResourceGroups && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azureResourceGroupsV2  && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view == azureResourceGroups && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@3"
                 }
             ],
