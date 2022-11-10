@@ -7,12 +7,8 @@
             "es6"
         ],
         "sourceMap": true,
+        "strict": true,
         "rootDir": ".",
-        "noUnusedLocals": true,
-        "noImplicitThis": true,
-        "noImplicitReturns": true,
-        "strictNullChecks": true,
-        "noUnusedParameters": true,
         "baseUrl": "./",
         "paths": {
             "*": [
