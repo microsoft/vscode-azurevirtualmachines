@@ -238,7 +238,7 @@
         "fs-extra": "^8.1.0",
         "open": "^8.0.4",
         "semver": "^5.7.0",
-        "ssh-config": "^4.0.5",
+        "ssh-config": "^4.1.4",
         "vscode-nls": "^4.1.0",
         "which": "^2.0.2"
     },

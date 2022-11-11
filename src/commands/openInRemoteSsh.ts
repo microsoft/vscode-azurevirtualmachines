@@ -15,7 +15,7 @@ import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/
 import { addSshKey } from './addSshKey';
 import { verifyRemoteSshExtension } from './verifyRemoteSshExtension';
 
-export async function openInRemoteSsh(context: IActionContext & { canPickMany: false }, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
+export async function openInRemoteSsh(context: IActionContext & { canPickMany?: false }, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {
         node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>(context, {
             filter: vmFilter,
