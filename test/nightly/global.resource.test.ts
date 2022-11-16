@@ -28,21 +28,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
     if (longRunningTestsEnabled) {
         this.timeout(10 * 60 * 1000);
-        await deleteResourceGroups();
         // ext.azureAccountTreeItem.dispose();
     }
 });
-
-async function deleteResourceGroups(): Promise<void> {
-    const rgClient: ResourceManagementClient = createAzureClient([await createTestActionContext(), testAccount.getSubscriptionContext()], ResourceManagementClient);
-    await Promise.all(resourceGroupsToDelete.map(async resourceGroup => {
-        if ((await rgClient.resourceGroups.checkExistence(resourceGroup)).body) {
-            console.log(`Started deleting resource group "${resourceGroup}"...`);
-            await rgClient.resourceGroups.beginDeleteAndWait(resourceGroup);
-            console.log(`Successfully deleted resource group "${resourceGroup}".`);
-        } else {
-            // If the test failed, the resource group might not actually exist
-            console.log(`Ignoring resource group "${resourceGroup}" because it does not exist.`);
-        }
-    }));
-}
