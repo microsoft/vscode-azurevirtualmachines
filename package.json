@@ -50,16 +50,14 @@
     ],
     "main": "./main.js",
     "contributes": {
-        "x-azResourcesV2": {
-            "application": {
+        "x-azResources": {
+            "azure": {
                 "branches": [
                     {
                         "type": "VirtualMachines"
                     }
                 ]
-            }
-        },
-        "x-azResources": {
+            },
             "activation": {
                 "onFetch": [
                     "microsoft.compute/virtualmachines"
@@ -141,27 +139,27 @@
                 },
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@4"
                 },
                 {

@@ -5,7 +5,7 @@
 
 import { VirtualMachine, VirtualMachineSizeTypes } from "@azure/arm-compute";
 import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, compatibilitySubscriptionExperience, IActionContext, ICreateChildImplContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
@@ -26,10 +26,12 @@ import { VirtualMachineNameStep } from "./VirtualMachineNameStep";
 import { VirtualNetworkCreateStep } from "./VirtualNetworkCreateStep";
 
 export async function createVirtualMachine(context: IActionContext & Partial<ICreateChildImplContext>, node?: SubscriptionTreeItemBase | undefined): Promise<VirtualMachineTreeItem> {
-    const subscription = node ? node.subscription : await compatibilitySubscriptionExperience(context, ext.v2RgApi.applicationResourceTreeDataProvider);
+    if (!node) {
+        node = await ext.rgApi.appResourceTree.showTreeItemPicker<SubscriptionTreeItemBase>(SubscriptionTreeItemBase.contextValue, context);
+    }
 
-    const size: VirtualMachineSizeTypes = subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
-    const wizardContext: IVirtualMachineWizardContext = Object.assign(context, subscription, {
+    const size: VirtualMachineSizeTypes = node.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
+    const wizardContext: IVirtualMachineWizardContext = Object.assign(context, node.subscription, {
         addressPrefix: '10.1.0.0/24',
         size,
         includeExtendedLocations: true,
@@ -79,12 +81,11 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
     wizardContext.activityTitle = localize('createVirtualMachine', 'Create virtual machine "{0}"', nonNullProp(wizardContext, 'newVirtualMachineName'));
 
     await wizard.execute();
-
-    // TODO: refresh tree so that the new VM shows up
+    await ext.rgApi.appResourceTree.refresh(context);
 
     const virtualMachine: VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
 
-    const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(subscription, virtualMachine, undefined /* assume all newly created VMs are running */);
+    const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(node.subscription, virtualMachine, undefined /* assume all newly created VMs are running */);
     if (newVm.contextValuesToAdd.includes(VirtualMachineTreeItem.linuxContextValue)) {
         await configureSshConfig(context, newVm, `~/.ssh/${wizardContext.sshKeyName}`);
     }

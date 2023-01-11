@@ -6,7 +6,7 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getResourceGroupsApi, IActionContext, registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getResourceGroupsApi, IActionContext, registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
 import * as vscode from 'vscode';
 import { addSshKey } from './commands/addSshKey';
@@ -20,6 +20,7 @@ import { startVirtualMachine } from './commands/startVirtualMachine';
 import { stopVirtualMachine } from './commands/stopVirtualMachine';
 import { remoteSshExtensionId } from './constants';
 import { ext } from './extensionVariables';
+import { VirtualMachineResolver } from './VirtualMachineTreeItemResolver';
 
 export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<AzureExtensionApiProvider> {
     ext.context = context;
@@ -51,7 +52,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerReportIssueCommand('azureVirtualMachines.reportIssue');
 
         ext.rgApi = await getResourceGroupsApi('0.0.1');
-        ext.v2RgApi = await getResourceGroupsApi('2.0.0');
+        ext.rgApi.registerApplicationResourceResolver(AzExtResourceType.VirtualMachines, new VirtualMachineResolver());
     });
 
     return createApiProvider([<AzureExtensionApi>{
