@@ -6,8 +6,9 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { AzExtResourceType, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getResourceGroupsApi, IActionContext, registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getApiExport, IActionContext, registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
+import { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
 import { addSshKey } from './commands/addSshKey';
 import { revealTreeItem } from './commands/api/revealTreeItem';
@@ -51,8 +52,14 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
         registerReportIssueCommand('azureVirtualMachines.reportIssue');
 
-        ext.rgApi = await getResourceGroupsApi('0.0.1');
-        ext.rgApi.registerApplicationResourceResolver(AzExtResourceType.VirtualMachines, new VirtualMachineResolver());
+        const rgApiProvider = await getApiExport<AzureExtensionApiProvider>('ms-azuretools.vscode-azureresourcegroups');
+        if (rgApiProvider) {
+            const api = rgApiProvider.getApi<AzureHostExtensionApi>('0.0.1');
+            ext.rgApi = api;
+            api.registerApplicationResourceResolver(AzExtResourceType.VirtualMachines, new VirtualMachineResolver());
+        } else {
+            throw new Error('Could not find the Azure Resource Groups extension');
+        }
     });
 
     return createApiProvider([<AzureExtensionApi>{
