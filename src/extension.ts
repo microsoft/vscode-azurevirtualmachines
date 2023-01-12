@@ -6,7 +6,7 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { AzExtResourceType, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getApiExport, IActionContext, registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
+import { AzExtResourceType, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, getExtensionExports, IActionContext, registerCommand, registerCommandWithTreeNodeUnwrapping, registerErrorHandler, registerReportIssueCommand, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import { AzureExtensionApi, AzureExtensionApiProvider } from '@microsoft/vscode-azext-utils/api';
 import { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import * as vscode from 'vscode';
@@ -52,7 +52,7 @@ export async function activateInternal(context: vscode.ExtensionContext, perfSta
         registerErrorHandler(c => c.errorHandling.suppressReportIssue = true);
         registerReportIssueCommand('azureVirtualMachines.reportIssue');
 
-        const rgApiProvider = await getApiExport<AzureExtensionApiProvider>('ms-azuretools.vscode-azureresourcegroups');
+        const rgApiProvider = await getExtensionExports<AzureExtensionApiProvider>('ms-azuretools.vscode-azureresourcegroups');
         if (rgApiProvider) {
             const api = rgApiProvider.getApi<AzureHostExtensionApi>('0.0.1');
             ext.rgApi = api;
