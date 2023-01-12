@@ -20,16 +20,13 @@
             }
         },
         {
-            "name": "Launch Extension(s)",
+            "name": "Launch Extension + Host",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
-                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azureresourcegroups",
-                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azureappservice",
-                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azurefunctions",
-                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azurestaticwebapps"
+                "--extensionDevelopmentPath=${workspaceFolder}/../vscode-azureresourcegroups"
             ],
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"
