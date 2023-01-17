@@ -51,6 +51,13 @@
     "main": "./main.js",
     "contributes": {
         "x-azResources": {
+            "azure": {
+                "branches": [
+                    {
+                        "type": "VirtualMachines"
+                    }
+                ]
+            },
             "activation": {
                 "onFetch": [
                     "microsoft.compute/virtualmachines"
@@ -122,47 +129,47 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azureResourceGroups && viewItem =~ /azureResourceTypeGroup.*microsoft.compute/virtualmachines/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view == azureResourceGroups && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view == azureResourceGroups  && viewItem =~ /VirtualMachine$/",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@4"
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view == azureResourceGroups && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azureResourceGroups  && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view == azureResourceGroups && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@3"
                 }
             ],
@@ -234,7 +241,7 @@
         "@azure/arm-resources": "^5.0.0",
         "@azure/arm-resources-profile-2020-09-01-hybrid": "^1.0.0",
         "@microsoft/vscode-azext-azureutils": "^0.3.4",
-        "@microsoft/vscode-azext-utils": "^0.3.15",
+        "@microsoft/vscode-azext-utils": "^0.3.26",
         "fs-extra": "^8.1.0",
         "open": "^8.0.4",
         "semver": "^5.7.0",
