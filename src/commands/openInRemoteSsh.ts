@@ -19,8 +19,13 @@ export async function openInRemoteSsh(context: IActionContext & { canPickMany?: 
     if (!node) {
         node = await ext.rgApi.pickAppResource<ResolvedVirtualMachineTreeItem>(context, {
             filter: vmFilter,
-            expectedChildContextValue: new RegExp(VirtualMachineTreeItem.linuxContextValue)
+            // TODO: only show Linux VMs
+            // expectedChildContextValue: new RegExp(VirtualMachineTreeItem.linuxContextValue)
         });
+
+        if (!node.contextValue.includes(VirtualMachineTreeItem.linuxContextValue)) {
+            throw new Error(localize('addSshKeyNotLinux', 'Only Linux VMs are supported.'));
+        }
     }
 
     await verifyRemoteSshExtension(context);
