@@ -1,11 +1,16 @@
 # Change Log
 
+## 0.6.3 - 2023-02-21
+
+### Fixed
+* Fix expected child context values by @alexweininger in [#373](https://github.com/microsoft/vscode-azurevirtualmachines/pull/373)
+
 ## 0.6.3 - 2023-01-25
 
-## Added
+### Added
 * Forward compatibility for Azure Resources API v2 @alexweininger in [#367](https://github.com/microsoft/vscode-azurevirtualmachines/pull/367)
 
-## Changes
+### Changes
 * Update AppInsights key by @bwateratmsft in [#340](https://github.com/microsoft/vscode-azurevirtualmachines/pull/340)
 * Enable all strict type checking options by @alexweininger in [#360](https://github.com/microsoft/vscode-azurevirtualmachines/pull/360)
 
