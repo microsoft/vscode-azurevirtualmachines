@@ -1,6 +1,11 @@
 # Change Log
 
-## 0.6.3 - 2023-02-21
+## 0.6.5 - 2023-05-17
+
+### Added
+* Add support for the upcoming Azure Resources Focus feature
+
+## 0.6.4 - 2023-02-21
 
 ### Fixed
 * Fix expected child context values by @alexweininger in [#373](https://github.com/microsoft/vscode-azurevirtualmachines/pull/373)
