@@ -129,47 +129,47 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.copyIpAddress",
-                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "1@2"
                 },
                 {
                     "command": "azureVirtualMachines.startVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@1"
                 },
                 {
                     "command": "azureVirtualMachines.restartVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@2"
                 },
                 {
                     "command": "azureVirtualMachines.stopVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@3"
                 },
                 {
                     "command": "azureVirtualMachines.deleteVirtualMachine",
-                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachine(?!s)/i",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachine(?!s)/i",
                     "group": "2@4"
                 },
                 {
                     "command": "azureVirtualMachines.openInRemoteSsh",
-                    "when": "view == azureResourceGroups && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.addSshKey",
-                    "when": "view == azureResourceGroups && viewItem =~ /linuxVirtualMachine/",
+                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /linuxVirtualMachine/",
                     "group": "1@3"
                 }
             ],
