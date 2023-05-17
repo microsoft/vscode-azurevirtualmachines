@@ -129,12 +129,12 @@
             "view/item/context": [
                 {
                     "command": "azureVirtualMachines.createVirtualMachine",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@1"
                 },
                 {
                     "command": "azureVirtualMachines.createVirtualMachineAdvanced",
-                    "when": "view =~ /(azureResourceGroups|azureFocusView)/ && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
+                    "when": "view == azureResourceGroups && viewItem =~ /virtualmachines/i && viewItem =~ /azureResourceTypeGroup/i",
                     "group": "1@2"
                 },
                 {
