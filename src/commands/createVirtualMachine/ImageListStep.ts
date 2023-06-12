@@ -65,7 +65,6 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
                 "group": 'Marketplace.FeaturedItems',
                 "returnedProperties": 'operatingSystem.family,id,image,freeTierEligible,legacyPlanId',
             }),
-            // url: 'https://catalogapi.azure.com/catalog/curationgrouplisting?' + query.toString(),
         };
 
         const images = <FeaturedImage[]>(await sendRequestWithTimeout(context, options, 5 * 1000, undefined)).parsedBody;
