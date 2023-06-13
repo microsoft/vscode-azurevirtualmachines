@@ -20,7 +20,7 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
 
     const networkReferences: { name: string; rgName: string }[] = [];
     if (node.data.networkProfile?.networkInterfaces) {
-        for (const networkRef of node.data.networkProfile?.networkInterfaces) {
+        for (const networkRef of node.data.networkProfile.networkInterfaces) {
             if (networkRef.id) {
                 networkReferences.push({ name: getNameFromId(networkRef.id), rgName: getResourceGroupFromId(networkRef.id) });
             }
