@@ -7,9 +7,13 @@ import { ImageReference, OperatingSystemType, OperatingSystemTypes, VirtualMachi
 import { AzExtRequestPrepareOptions, sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
 import { AzureWizardPromptStep, IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from '../../localize';
+import { createRequestUrl } from "../../utils/requestUtils";
 import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export const apiVersion = '2018-08-01-beta';
+const apiVersionQueryParam = {
+    'api-version': apiVersion,
+}
 
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
@@ -56,12 +60,11 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
 
         const options: AzExtRequestPrepareOptions = {
             method: 'GET',
-            url: 'https://catalogapi.azure.com/catalog/curationgrouplisting',
-            queryParameters: {
-                "api-version": { value: apiVersion },
-                "group": { value: 'Marketplace.FeaturedItems' },
-                "returnedProperties": { value: 'operatingSystem.family,id,image,freeTierEligible,legacyPlanId' }
-            }
+            url: createRequestUrl('https://catalogapi.azure.com/catalog/curationgrouplisting', {
+                ...apiVersionQueryParam,
+                "group": 'Marketplace.FeaturedItems',
+                "returnedProperties": 'operatingSystem.family,id,image,freeTierEligible,legacyPlanId',
+            }),
         };
 
         const images = <FeaturedImage[]>(await sendRequestWithTimeout(context, options, 5 * 1000, undefined)).parsedBody;
@@ -71,10 +74,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
     private async getPlanFromLegacyPlanId(context: IActionContext, featuredImage: FeaturedImage): Promise<PlanFromLegacyPlanId> {
         const getOfferOptions: AzExtRequestPrepareOptions = {
             method: 'GET',
-            url: `https://euap.catalogapi.azure.com/view/offers/${featuredImage.legacyPlanId}`,
-            queryParameters: {
-                "api-version": { value: apiVersion }
-            }
+            url: createRequestUrl(`https://euap.catalogapi.azure.com/view/offers/${featuredImage.legacyPlanId}`, apiVersionQueryParam),
         };
 
         const offer = <OfferFromLegacyPlanId>(await sendRequestWithTimeout(context, getOfferOptions, 5 * 1000, undefined)).parsedBody;
@@ -92,13 +92,9 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         if (!uiDefUri) {
             throw new Error(localize('noUiDefUri', 'Could not find image reference from featured offer.'))
         }
-
         const getUiDefOptions: AzExtRequestPrepareOptions = {
             method: 'GET',
-            url: uiDefUri,
-            queryParameters: {
-                "api-version": { value: apiVersion }
-            }
+            url: createRequestUrl(uiDefUri, apiVersionQueryParam),
         };
 
         const createdUiDefintion = <UiDefinition>(await sendRequestWithTimeout(context, getUiDefOptions, 5 * 1000, undefined)).parsedBody;
