@@ -8,10 +8,11 @@ import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azu
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
 import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext, nonNullProp, nonNullValueAndProp } from '@microsoft/vscode-azext-utils';
 import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
+import { ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
 import { ConfirmDeleteStep } from '../commands/deleteVirtualMachine/ConfirmDeleteStep';
-import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { DeleteVirtualMachineStep } from '../commands/deleteVirtualMachine/DeleteVirtualMachineStep';
 import { SelectResourcesToDeleteStep } from '../commands/deleteVirtualMachine/SelectResourcesToDeleteStep';
+import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { localize } from '../localize';
 import { createActivityContext } from '../utils/activityUtils';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';
@@ -58,6 +59,13 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
 
     public get data(): VirtualMachine {
         return this.virtualMachine;
+    }
+
+    public get viewProperties(): ViewPropertiesModel {
+        return {
+            data: this.virtualMachine,
+            label: this.name,
+        }
     }
 
     public static linuxContextValue: string = 'linuxVirtualMachine';
