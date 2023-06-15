@@ -11,9 +11,8 @@ import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { configureSshConfig } from "../../utils/sshUtils";
-import { getAvailableVMLocations } from "./getAvailableVMLocations";
-import { ImageListStep } from "./ImageListStep";
 import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
+import { ImageListStep } from "./ImageListStep";
 import { NetworkInterfaceCreateStep } from "./NetworkInterfaceCreateStep";
 import { NetworkSecurityGroupCreateStep } from "./NetworkSecurityGroupCreateStep";
 import { OSListStep } from "./OSListStep";
@@ -24,6 +23,7 @@ import { UsernamePromptStep } from "./UsernamePromptStep";
 import { VirtualMachineCreateStep } from "./VirtualMachineCreateStep";
 import { VirtualMachineNameStep } from "./VirtualMachineNameStep";
 import { VirtualNetworkCreateStep } from "./VirtualNetworkCreateStep";
+import { getAvailableVMLocations } from "./getAvailableVMLocations";
 
 export async function createVirtualMachine(context: IActionContext & Partial<ICreateChildImplContext>, node?: SubscriptionTreeItemBase | undefined): Promise<VirtualMachineTreeItem> {
     if (!node) {
@@ -85,7 +85,7 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
 
     const virtualMachine: VirtualMachine = nonNullProp(wizardContext, 'virtualMachine');
 
-    const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(node.subscription, virtualMachine, undefined /* assume all newly created VMs are running */);
+    const newVm: VirtualMachineTreeItem = new VirtualMachineTreeItem(node.subscription, virtualMachine);
     if (newVm.contextValuesToAdd.includes(VirtualMachineTreeItem.linuxContextValue)) {
         await configureSshConfig(context, newVm, `~/.ssh/${wizardContext.sshKeyName}`);
     }
