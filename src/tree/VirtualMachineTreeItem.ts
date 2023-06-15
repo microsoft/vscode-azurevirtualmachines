@@ -77,9 +77,9 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
 
     private _state?: string;
 
-    public constructor(private readonly _subscription: ISubscriptionContext, vm: VirtualMachine, instanceView?: VirtualMachineInstanceView) {
+    public constructor(private readonly _subscription: ISubscriptionContext, vm: VirtualMachine) {
         this.virtualMachine = vm;
-        this._state = instanceView ? this.getStateFromInstanceView(instanceView) : undefined;
+        this._state = vm.instanceView ? this.getStateFromInstanceView(vm.instanceView) : undefined;
         this.contextValuesToAdd = vm.osProfile?.linuxConfiguration ? [VirtualMachineTreeItem.linuxContextValue] : [VirtualMachineTreeItem.windowsContextValue];
     }
 
