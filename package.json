@@ -35,19 +35,7 @@
         "multi-root ready"
     ],
     "preview": true,
-    "activationEvents": [
-        "onCommand:azureVirtualMachines.addSshKey",
-        "onCommand:azureVirtualMachines.createVirtualMachine",
-        "onCommand:azureVirtualMachines.createVirtualMachineAdvanced",
-        "onCommand:azureVirtualMachines.deleteVirtualMachine",
-        "onCommand:azureVirtualMachines.openInPortal",
-        "onCommand:azureVirtualMachines.refresh",
-        "onCommand:azureVirtualMachines.reportIssue",
-        "onCommand:azureVirtualMachines.restartVirtualMachine",
-        "onCommand:azureVirtualMachines.startVirtualMachine",
-        "onCommand:azureVirtualMachines.stopVirtualMachine",
-        "onCommand:azureVirtualMachines.viewProperties"
-    ],
+    "activationEvents": [],
     "main": "./main.js",
     "contributes": {
         "x-azResources": {
