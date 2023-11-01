@@ -16,7 +16,7 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
             { label: 'Windows', data: 'Windows' }
         ];
 
-        context.os = (await context.ui.showQuickPick(picks, { placeHolder: localize('selectOS', 'Select an OS.') })).data;
+        context.os = (await context.ui.showQuickPick(picks, { placeHolder: localize('selectOS', 'Select an OS') })).data;
     }
 
     public shouldPrompt(context: IVirtualMachineWizardContext): boolean {
