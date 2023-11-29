@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient } from "@azure/arm-compute";
-import { AzureWizardPromptStep, IActionContext, IAzureQuickPickItem, nonNullProp, UserCancelledError } from "@microsoft/vscode-azext-utils";
+import { type ComputeManagementClient } from "@azure/arm-compute";
+import { AzureWizardPromptStep, UserCancelledError, nonNullProp, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { virtualMachineLabel } from "../../constants";
 import { localize } from "../../localize";
-import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
+import { type ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../../utils/azureClients";
-import { IDeleteChildImplContext, ResourceToDelete } from "./deleteConstants";
+import { type IDeleteChildImplContext, type ResourceToDelete } from "./deleteConstants";
 import { getResourcesAssociatedToVm } from "./getResourcesAssociatedToVm";
 
 export class SelectResourcesToDeleteStep extends AzureWizardPromptStep<IDeleteChildImplContext> {

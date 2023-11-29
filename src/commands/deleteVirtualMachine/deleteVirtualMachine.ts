@@ -3,11 +3,11 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { vmFilter } from "../../constants";
 import { ext } from "../../extensionVariables";
-import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
-import { IDeleteChildImplContext } from "./deleteConstants";
+import { type ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
+import { type IDeleteChildImplContext } from "./deleteConstants";
 
 export async function deleteVirtualMachine(context: IActionContext & Partial<IDeleteChildImplContext>, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {

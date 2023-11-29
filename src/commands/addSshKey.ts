@@ -3,14 +3,14 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, VirtualMachine, VirtualMachineExtension } from "@azure/arm-compute";
-import { IActionContext, nonNullValueAndProp, parseError } from "@microsoft/vscode-azext-utils";
+import { type ComputeManagementClient, type VirtualMachine, type VirtualMachineExtension } from "@azure/arm-compute";
+import { nonNullValueAndProp, parseError, type IActionContext } from "@microsoft/vscode-azext-utils";
 import * as fse from "fs-extra";
 import { ProgressLocation, Uri, window } from "vscode";
 import { sshFsPath, vmFilter } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
-import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { VirtualMachineTreeItem, type ResolvedVirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
 import { configureSshConfig } from "../utils/sshUtils";
 

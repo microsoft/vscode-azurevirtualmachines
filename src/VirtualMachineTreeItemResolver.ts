@@ -3,11 +3,11 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, VirtualMachine } from "@azure/arm-compute";
+import { type ComputeManagementClient, type VirtualMachine } from "@azure/arm-compute";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, ISubscriptionContext, callWithTelemetryAndErrorHandling } from "@microsoft/vscode-azext-utils";
-import { AppResource, AppResourceResolver } from "@microsoft/vscode-azext-utils/hostapi";
-import { ResolvedVirtualMachine, VirtualMachineTreeItem } from './tree/VirtualMachineTreeItem';
+import { callWithTelemetryAndErrorHandling, type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { type AppResource, type AppResourceResolver } from "@microsoft/vscode-azext-utils/hostapi";
+import { VirtualMachineTreeItem, type ResolvedVirtualMachine } from './tree/VirtualMachineTreeItem';
 import { createComputeClient } from "./utils/azureClients";
 
 export class VirtualMachineResolver implements AppResourceResolver {

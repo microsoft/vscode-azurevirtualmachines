@@ -3,16 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient } from "@azure/arm-compute";
-import { NetworkInterface, NetworkManagementClient, Subnet } from "@azure/arm-network";
+import { type ComputeManagementClient } from "@azure/arm-compute";
+import { type NetworkInterface, type NetworkManagementClient, type Subnet } from "@azure/arm-network";
 import { getResourceGroupFromId } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext } from "@microsoft/vscode-azext-utils";
 import { networkInterfaceLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
-import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
+import { type ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createComputeClient, createNetworkClient } from "../../utils/azureClients";
 import { getNameFromId } from "../../utils/azureUtils";
-import { ResourceToDelete } from "./deleteConstants";
+import { type ResourceToDelete } from "./deleteConstants";
 
 export async function getResourcesAssociatedToVm(context: IActionContext, node: ResolvedVirtualMachineTreeItem): Promise<ResourceToDelete[]> {
 

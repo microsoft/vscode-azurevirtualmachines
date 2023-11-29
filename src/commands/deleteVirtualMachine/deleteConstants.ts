@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ExecuteActivityContext, IActionContext } from "@microsoft/vscode-azext-utils";
-import { ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
+import { type ExecuteActivityContext, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { type ResolvedVirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 
 export type ResourceToDelete = {
     resourceName: string;

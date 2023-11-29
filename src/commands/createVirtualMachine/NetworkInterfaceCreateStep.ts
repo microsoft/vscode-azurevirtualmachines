@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { NetworkInterface, NetworkManagementClient, PublicIPAddress, Subnet } from '@azure/arm-network';
-import { AzExtLocation, LocationListStep } from '@microsoft/vscode-azext-azureutils';
+import { type NetworkInterface, type NetworkManagementClient, type PublicIPAddress, type Subnet } from '@azure/arm-network';
+import { LocationListStep, type AzExtLocation } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import { type Progress } from "vscode";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
-import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class NetworkInterfaceCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 250;

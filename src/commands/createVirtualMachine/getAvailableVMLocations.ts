@@ -3,11 +3,11 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, ResourceSku } from "@azure/arm-compute";
+import { type ComputeManagementClient, type ResourceSku } from "@azure/arm-compute";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
 import { nonNullProp } from "@microsoft/vscode-azext-utils";
 import { createComputeClient } from "../../utils/azureClients";
-import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
+import { type IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export async function getAvailableVMLocations(context: IVirtualMachineWizardContext): Promise<string[]> {
     const computeClient: ComputeManagementClient = await createComputeClient(context);

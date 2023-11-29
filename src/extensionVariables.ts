@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IAzExtOutputChannel } from "@microsoft/vscode-azext-utils";
-import { AzureHostExtensionApi } from "@microsoft/vscode-azext-utils/hostapi";
-import { ExtensionContext } from "vscode";
+import { type IAzExtOutputChannel } from "@microsoft/vscode-azext-utils";
+import { type AzureHostExtensionApi } from "@microsoft/vscode-azext-utils/hostapi";
+import { type ExtensionContext } from "vscode";
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts

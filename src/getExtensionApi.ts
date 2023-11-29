@@ -3,7 +3,7 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { Extension, extensions } from "vscode";
+import { extensions, type Extension } from "vscode";
 
 export async function getApiExport<T>(extensionId: string): Promise<T | undefined> {
     const extension: Extension<T> | undefined = extensions.getExtension(extensionId);

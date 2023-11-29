@@ -3,18 +3,18 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, SshPublicKeyGenerateKeyPairResult } from '@azure/arm-compute';
+import { type ComputeManagementClient, type SshPublicKeyGenerateKeyPairResult } from '@azure/arm-compute';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
-import { callWithMaskHandling, IActionContext, nonNullValueAndProp } from '@microsoft/vscode-azext-utils';
+import { callWithMaskHandling, nonNullValueAndProp, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
 import * as which from 'which';
-import { IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
+import { type IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { sshFsPath } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
-import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { type ResolvedVirtualMachineTreeItem, type VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { createComputeClient } from './azureClients';
 import { cpUtils } from "./cpUtils";
 

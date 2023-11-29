@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ImageReference, OperatingSystemTypes, VirtualMachine, VirtualMachineSizeTypes } from '@azure/arm-compute';
-import { NetworkInterface, NetworkSecurityGroup, PublicIPAddress, Subnet, VirtualNetwork } from '@azure/arm-network';
-import { IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
-import { ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
+import { type ImageReference, type OperatingSystemTypes, type VirtualMachine, type VirtualMachineSizeTypes } from '@azure/arm-compute';
+import { type NetworkInterface, type NetworkSecurityGroup, type PublicIPAddress, type Subnet, type VirtualNetwork } from '@azure/arm-network';
+import { type IResourceGroupWizardContext } from '@microsoft/vscode-azext-azureutils';
+import { type ExecuteActivityContext } from '@microsoft/vscode-azext-utils';
 
 export interface IVirtualMachineWizardContext extends IResourceGroupWizardContext, ExecuteActivityContext {
     advancedCreation?: boolean;
