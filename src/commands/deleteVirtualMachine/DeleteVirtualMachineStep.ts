@@ -32,7 +32,7 @@ export class DeleteVirtualMachineStep extends AzureWizardExecuteStep<IDeleteChil
         const failedResources: ResourceToDelete[] = await deleteAllResources(context, node.subscription, node.resourceGroup, resourcesToDelete);
         const failedResourceList: string = failedResources.map(r => `"${r.resourceName}"`).join(', ');
 
-        const messageDeleteWithErrors: string = localize('messageDeleteWithErrors', 'Failed to delete the following resources: {0}.', failedResourceList);
+        const messageDeleteWithErrors: string = localize('messageDeleteWithErrors', 'Failed to delete the following resource(s): {0}.', failedResourceList);
 
         const deleteSucceeded: string = multiDelete ? localize('DeleteSucceeded', 'Successfully deleted {0}.', context.resourceList) :
             localize('DeleteSucceeded', 'Successfully deleted {0} "{1}".', resourcesToDelete[0].resourceType, resourcesToDelete[0].resourceName);
