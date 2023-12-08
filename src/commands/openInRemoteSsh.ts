@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from '@microsoft/vscode-azext-utils';
+import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
@@ -11,7 +11,7 @@ import { commands } from 'vscode';
 import { sshFsPath, vmFilter } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
-import { ResolvedVirtualMachineTreeItem, VirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { VirtualMachineTreeItem, type ResolvedVirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 import { addSshKey } from './addSshKey';
 import { verifyRemoteSshExtension } from './verifyRemoteSshExtension';
 

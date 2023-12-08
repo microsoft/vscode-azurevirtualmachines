@@ -6,7 +6,7 @@
 import { AzureWizardPromptStep, DialogResponses, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { virtualMachineLabel } from "../../constants";
 import { localize } from "../../localize";
-import { IDeleteChildImplContext } from "./deleteConstants";
+import { type IDeleteChildImplContext } from "./deleteConstants";
 
 export class ConfirmDeleteStep extends AzureWizardPromptStep<IDeleteChildImplContext> {
     public async prompt(context: IDeleteChildImplContext): Promise<void> {

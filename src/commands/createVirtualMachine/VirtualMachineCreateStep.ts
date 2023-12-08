@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, HardwareProfile, LinuxConfiguration, NetworkProfile, OSProfile, StorageProfile, VirtualMachine, WindowsConfiguration } from '@azure/arm-compute';
-import { NetworkInterface } from '@azure/arm-network';
+import { type ComputeManagementClient, type HardwareProfile, type LinuxConfiguration, type NetworkProfile, type OSProfile, type StorageProfile, type VirtualMachine, type WindowsConfiguration } from '@azure/arm-compute';
+import { type NetworkInterface } from '@azure/arm-network';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, IActionContext, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
-import { MessageItem, Progress, window } from "vscode";
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { window, type MessageItem, type Progress } from "vscode";
 import { viewOutput } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createComputeClient } from '../../utils/azureClients';
 import { createSshKey } from '../../utils/sshUtils';
-import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 260;

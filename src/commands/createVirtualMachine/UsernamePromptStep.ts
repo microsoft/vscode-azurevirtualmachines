@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OperatingSystemTypes } from "@azure/arm-compute";
+import { type OperatingSystemTypes } from "@azure/arm-compute";
 import { AzureWizardPromptStep, nonNullProp } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../localize";
-import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
+import { type IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 const reservedWords: string[] = ['admin', 'administrator', 'root', 'test', 'user'];
 

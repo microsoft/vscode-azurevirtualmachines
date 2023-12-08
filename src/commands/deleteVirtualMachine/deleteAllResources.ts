@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GenericResourceExpanded, ResourceManagementClient } from "@azure/arm-resources";
+import { type GenericResourceExpanded, type ResourceManagementClient } from "@azure/arm-resources";
 import { uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { IActionContext, ISubscriptionContext } from "@microsoft/vscode-azext-utils";
+import { type IActionContext, type ISubscriptionContext } from "@microsoft/vscode-azext-utils";
 import { networkInterfaceLabel, virtualMachineLabel, virtualNetworkLabel } from "../../constants";
 import { localize } from "../../localize";
 import { createResourceClient } from "../../utils/azureClients";
-import { ResourceToDelete } from "./deleteConstants";
+import { type ResourceToDelete } from "./deleteConstants";
 import { deleteWithOutput } from "./deleteWithOutput";
 
 export async function deleteAllResources(context: IActionContext, subscription: ISubscriptionContext, resourceGroupName: string, resourcesToDelete: ResourceToDelete[]): Promise<ResourceToDelete[]> {

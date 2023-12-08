@@ -5,7 +5,7 @@
 
 import * as os from 'os';
 import { join } from "path";
-import { MessageItem } from "vscode";
+import { type MessageItem } from "vscode";
 import { localize } from "./localize";
 
 export const viewOutput: MessageItem = { title: localize('viewOutput', 'View Output') };

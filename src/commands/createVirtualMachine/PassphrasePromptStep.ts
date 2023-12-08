@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardPromptStep, IWizardOptions } from "@microsoft/vscode-azext-utils";
+import { AzureWizardPromptStep, type IWizardOptions } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../localize";
 import { getWorkspaceSetting } from "../../vsCodeConfig/settings";
 import { ConfirmPassphraseStep } from "./ConfirmPassphraseStep";
-import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
+import { type IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export class PassphrasePromptStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {

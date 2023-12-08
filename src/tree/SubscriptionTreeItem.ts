@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { SubscriptionTreeItemBase } from '@microsoft/vscode-azext-azureutils';
-import { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { type AzExtTreeItem, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { localize } from '../localize';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {

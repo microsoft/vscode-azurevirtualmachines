@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, VirtualMachine } from "@azure/arm-compute";
+import { type ComputeManagementClient, type VirtualMachine } from "@azure/arm-compute";
 import { ResourceGroupListStep, resourceGroupNamingRules, uiUtils } from "@microsoft/vscode-azext-azureutils";
-import { AzureNameStep, IAzureNamingRules } from "@microsoft/vscode-azext-utils";
+import { AzureNameStep, type IAzureNamingRules } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../localize";
 import { createComputeClient } from "../../utils/azureClients";
-import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
+import { type IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export const virtualMachineNamingRules: IAzureNamingRules = {
     minLength: 1,

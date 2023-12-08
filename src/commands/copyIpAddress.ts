@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IActionContext } from '@microsoft/vscode-azext-utils';
+import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { vmFilter } from '../constants';
 import { ext } from '../extensionVariables';
 import { localize } from '../localize';
-import { ResolvedVirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
+import { type ResolvedVirtualMachineTreeItem } from '../tree/VirtualMachineTreeItem';
 
 export async function copyIpAddress(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
     if (!node) {

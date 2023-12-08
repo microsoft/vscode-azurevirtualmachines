@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ImageReference, OperatingSystemType, OperatingSystemTypes, VirtualMachineSizeTypes } from "@azure/arm-compute";
-import { AzExtRequestPrepareOptions, sendRequestWithTimeout } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, IActionContext, IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { type ImageReference, type OperatingSystemType, type OperatingSystemTypes, type VirtualMachineSizeTypes } from "@azure/arm-compute";
+import { sendRequestWithTimeout, type AzExtRequestPrepareOptions } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardPromptStep, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
 import { localize } from '../../localize';
 import { createRequestUrl } from "../../utils/requestUtils";
-import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
 export const apiVersion = '2018-08-01-beta';
 const apiVersionQueryParam = {

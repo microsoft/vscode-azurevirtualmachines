@@ -198,7 +198,7 @@
         "all": "npm i && npm run lint && npm test"
     },
     "devDependencies": {
-        "@microsoft/eslint-config-azuretools": "^0.2.1",
+        "@microsoft/eslint-config-azuretools": "^0.2.2",
         "@microsoft/vscode-azext-dev": "^2.0.0",
         "@types/fs-extra": "^8.1.1",
         "@types/gulp": "^4.0.8",

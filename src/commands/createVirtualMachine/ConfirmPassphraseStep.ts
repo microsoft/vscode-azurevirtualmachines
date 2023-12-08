@@ -5,7 +5,7 @@
 
 import { AzureWizardPromptStep } from "@microsoft/vscode-azext-utils";
 import { localize } from "../../localize";
-import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
+import { type IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 
 export class ConfirmPassphraseStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {

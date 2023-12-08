@@ -3,13 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzExtErrorButton, AzureWizardExecuteStep, nonNullProp } from "@microsoft/vscode-azext-utils";
-import { Progress } from "vscode";
+import { AzureWizardExecuteStep, nonNullProp, type AzExtErrorButton } from "@microsoft/vscode-azext-utils";
+import { type Progress } from "vscode";
 import { viewOutput, virtualMachineLabel } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { deleteAllResources } from "./deleteAllResources";
-import { IDeleteChildImplContext, ResourceToDelete } from "./deleteConstants";
+import { type IDeleteChildImplContext, type ResourceToDelete } from "./deleteConstants";
 
 export class DeleteVirtualMachineStep extends AzureWizardExecuteStep<IDeleteChildImplContext> {
     public priority: number = 100;

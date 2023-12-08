@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient } from '@azure/arm-compute';
-import { NetworkManagementClient } from '@azure/arm-network';
-import { ResourceManagementClient } from '@azure/arm-resources';
-import { AzExtClientContext, createAzureClient, parseClientContext } from '@microsoft/vscode-azext-azureutils';
+import { type ComputeManagementClient } from '@azure/arm-compute';
+import { type NetworkManagementClient } from '@azure/arm-network';
+import { type ResourceManagementClient } from '@azure/arm-resources';
+import { createAzureClient, parseClientContext, type AzExtClientContext } from '@microsoft/vscode-azext-azureutils';
 
 // Lazy-load @azure packages to improve startup performance.
 // NOTE: The client is the only import that matters, the rest of the types disappear when compiled to JavaScript

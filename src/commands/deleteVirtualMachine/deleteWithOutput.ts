@@ -6,7 +6,7 @@
 import { parseError } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
-import { ResourceToDelete } from "./deleteConstants";
+import { type ResourceToDelete } from "./deleteConstants";
 
 export async function deleteWithOutput(resource: ResourceToDelete, errors: ResourceToDelete[]): Promise<void> {
     const deleting: string = localize('Deleting', 'Deleting {0} "{1}"...', resource.resourceType, resource.resourceName);

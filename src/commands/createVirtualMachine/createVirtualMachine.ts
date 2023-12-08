@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { VirtualMachine, VirtualMachineSizeTypes } from "@azure/arm-compute";
+import { type VirtualMachine, type VirtualMachineSizeTypes } from "@azure/arm-compute";
 import { LocationListStep, ResourceGroupCreateStep, SubscriptionTreeItemBase, VerifyProvidersStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext, ICreateChildImplContext, nonNullProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizard, nonNullProp, type AzureWizardExecuteStep, type AzureWizardPromptStep, type IActionContext, type ICreateChildImplContext } from "@microsoft/vscode-azext-utils";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
 import { VirtualMachineTreeItem } from "../../tree/VirtualMachineTreeItem";
 import { createActivityContext } from "../../utils/activityUtils";
 import { configureSshConfig } from "../../utils/sshUtils";
-import { IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
+import { type IVirtualMachineWizardContext } from "./IVirtualMachineWizardContext";
 import { ImageListStep } from "./ImageListStep";
 import { NetworkInterfaceCreateStep } from "./NetworkInterfaceCreateStep";
 import { NetworkSecurityGroupCreateStep } from "./NetworkSecurityGroupCreateStep";

@@ -3,16 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient, InstanceViewStatus, NetworkInterfaceReference, VirtualMachine, VirtualMachineInstanceView } from '@azure/arm-compute';
-import { NetworkInterface, NetworkManagementClient, PublicIPAddress } from '@azure/arm-network';
+import { type ComputeManagementClient, type InstanceViewStatus, type NetworkInterfaceReference, type VirtualMachine, type VirtualMachineInstanceView } from '@azure/arm-compute';
+import { type NetworkInterface, type NetworkManagementClient, type PublicIPAddress } from '@azure/arm-network';
 import { getResourceGroupFromId } from '@microsoft/vscode-azext-azureutils';
-import { AzExtTreeItem, AzureWizard, IActionContext, ISubscriptionContext, nonNullProp, nonNullValueAndProp } from '@microsoft/vscode-azext-utils';
-import { ResolvedAppResourceBase, ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
-import { ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
+import { AzureWizard, nonNullProp, nonNullValueAndProp, type AzExtTreeItem, type IActionContext, type ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { type ResolvedAppResourceBase, type ResolvedAppResourceTreeItem } from '@microsoft/vscode-azext-utils/hostapi';
+import { type ViewPropertiesModel } from '@microsoft/vscode-azureresources-api';
 import { ConfirmDeleteStep } from '../commands/deleteVirtualMachine/ConfirmDeleteStep';
 import { DeleteVirtualMachineStep } from '../commands/deleteVirtualMachine/DeleteVirtualMachineStep';
 import { SelectResourcesToDeleteStep } from '../commands/deleteVirtualMachine/SelectResourcesToDeleteStep';
-import { IDeleteChildImplContext, ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
+import { type IDeleteChildImplContext, type ResourceToDelete } from '../commands/deleteVirtualMachine/deleteConstants';
 import { localize } from '../localize';
 import { createActivityContext } from '../utils/activityUtils';
 import { createComputeClient, createNetworkClient } from '../utils/azureClients';

@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OperatingSystemTypes } from '@azure/arm-compute';
-import { AzureWizardPromptStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
+import  { type OperatingSystemTypes } from '@azure/arm-compute';
+import  { type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
+import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../localize';
-import { IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
+import  { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 import { ValidateWindowsNameStep } from './ValidateWindowsNameStep';
 
 export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {

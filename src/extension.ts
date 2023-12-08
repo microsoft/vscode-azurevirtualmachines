@@ -6,14 +6,14 @@
 'use strict';
 
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
-import { apiUtils, AzureExtensionApi, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, IActionContext, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
-import { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
+import { apiUtils, callWithTelemetryAndErrorHandling, createApiProvider, createAzExtOutputChannel, registerUIExtensionVariables, type AzureExtensionApi, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { type AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import { AzExtResourceType } from '@microsoft/vscode-azureresources-api';
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
+import { VirtualMachineResolver } from './VirtualMachineTreeItemResolver';
 import { revealTreeItem } from './commands/api/revealTreeItem';
 import { registerCommands } from './commands/registerCommands';
 import { ext } from './extensionVariables';
-import { VirtualMachineResolver } from './VirtualMachineTreeItemResolver';
 
 export async function activateInternal(context: vscode.ExtensionContext, perfStats: { loadStartTime: number; loadEndTime: number }, ignoreBundle?: boolean): Promise<apiUtils.AzureExtensionApiProvider> {
     ext.context = context;

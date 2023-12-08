@@ -3,12 +3,12 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { ComputeManagementClient } from "@azure/arm-compute";
-import { IActionContext, nonNullValue } from "@microsoft/vscode-azext-utils";
+import { type ComputeManagementClient } from "@azure/arm-compute";
+import { nonNullValue, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { vmFilter } from "../constants";
 import { ext } from "../extensionVariables";
 import { localize } from "../localize";
-import { ResolvedVirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
+import { type ResolvedVirtualMachineTreeItem } from "../tree/VirtualMachineTreeItem";
 import { createComputeClient } from "../utils/azureClients";
 
 export async function startVirtualMachine(context: IActionContext, node?: ResolvedVirtualMachineTreeItem): Promise<void> {
