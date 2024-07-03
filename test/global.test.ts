@@ -9,7 +9,10 @@ import { } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ext, registerOnActionStartHandler } from '../extension.bundle';
 
-export let longRunningTestsEnabled: boolean;
+const longRunningLocalTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env.AzCode_EnableLongRunningTestsLocal || '');
+const longRunningRemoteTestsEnabled: boolean = !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
+
+export const longRunningTestsEnabled: boolean = longRunningLocalTestsEnabled || longRunningRemoteTestsEnabled;
 
 // Runs before all tests
 suiteSetup(async function (this: Mocha.Context): Promise<void> {
@@ -23,8 +26,6 @@ suiteSetup(async function (this: Mocha.Context): Promise<void> {
         // Use `TestUserInput` by default so we get an error if an unexpected call to `context.ui` occurs, rather than timing out
         context.ui = new TestUserInput(vscode);
     });
-
-    longRunningTestsEnabled = !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials || '');
 });
 
 suiteTeardown(async function (this: Mocha.Context): Promise<void> {
