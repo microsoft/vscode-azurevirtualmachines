@@ -16,6 +16,7 @@ import { ImageListStep } from "./ImageListStep";
 import { NetworkInterfaceCreateStep } from "./NetworkInterfaceCreateStep";
 import { NetworkSecurityGroupCreateStep } from "./NetworkSecurityGroupCreateStep";
 import { OSListStep } from "./OSListStep";
+import { PassphrasePromptStep } from "./PassphrasePromptStep";
 import { PublicIpCreateStep } from "./PublicIpCreateStep";
 import { SubnetCreateStep } from "./SubnetCreateStep";
 import { UsernamePromptStep } from "./UsernamePromptStep";
@@ -50,6 +51,7 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
     promptSteps.push(imageListStep);
 
     promptSteps.push(new UsernamePromptStep());
+    promptSteps.push(new PassphrasePromptStep());
     LocationListStep.addStep(wizardContext, promptSteps);
 
     executeSteps.push(new ResourceGroupCreateStep());
