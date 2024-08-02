@@ -30,6 +30,10 @@ parameters:
     type: boolean
     default: true
 
+variables:
+  - name: TeamName
+  value: "Azure Tools"
+
 # Use those templates
 extends:
   template: azure-pipelines/1esmain.yml@azExtTemplates
