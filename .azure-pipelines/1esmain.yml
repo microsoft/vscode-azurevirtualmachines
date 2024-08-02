@@ -32,7 +32,7 @@ parameters:
 
 variables:
   - name: TeamName
-  value: "Azure Tools"
+    value: "Azure Tools"
 
 # Use those templates
 extends:
