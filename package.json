@@ -187,7 +187,7 @@
         "build": "tsc",
         "cleanReadme": "gulp cleanReadme",
         "compile": "tsc -watch",
-        "package": "vsce package --githubBranch main --out extension.vsix && node ./build/sign.js",
+        "package": "vsce package --githubBranch main --out extension.vsix",
         "lint": "eslint --ext .ts .",
         "lint-fix": "eslint --ext .ts . --fix",
         "pretest": "npm run webpack-prod",
