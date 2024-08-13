@@ -26,7 +26,6 @@ export class ConfirmDeleteStep extends AzureWizardPromptStep<IDeleteChildImplCon
         context.telemetry.properties.deleteVm = String(deleteVm);
     }
 
-
     public shouldPrompt(): boolean {
         return true;
     }

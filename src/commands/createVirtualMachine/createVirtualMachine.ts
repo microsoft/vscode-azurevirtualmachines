@@ -38,6 +38,8 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
         ...(await createActivityContext())
     });
 
+    wizardContext.activityChildren = [];
+
     const computeProvider: string = 'Microsoft.Compute';
     LocationListStep.setLocationSubset(wizardContext, getAvailableVMLocations(wizardContext), computeProvider);
 
