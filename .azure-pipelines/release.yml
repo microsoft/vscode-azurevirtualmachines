@@ -1,3 +1,5 @@
+trigger: none # Only run this pipeline when manually triggered
+
 resources:
   pipelines:
     - pipeline: vscode-azurevirtualmachines # identifier to use in pipeline resource variables
