@@ -16,3 +16,12 @@ steps:
       echo $(resources.pipeline.vscode-azurevirtualmachines.sourceProvider)
       echo $(resources.pipeline.vscode-azurevirtualmachines.requestedFor)
       echo $(resources.pipeline.vscode-azurevirtualmachines.requestedForID)
+
+  - task: DownloadPipelineArtifact@2
+    displayName: Download PowerShellEditorServices
+    inputs:
+      source: specific # download from a different run
+      project: DevDiv
+      definition: resources.pipeline.vscode-azurevirtualmachines.pipelineID
+      buildVersionToDownload: specific
+      runId: resources.pipeline.vscode-azurevirtualmachines.runID
