@@ -18,10 +18,10 @@ steps:
       echo $(resources.pipeline.vscode-azurevirtualmachines.requestedForID)
 
   - task: DownloadPipelineArtifact@2
-    displayName: Download PowerShellEditorServices
+    displayName: Download VSIX
     inputs:
       source: specific # download from a different run
       project: DevDiv
-      definition: resources.pipeline.vscode-azurevirtualmachines.pipelineID
+      definition: $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
       buildVersionToDownload: specific
-      runId: resources.pipeline.vscode-azurevirtualmachines.runID
+      runId: $(resources.pipeline.vscode-azurevirtualmachines.runID)
