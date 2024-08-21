@@ -1,0 +1,16 @@
+resources:
+  pipelines:
+    - pipeline: vscode-azurevirtualmachines # identifier to use in pipeline resource variables
+      source: \Azure Tools\VSCode\Extensions\vscode-azurevirtualmachines # name of the pipeline that produces the artifacts
+
+steps:
+  - script: |
+      echo $(resources.pipeline.myresourcevars.pipelineID)
+      echo $(resources.pipeline.myresourcevars.runName)
+      echo $(resources.pipeline.myresourcevars.runID)
+      echo $(resources.pipeline.myresourcevars.runURI)
+      echo $(resources.pipeline.myresourcevars.sourceBranch)
+      echo $(resources.pipeline.myresourcevars.sourceCommit)
+      echo $(resources.pipeline.myresourcevars.sourceProvider)
+      echo $(resources.pipeline.myresourcevars.requestedFor)
+      echo $(resources.pipeline.myresourcevars.requestedForID)
