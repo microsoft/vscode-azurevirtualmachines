@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericTreeItem, type ExecuteActivityOutput, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { activityFailContext, activityFailIcon, activityProgressContext, activityProgressIcon, activitySuccessContext, activitySuccessIcon, AzureWizardExecuteStep, createUniversallyUniqueContextValue, GenericParentTreeItem, GenericTreeItem, type ExecuteActivityOutput, type IActionContext } from "@microsoft/vscode-azext-utils";
 
 export abstract class AzureWizardActivityOutputExecuteStep<T extends IActionContext> extends AzureWizardExecuteStep<T> {
     protected abstract getSuccessString(context: T): string;
@@ -47,12 +47,21 @@ function createExecuteActivityOutput(context: IActionContext, options: {
     const label = options.label;
     const iconPath = options.activityStatus === 'Success' ? activitySuccessIcon : options.activityStatus === 'Fail' ? activityFailIcon : activityProgressIcon;
 
-    return {
-        item: new GenericTreeItem(undefined, {
+    const item = options.activityStatus === 'Fail' ?
+        // there is logic that will automatically tack on error items as children if thrown in that step so return a parent tree item
+        new GenericParentTreeItem(undefined, {
             contextValue,
             label,
             iconPath
-        }),
+        }) :
+        new GenericTreeItem(undefined, {
+            contextValue,
+            label,
+            iconPath
+        });
+
+    return {
+        item,
         message: options.label
     }
 }
