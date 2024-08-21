@@ -25,3 +25,4 @@ steps:
       definition: $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
       buildVersionToDownload: specific
       runId: $(resources.pipeline.vscode-azurevirtualmachines.runID)
+      artifact: Build Root
