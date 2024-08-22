@@ -39,28 +39,23 @@ extends:
                   artifact: Build Root
                   targetPath: $(System.DefaultWorkingDirectory)
 
-              - bash: |
-                  # Find all .vsix files in the working directory
-                  vsixFiles="$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.vsix')"
+              - powershell: |
+                  # Get all .vsix files in the current directory
+                  $vsixFiles = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter *.vsix -File
 
-                  # Count the number of .vsix files
-                  count=$(echo "$vsixFiles" | wc -l)
-
-                  # Check if more than one .vsix file is found. We don't want to accidentially release the wrong .vsix.
-                  if [ "$count" -gt 1 ]; then
-                    echo "More than one .vsix file found. There should be only one .vsix present in the build artifacts."
-                    ls
+                  # Check if more than one .vsix file is found
+                  if ($vsixFiles.Count -gt 1) {
+                    Write-Error "More than one .vsix file found."
                     exit 1
-                  elif [ "$count" -eq 0 ]; then
-                    echo "No .vsix files found. The pipeline will fail."
-                    ls
+                  } elseif ($vsixFiles.Count -eq 0) {
+                    Write-Error "No .vsix files found."
                     exit 1
-                  else
+                  } else {
                     # Set the pipeline variable
-                    vsixFileName=$(basename "$vsixFiles")
-                    echo "##vso[task.setvariable variable=vsixFileName;]$vsixFileName"
-                    echo "Found .vsix file: $vsixFileName"
-                  fi
+                    $vsixFileName = $vsixFiles.Name
+                    Write-Output "##vso[task.setvariable variable=vsixFileName;]$vsixFileName"
+                    Write-Output "Found .vsix file: $vsixFileName"
+                  }
                 displayName: "Find and Set .vsix File Variable"
 
               - task: AzureCLI@2
