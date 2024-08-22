@@ -38,7 +38,7 @@ steps:
   - task: AzureCLI@2
     displayName: Get userId of WIF
     inputs:
-      azureSubscription: Azure Tools Manual Testing 1
+      azureSubscription: AzCodeReleases
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
@@ -47,7 +47,7 @@ steps:
   - task: AzureCLI@2
     displayName: Get userId of WIF 2
     inputs:
-      azureSubscription: Azure Tools Manual Testing 1
+      azureSubscription: AzCodeReleases
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
