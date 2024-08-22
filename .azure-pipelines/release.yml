@@ -4,90 +4,89 @@ resources:
   pipelines:
     - pipeline: vscode-azurevirtualmachines # identifier to use in pipeline resource variables
       source: \Azure Tools\VSCode\Extensions\vscode-azurevirtualmachines # name of the pipeline that produces the artifacts
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/tags/release
 
-steps:
-  - checkout: none
-  - script: |
-      echo $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.runName)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.runID)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.runURI)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.sourceBranch)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.sourceCommit)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.sourceProvider)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.requestedFor)
-      echo $(resources.pipeline.vscode-azurevirtualmachines.requestedForID)
+variables:
+  # Required by MicroBuild template
+  - name: TeamName
+    value: "Azure Tools for VS Code"
 
-  - task: DownloadPipelineArtifact@2
-    displayName: Download artifacts from Build pipeline
-    inputs:
-      source: specific # download from a different run
-      project: DevDiv
-      definition: $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
-      buildVersionToDownload: specific
-      runId: $(resources.pipeline.vscode-azurevirtualmachines.runID)
-      artifact: Build Root
-      targetPath: $(System.DefaultWorkingDirectory)
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  parameters:
+    pool:
+      name: VSEngSS-MicroBuild2022-1ES # Name of your hosted pool
+      image: server2022-microbuildVS2022-1es # Name of the image in your pool. If not specified, first image of the pool is used
+      os: windows # OS of the image. Allowed values: windows, linux, macOS
+    stages:
+      - name: release
+        jobs:
+          - name: Build
+            steps:
+              - task: DownloadPipelineArtifact@2
+                displayName: Download artifacts from Build pipeline
+                inputs:
+                  source: specific # download from a different run
+                  project: DevDiv
+                  definition: $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
+                  buildVersionToDownload: specific
+                  runId: $(resources.pipeline.vscode-azurevirtualmachines.runID)
+                  artifact: Build Root
+                  targetPath: $(System.DefaultWorkingDirectory)
 
-  - script: npm i -g @vscode/vsce
-    displayName: "Install vsce"
+              - script: npm i -g @vscode/vsce
+                displayName: "Install vsce"
 
-  - script: |
-      # Find all .vsix files in the working directory
-      vsixFiles="$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.vsix')"
+              - script: |
+                  # Find all .vsix files in the working directory
+                  vsixFiles="$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.vsix')"
 
-      # Count the number of .vsix files
-      count=$(echo "$vsixFiles" | wc -l)
+                  # Count the number of .vsix files
+                  count=$(echo "$vsixFiles" | wc -l)
 
-      # Check if more than one .vsix file is found. We don't want to accidentially release the wrong .vsix.
-      if [ "$count" -gt 1 ]; then
-        echo "More than one .vsix file found. There should be only one .vsix present in the build artifacts."
-        ls
-        exit 1
-      elif [ "$count" -eq 0 ]; then
-        echo "No .vsix files found. The pipeline will fail."
-        ls
-        exit 1
-      else
-        # Set the pipeline variable
-        vsixFileName=$(basename "$vsixFiles")
-        echo "##vso[task.setvariable variable=vsixFileName;]$vsixFileName"
-        echo "Found .vsix file: $vsixFileName"
-      fi
-    displayName: "Find and Set .vsix File Variable"
+                  # Check if more than one .vsix file is found. We don't want to accidentially release the wrong .vsix.
+                  if [ "$count" -gt 1 ]; then
+                    echo "More than one .vsix file found. There should be only one .vsix present in the build artifacts."
+                    ls
+                    exit 1
+                  elif [ "$count" -eq 0 ]; then
+                    echo "No .vsix files found. The pipeline will fail."
+                    ls
+                    exit 1
+                  else
+                    # Set the pipeline variable
+                    vsixFileName=$(basename "$vsixFiles")
+                    echo "##vso[task.setvariable variable=vsixFileName;]$vsixFileName"
+                    echo "Found .vsix file: $vsixFileName"
+                  fi
+                displayName: "Find and Set .vsix File Variable"
 
-  # requires package.json to work
-  # - task: AzureCLI@2
-  #   displayName: Run vsce verify-pat
-  #   inputs:
-  #     azureSubscription: AzCodeReleases
-  #     scriptType: pscore
-  #     scriptLocation: inlineScript
-  #     inlineScript: |
-  #       vsce verify-pat --azure-credential
+              - task: AzureCLI@2
+                displayName: Run vsce verify-pat
+                inputs:
+                  azureSubscription: AzCodeReleases
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    vsce verify-pat ms-azuretools --azure-credential
 
-  - task: AzureCLI@2
-    displayName: "Verify credentials"
-    inputs:
-      azureSubscription: "AzCodeReleases"
-      scriptType: "pscore"
-      scriptLocation: "inlineScript"
-      inlineScript: |
-        $aadToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
-        npx vsce verify-pat --pat $aadToken ms-azuretools
-
-  # - task: AzureCLI@2
-  #   displayName: Run vsce publish
-  #   inputs:
-  #     azureSubscription: AzCodeReleases
-  #     scriptType: pscore
-  #     scriptLocation: inlineScript
-  #     inlineScript: |
-  #       $publishArgs = @(
-  #         '--azure-credential'
-  #         '--packagePath'
-  #         '$(vsixFileName)'
-  #         '--manifestPath extension.manifest'
-  #         '--signaturePath extension.signature.p7s'
-  #       )
-  #       npm run publish -- @publishArgs
+            # requires package.json to be present
+            # - task: AzureCLI@2
+            #   displayName: Run vsce publish
+            #   inputs:
+            #     azureSubscription: AzCodeReleases
+            #     scriptType: pscore
+            #     scriptLocation: inlineScript
+            #     inlineScript: |
+            #       $publishArgs = @(
+            #         '--azure-credential'
+            #         '--packagePath'
+            #         '$(vsixFileName)'
+            #         '--manifestPath extension.manifest'
+            #         '--signaturePath extension.signature.p7s'
+            #       )
+            #       vsce publish -- @publishArgs
