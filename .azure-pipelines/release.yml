@@ -44,7 +44,6 @@ extends:
                 inputs:
                   command: custom
                   customCommand: i -g @vscode/vsce
-                  workingDir: $(working_directory)
 
               - script: |
                   # Find all .vsix files in the working directory
