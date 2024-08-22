@@ -6,7 +6,7 @@ resources:
       source: \Azure Tools\VSCode\Extensions\vscode-azurevirtualmachines # name of the pipeline that produces the artifacts
 
 steps:
-  - checkout: self
+  - checkout: none
   - script: |
       echo $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
       echo $(resources.pipeline.vscode-azurevirtualmachines.runName)
@@ -60,7 +60,7 @@ steps:
       # Count the number of .vsix files
       count=$(echo "$vsixFiles" | wc -l)
 
-      # Check if more than one .vsix file is found
+      # Check if more than one .vsix file is found. We don't want to accidentially release the wrong .vsix.
       if [ "$count" -gt 1 ]; then
         echo "More than one .vsix file found. The pipeline will fail."
         exit 1
