@@ -1,16 +1,33 @@
+trigger: none # Only run this pipeline when manually triggered
+
 resources:
   pipelines:
     - pipeline: vscode-azurevirtualmachines # identifier to use in pipeline resource variables
       source: \Azure Tools\VSCode\Extensions\vscode-azurevirtualmachines # name of the pipeline that produces the artifacts
 
 steps:
+  - checkout: none
   - script: |
-      echo $(resources.pipeline.myresourcevars.pipelineID)
-      echo $(resources.pipeline.myresourcevars.runName)
-      echo $(resources.pipeline.myresourcevars.runID)
-      echo $(resources.pipeline.myresourcevars.runURI)
-      echo $(resources.pipeline.myresourcevars.sourceBranch)
-      echo $(resources.pipeline.myresourcevars.sourceCommit)
-      echo $(resources.pipeline.myresourcevars.sourceProvider)
-      echo $(resources.pipeline.myresourcevars.requestedFor)
-      echo $(resources.pipeline.myresourcevars.requestedForID)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.runName)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.runID)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.runURI)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.sourceBranch)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.sourceCommit)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.sourceProvider)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.requestedFor)
+      echo $(resources.pipeline.vscode-azurevirtualmachines.requestedForID)
+
+  - task: DownloadPipelineArtifact@2
+    displayName: Download VSIX
+    inputs:
+      source: specific # download from a different run
+      project: DevDiv
+      definition: $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
+      buildVersionToDownload: specific
+      runId: $(resources.pipeline.vscode-azurevirtualmachines.runID)
+      artifact: Build Root
+      targetPath: $(System.DefaultWorkingDirectory)
+
+  - script: |
+      dir
