@@ -19,7 +19,7 @@ steps:
       echo $(resources.pipeline.vscode-azurevirtualmachines.requestedForID)
 
   - task: DownloadPipelineArtifact@2
-    displayName: Download VSIX
+    displayName: Download artifacts from Build pipeline
     inputs:
       source: specific # download from a different run
       project: DevDiv
@@ -56,6 +56,7 @@ steps:
       fi
     displayName: "Find and Set .vsix File Variable"
 
+  # requires package.json to work
   - task: AzureCLI@2
     displayName: Run vsce verify-pat
     inputs:
@@ -65,18 +66,28 @@ steps:
       inlineScript: |
         vsce verify-pat --azure-credential
 
-  # - task: AzureCLI@2
-  #   displayName: Run vsce publish
-  #   inputs:
-  #     azureSubscription: AzCodeReleases
-  #     scriptType: pscore
-  #     scriptLocation: inlineScript
-  #     inlineScript: |
-  #       $publishArgs = @(
-  #         '--azure-credential'
-  #         '--packagePath'
-  #         '$(vsixFileName)'
-  #         '--manifestPath extension.manifest'
-  #         '--signaturePath extension.signature.p7s'
-  #       )
-  #       npm run publish -- @publishArgs
+  - task: AzureCLI@2
+    displayName: "Publishing with Managed Identity"
+    inputs:
+      azureSubscription: "AzCodeReleases"
+      scriptType: "pscore"
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        $aadToken = az account get-access-token --query accessToken --resource 499b84ac-1321-427f-aa17-267ca6975798 -o tsv
+        npx vsce verify-pat --pat $aadToken ms-azuretools
+
+  - task: AzureCLI@2
+    displayName: Run vsce publish
+    inputs:
+      azureSubscription: AzCodeReleases
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        $publishArgs = @(
+          '--azure-credential'
+          '--packagePath'
+          '$(vsixFileName)'
+          '--manifestPath extension.manifest'
+          '--signaturePath extension.signature.p7s'
+        )
+        npm run publish -- @publishArgs
