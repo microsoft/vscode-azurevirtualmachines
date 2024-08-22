@@ -39,7 +39,7 @@ extends:
                   artifact: Build Root
                   targetPath: $(System.DefaultWorkingDirectory)
 
-              - script: |
+              - bash: |
                   # Find all .vsix files in the working directory
                   vsixFiles="$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.vsix')"
 
@@ -70,7 +70,7 @@ extends:
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
-                    vsce verify-pat ms-azuretools --azure-credential
+                    npx vsce verify-pat ms-azuretools --azure-credential
 
             # requires package.json to be present
             # - task: AzureCLI@2
