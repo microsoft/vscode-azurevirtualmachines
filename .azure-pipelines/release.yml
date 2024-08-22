@@ -6,7 +6,7 @@ resources:
       source: \Azure Tools\VSCode\Extensions\vscode-azurevirtualmachines # name of the pipeline that produces the artifacts
 
 steps:
-  - checkout: none
+  - checkout: self
   - script: |
       echo $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
       echo $(resources.pipeline.vscode-azurevirtualmachines.runName)
@@ -55,7 +55,7 @@ steps:
 
   - script: |
       # Find all .vsix files in the working directory
-      vsixFiles=$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.vsix')
+      vsixFiles="$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.md')"
 
       # Count the number of .vsix files
       count=$(echo "$vsixFiles" | wc -l)
