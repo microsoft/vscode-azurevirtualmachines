@@ -30,7 +30,7 @@ extends:
         jobs:
           - job: Release
             steps:
-              - checkout: self
+              - checkout: none
               - task: DownloadPipelineArtifact@2
                 displayName: Download artifacts from Build pipeline
                 inputs:
@@ -44,7 +44,7 @@ extends:
 
               - powershell: |
                   # Get all .vsix files in the current directory
-                  $vsixFiles = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter *.md -File
+                  $vsixFiles = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter *.vsix -File
 
                   # Check if more than one .vsix file is found
                   if ($vsixFiles.Count -gt 1) {
@@ -69,29 +69,29 @@ extends:
               - script: npm i -g @vscode/vsce
                 displayName: "Install vsce"
 
+              # - task: AzureCLI@2
+              #   displayName: Run vsce verify-pat
+              #   inputs:
+              #     azureSubscription: AzCodeReleases
+              #     scriptType: pscore
+              #     scriptLocation: inlineScript
+              #     inlineScript: |
+              #       npx vsce verify-pat ms-azuretools --azure-credential
+
+              # requires package.json to be present
+              # enable this once we can verify our credentials above
               - task: AzureCLI@2
-                displayName: Run vsce verify-pat
+                displayName: Run vsce publish
                 inputs:
                   azureSubscription: AzCodeReleases
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
-                    npx vsce verify-pat ms-azuretools --azure-credential
-
-            # requires package.json to be present
-            # enable this once we can verify our credentials above
-            # - task: AzureCLI@2
-            #   displayName: Run vsce publish
-            #   inputs:
-            #     azureSubscription: AzCodeReleases
-            #     scriptType: pscore
-            #     scriptLocation: inlineScript
-            #     inlineScript: |
-            #       $publishArgs = @(
-            #         '--azure-credential'
-            #         '--packagePath'
-            #         '$(vsixFileName)'
-            #         '--manifestPath extension.manifest'
-            #         '--signaturePath extension.signature.p7s'
-            #       )
-            #       vsce publish -- @publishArgs
+                    $publishArgs = @(
+                      '--azure-credential'
+                      '--packagePath'
+                      '$(vsixFileName)'
+                      '--manifestPath extension.manifest'
+                      '--signaturePath extension.signature.p7s'
+                    )
+                    vsce publish -- @publishArgs
