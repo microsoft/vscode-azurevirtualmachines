@@ -44,7 +44,7 @@ extends:
 
               - powershell: |
                   # Get all .vsix files in the current directory
-                  $vsixFiles = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter *.vsix -File
+                  $vsixFiles = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter *.md -File
 
                   # Check if more than one .vsix file is found
                   if ($vsixFiles.Count -gt 1) {
@@ -79,6 +79,7 @@ extends:
                     npx vsce verify-pat ms-azuretools --azure-credential
 
             # requires package.json to be present
+            # enable this once we can verify our credentials above
             # - task: AzureCLI@2
             #   displayName: Run vsce publish
             #   inputs:
