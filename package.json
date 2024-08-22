@@ -187,7 +187,7 @@
         "build": "tsc",
         "cleanReadme": "gulp cleanReadme",
         "compile": "tsc -watch",
-        "package": "vsce package --githubBranch main --out extension.vsix",
+        "package": "vsce package --githubBranch main --out vscode-azurevirtualmachines.vsix",
         "lint": "eslint --ext .ts .",
         "lint-fix": "eslint --ext .ts . --fix",
         "pretest": "npm run webpack-prod",
