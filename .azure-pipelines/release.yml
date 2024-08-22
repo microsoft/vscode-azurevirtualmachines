@@ -39,7 +39,7 @@ extends:
                   artifact: Build Root
                   targetPath: $(System.DefaultWorkingDirectory)
 
-              - task: UseNode@2
+              - task: UseNode@1
                 inputs:
                   versionSpec: "18.x" # Specify the desired Node.js version here
                 displayName: "Install Node.js 18.x"
