@@ -39,17 +39,6 @@ extends:
                   artifact: Build Root
                   targetPath: $(System.DefaultWorkingDirectory)
 
-              - task: UseNode@1
-                inputs:
-                  versionSpec: "18.x" # Specify the desired Node.js version here
-                displayName: "Install Node.js 18.x"
-
-              - task: Npm@1
-                displayName: "\U0001F449 Install vsce"
-                inputs:
-                  command: custom
-                  customCommand: i -g @vscode/vsce
-
               - script: |
                   # Find all .vsix files in the working directory
                   vsixFiles="$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.vsix')"
