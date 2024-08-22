@@ -26,3 +26,7 @@ steps:
       buildVersionToDownload: specific
       runId: $(resources.pipeline.vscode-azurevirtualmachines.runID)
       artifact: Build Root
+      targetPath: $(System.DefaultWorkingDirectory)
+
+  - script: |
+      dir
