@@ -31,3 +31,38 @@ steps:
 
   - script: |
       dir
+
+  - script: npm i -g @vscode/vsce
+    displayName: "Install vsce"
+
+  - task: AzureCLI@2
+    displayName: Get userId of WIF
+    inputs:
+      azureSubscription: Azure Tools Manual Testing 1
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        az account show
+
+  - task: AzureCLI@2
+    displayName: Get userId of WIF 2
+    inputs:
+      azureSubscription: Azure Tools Manual Testing 1
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        az
+
+  # - task: AzureCLI@2
+  #   displayName: Run vsce publish
+  #   inputs:
+  #     azureSubscription: vscode-marketplace
+  #     scriptType: pscore
+  #     scriptLocation: inlineScript
+  #     inlineScript: |
+  #       $publishArgs = @(
+  #         '--azure-credential'
+  #         '--packagePath'
+  #         '$(drop)/vscode-azurearcenabledmachines-$(version).vsix'
+  #       )
+  #       npm run publish -- @publishArgs
