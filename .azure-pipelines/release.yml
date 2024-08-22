@@ -57,17 +57,26 @@ steps:
     displayName: "Find and Set .vsix File Variable"
 
   - task: AzureCLI@2
-    displayName: Run vsce publish
+    displayName: Run vsce verify-pat
     inputs:
       azureSubscription: AzCodeReleases
       scriptType: pscore
       scriptLocation: inlineScript
       inlineScript: |
-        $publishArgs = @(
-          '--azure-credential'
-          '--packagePath'
-          '$(vsixFileName)'
-          '--manifestPath extension.manifest'
-          '--signaturePath extension.signature.p7s'
-        )
-        npm run publish -- @publishArgs
+        vsce verify-pat --azure-credential
+
+  # - task: AzureCLI@2
+  #   displayName: Run vsce publish
+  #   inputs:
+  #     azureSubscription: AzCodeReleases
+  #     scriptType: pscore
+  #     scriptLocation: inlineScript
+  #     inlineScript: |
+  #       $publishArgs = @(
+  #         '--azure-credential'
+  #         '--packagePath'
+  #         '$(vsixFileName)'
+  #         '--manifestPath extension.manifest'
+  #         '--signaturePath extension.signature.p7s'
+  #       )
+  #       npm run publish -- @publishArgs
