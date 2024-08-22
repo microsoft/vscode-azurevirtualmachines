@@ -6,7 +6,7 @@ resources:
       source: \Azure Tools\VSCode\Extensions\vscode-azurevirtualmachines # name of the pipeline that produces the artifacts
 
 steps:
-  - checkout: none
+  - checkout: self
   - script: |
       echo $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
       echo $(resources.pipeline.vscode-azurevirtualmachines.runName)
@@ -53,16 +53,43 @@ steps:
       inlineScript: |
         az
 
+  - script: |
+      # Find all .vsix files in the working directory
+      vsixFiles=$(find $(Build.SourcesDirectory) -maxdepth 1 -type f -name '*.vsix')
+
+      # Count the number of .vsix files
+      count=$(echo "$vsixFiles" | wc -l)
+
+      # Check if more than one .vsix file is found
+      if [ "$count" -gt 1 ]; then
+        echo "More than one .vsix file found. The pipeline will fail."
+        exit 1
+      elif [ "$count" -eq 0 ]; then
+        echo "No .vsix files found. The pipeline will fail."
+        exit 1
+      else
+        # Set the pipeline variable
+        vsixFileName=$(basename "$vsixFiles")
+        echo "##vso[task.setvariable variable=vsixFileName;]$vsixFileName"
+        echo "Found .vsix file: $vsixFileName"
+      fi
+    displayName: "Find and Set .vsix File Variable"
+
+  - script: |
+      echo $(vsixFileName)
+
   # - task: AzureCLI@2
   #   displayName: Run vsce publish
   #   inputs:
-  #     azureSubscription: vscode-marketplace
+  #     azureSubscription: AzCodeReleases
   #     scriptType: pscore
   #     scriptLocation: inlineScript
   #     inlineScript: |
   #       $publishArgs = @(
   #         '--azure-credential'
   #         '--packagePath'
-  #         '$(drop)/vscode-azurearcenabledmachines-$(version).vsix'
+  #         '$(vsixFileName)'
+  #         '--manifestPath extension.manifest'
+  #         '--signaturePath extension.signature.p7s'
   #       )
   #       npm run publish -- @publishArgs
