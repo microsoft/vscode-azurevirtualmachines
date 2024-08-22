@@ -66,7 +66,7 @@ extends:
                   version: "20.x"
                 displayName: "Install Node.js"
 
-              - script: npm i -g @vscode/vsce@latest
+              - script: npm i -g @vscode/vsce
                 displayName: "Install vsce"
 
               # - task: AzureCLI@2
@@ -77,6 +77,8 @@ extends:
               #     scriptLocation: inlineScript
               #     inlineScript: |
               #       npx vsce verify-pat ms-azuretools --azure-credential
+
+              - script: dir
 
               # requires package.json to be present
               # enable this once we can verify our credentials above
