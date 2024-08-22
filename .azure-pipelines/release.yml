@@ -27,6 +27,7 @@ extends:
         jobs:
           - job: Release
             steps:
+              - checkout: none
               - task: DownloadPipelineArtifact@2
                 displayName: Download artifacts from Build pipeline
                 inputs:
