@@ -25,7 +25,7 @@ extends:
     stages:
       - stage: Release
         jobs:
-          - name: Build
+          - job: Release
             steps:
               - task: DownloadPipelineArtifact@2
                 displayName: Download artifacts from Build pipeline
