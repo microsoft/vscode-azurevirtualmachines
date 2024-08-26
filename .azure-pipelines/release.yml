@@ -79,14 +79,14 @@ extends:
                     az account show
                     az ad sp show --id 3b55f2b8-b6d0-4e03-a3f9-2b22471450c6
 
-              # - task: AzureCLI@2
-              #   displayName: Get user id
-              #   inputs:
-              #     azureSubscription: AzCodeReleases
-              #     scriptType: pscore
-              #     scriptLocation: inlineScript
-              #     inlineScript: |
-              #       az rest -u https://app.vssps.visualstudio.com/_apis/profile/profiles/me --resource 499b84ac-1321-427f-aa17-267ca6975798
+              - task: AzureCLI@2
+                displayName: Get user id
+                inputs:
+                  azureSubscription: AzCodeReleases
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    az rest -u https://app.vssps.visualstudio.com/_apis/profile/profiles/me --resource 499b84ac-1321-427f-aa17-267ca6975798
 
               # requires package.json to be present
               # enable this once we can verify our credentials above
