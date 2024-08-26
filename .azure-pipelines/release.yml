@@ -73,7 +73,7 @@ extends:
                 inputs:
                   addSpnToEnvironment: true
                   azureSubscription: AzCodeReleases
-                  scriptType: bash
+                  scriptType: powershell
                   scriptLocation: inlineScript
                   inlineScript: |
                     az account show
