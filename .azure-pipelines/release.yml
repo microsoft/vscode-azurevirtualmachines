@@ -76,12 +76,8 @@ extends:
                   scriptType: bash
                   scriptLocation: inlineScript
                   inlineScript: |
-                    # Inherit Azure CLI service connection
-                    export ARM_CLIENT_ID=$servicePrincipalId
-                    export ARM_OIDC_TOKEN=$idToken
-                    export ARM_TENANT_ID=$tenantId
-                    export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-                    export ARM_USE_OIDC=true
+                    az account show
+                    az ad sp show --id 3b55f2b8-b6d0-4e03-a3f9-2b22471450c6
 
               # - task: AzureCLI@2
               #   displayName: Get user id
