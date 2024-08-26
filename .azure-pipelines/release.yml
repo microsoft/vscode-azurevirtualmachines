@@ -69,24 +69,22 @@ extends:
               - script: npm i -g @vscode/vsce
                 displayName: "Install vsce"
 
-              # - task: AzureCLI@2
-              #   displayName: Run vsce verify-pat
-              #   inputs:
-              #     azureSubscription: AzCodeReleases
-              #     scriptType: pscore
-              #     scriptLocation: inlineScript
-              #     inlineScript: |
-              #       npx vsce verify-pat ms-azuretools --azure-credential
-
-              - script: dir
-
-              # requires package.json to be present
-              # enable this once we can verify our credentials above
               - task: AzureCLI@2
-                displayName: Run vsce publish
+                displayName: Run vsce verify-pat
                 inputs:
                   azureSubscription: AzCodeReleases
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
-                    vsce publish --azure-credential --packagePath $(vsixFileName) --manifestPath extension.manifest --signaturePath extension.signature.p7s
+                    az rest -u https://app.vssps.visualstudio.com/_apis/profile/profiles/me --resource 499b84ac-1321-427f-aa17-267ca6975798
+
+              # requires package.json to be present
+              # enable this once we can verify our credentials above
+              # - task: AzureCLI@2
+              #   displayName: Run vsce publish
+              #   inputs:
+              #     azureSubscription: AzCodeReleases
+              #     scriptType: pscore
+              #     scriptLocation: inlineScript
+              #     inlineScript: |
+              #       vsce publish --azure-credential --packagePath $(vsixFileName) --manifestPath extension.manifest --signaturePath extension.signature.p7s
