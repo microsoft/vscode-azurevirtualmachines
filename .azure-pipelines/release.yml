@@ -20,5 +20,5 @@ variables:
 extends:
   template: azure-pipelines/1esmain.yml@azExtTemplates
   parameters:
-    pipelineID: $(resources.pipeline.vscode-azurevirtualmachines.pipelineID)
-    runID: $(resources.pipeline.vscode-azurevirtualmachines.runID)
+    pipelineID: ${{ resources.pipeline.vscode-azurevirtualmachines.pipelineID }}
+    runID: ${{ resources.pipeline.vscode-azurevirtualmachines.runID }}
