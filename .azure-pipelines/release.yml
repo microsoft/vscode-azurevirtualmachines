@@ -18,7 +18,7 @@ variables:
 
 # Use those templates
 extends:
-  template: azure-pipelines/1esmain.yml@azExtTemplates
+  template: azure-pipelines/release-extension.yml@azExtTemplates
   parameters:
     pipelineID: ${{ resources.pipeline.vscode-azurevirtualmachines.pipelineID }}
     runID: ${{ resources.pipeline.vscode-azurevirtualmachines.runID }}
