@@ -3,16 +3,18 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { AzureWizardExecuteStep, nonNullProp, type AzExtErrorButton } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, type AzExtErrorButton } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { viewOutput, virtualMachineLabel } from "../../constants";
 import { ext } from "../../extensionVariables";
 import { localize } from "../../localize";
+import { AzureWizardActivityOutputExecuteStep } from "../AzureWizardActivityOutputExecuteStep";
 import { deleteAllResources } from "./deleteAllResources";
 import { type IDeleteChildImplContext, type ResourceToDelete } from "./deleteConstants";
 
-export class DeleteVirtualMachineStep extends AzureWizardExecuteStep<IDeleteChildImplContext> {
+export class DeleteVirtualMachineStep extends AzureWizardActivityOutputExecuteStep<IDeleteChildImplContext> {
     public priority: number = 100;
+    stepName: string = 'deleteVirtualMachineStep';
 
     public async execute(context: IDeleteChildImplContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined; }>): Promise<void> {
 
@@ -58,5 +60,17 @@ export class DeleteVirtualMachineStep extends AzureWizardExecuteStep<IDeleteChil
 
     public shouldExecute(): boolean {
         return true;
+    }
+
+    protected getSuccessString(context: IDeleteChildImplContext): string {
+        return localize('deletedVm', 'Deleted virtual machine "{0}".', context.resourceList);
+    }
+
+    protected getProgressString(context: IDeleteChildImplContext): string {
+        return localize('deletingVm', 'Deleting virtual machine "{0}"...', context.resourceList);
+    }
+
+    protected getFailString(context: IDeleteChildImplContext): string {
+        return this.getSuccessString(context);
     }
 }
