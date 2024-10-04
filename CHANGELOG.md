@@ -1,5 +1,25 @@
 # Change Log
 
+## 0.6.6 - 2024-10-04
+### Added
+* [[398](https://github.com/microsoft/vscode-azurevirtualmachines/pull/398)] Added create icon to ribbon command
+
+### Changes
+* [[391](https://github.com/microsoft/vscode-azurevirtualmachines/pull/391)] Improve resolve resource performance
+
+### Fixes
+* [[400](https://github.com/microsoft/vscode-azurevirtualmachines/pull/400)] Remove period from select an OS
+* [[389](https://github.com/microsoft/vscode-azurevirtualmachines/pull/389)] Fix view properties command
+
+### Engineering
+* [[423](https://github.com/microsoft/vscode-azurevirtualmachines/pull/423)] Update release pipeline to support signing
+* [[425](https://github.com/microsoft/vscode-azurevirtualmachines/pull/425)] [[420]](https://github.com/microsoft/vscode-azurevirtualmachines/pull/420) Upgrade packages for various improvements to telemetry reporting
+* [[408](https://github.com/microsoft/vscode-azurevirtualmachines/pull/408)] Add 1ES pipeline
+* [[403](https://github.com/microsoft/vscode-azurevirtualmachines/pull/403)] Update ESLint config to enforce import types
+* [[394](https://github.com/microsoft/vscode-azurevirtualmachines/pull/394)] Remove onCommand activation events
+* [[393](https://github.com/microsoft/vscode-azurevirtualmachines/pull/393)] Exclude dist folder from policheck
+* [[386](https://github.com/microsoft/vscode-azurevirtualmachines/pull/386)] Move to track 2 SDKs
+
 ## 0.6.5 - 2023-05-17
 
 ### Added
