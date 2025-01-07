@@ -5,15 +5,17 @@
 
 import { type NetworkManagementClient, type VirtualNetwork } from '@azure/arm-network';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
+import { AzureWizardActivityOutputExecuteStep } from '../AzureWizardActivityOutputExecuteStep';
 import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
-export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
+export class VirtualNetworkCreateStep extends AzureWizardActivityOutputExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 230;
+    stepName: string = 'virtualNetworkCreateStep';
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
@@ -27,16 +29,31 @@ export class VirtualNetworkCreateStep extends AzureWizardExecuteStep<IVirtualMac
         // network names can't be 1 character and will fail the creation
         const vnName: string = vmName.length === 1 ? `${vmName}-vnet` : vmName;
 
-        const creatingVn: string = localize('creatingVn', `Creating new virtual network "${vnName}"...`);
-        ext.outputChannel.appendLog(creatingVn);
-        progress.report({ message: creatingVn });
+        ext.outputChannel.appendLog(this.getProgressString(context));
+        progress.report({ message: this.getProgressString(context) });
         await networkClient.virtualNetworks.beginCreateOrUpdateAndWait(rgName, vnName, virtualNetworkProps);
         // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
         context.virtualNetwork = await networkClient.virtualNetworks.get(rgName, vnName);
-        ext.outputChannel.appendLog(localize('creatingVn', `Created new virtual network "${vnName}".`));
+        ext.outputChannel.appendLog(this.getSuccessString(context));
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.virtualNetwork;
+    }
+
+    public getSuccessString(context: IVirtualMachineWizardContext): string {
+        const vmName: string = nonNullProp(context, 'newVirtualMachineName');
+        const vnName: string = vmName.length === 1 ? `${vmName}-vnet` : vmName;
+        return localize('createdVm', 'Created new virtual network "{0}".', vnName);
+    }
+
+    public getProgressString(context: IVirtualMachineWizardContext): string {
+        const vmName: string = nonNullProp(context, 'newVirtualMachineName');
+        const vnName: string = vmName.length === 1 ? `${vmName}-vnet` : vmName;
+        return localize('creatingVm', 'Creating new virtual network "{0}".', vnName);
+    }
+
+    protected getFailString(context: IVirtualMachineWizardContext): string {
+        return this.getSuccessString(context);
     }
 }

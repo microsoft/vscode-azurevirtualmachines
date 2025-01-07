@@ -5,15 +5,17 @@
 
 import { type NetworkManagementClient, type NetworkSecurityGroup, type SecurityRule } from '@azure/arm-network';
 import { LocationListStep } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
+import { AzureWizardActivityOutputExecuteStep } from '../AzureWizardActivityOutputExecuteStep';
 import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
-export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
+export class NetworkSecurityGroupCreateStep extends AzureWizardActivityOutputExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 220;
+    stepName: string = 'nsgCreateStep';
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
@@ -43,10 +45,24 @@ export class NetworkSecurityGroupCreateStep extends AzureWizardExecuteStep<IVirt
         await networkClient.networkSecurityGroups.beginCreateOrUpdateAndWait(rgName, nsgName, networkSecurityGroupProps);
         // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
         context.networkSecurityGroup = await networkClient.networkSecurityGroups.get(rgName, nsgName);
-        ext.outputChannel.appendLog(localize('createdNsg', `Created new network security group "${nsgName}".`));
+        ext.outputChannel.appendLog(this.getSuccessString(context));
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.networkSecurityGroup;
+    }
+
+    protected getProgressString(context: IVirtualMachineWizardContext): string {
+        const nsgName: string = nonNullProp(context, 'newVirtualMachineName') + '-nsg';
+        return localize('createdNsg', 'Creating new network security group "{0}"...', nsgName);
+    }
+
+    protected getSuccessString(context: IVirtualMachineWizardContext): string {
+        const nsgName: string = nonNullProp(context, 'newVirtualMachineName') + '-nsg';
+        return localize('createdNsg', 'Created new network security group "{0}".', nsgName);
+    }
+
+    protected getFailString(context: IVirtualMachineWizardContext): string {
+        return this.getSuccessString(context);
     }
 }
