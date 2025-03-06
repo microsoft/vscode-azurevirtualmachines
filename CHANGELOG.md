@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.6.7 - 2025-03-10
+
+### Changed
+* [[440](https://github.com/microsoft/vscode-azurevirtualmachines/pull/440)] Automatically collect subscription and resource information for telemetry. [How to disable telemetry reporting](https://code.visualstudio.com/docs/supporting/FAQ#_how-to-disable-telemetry-reporting)
+
 ## 0.6.6 - 2024-10-04
 ### Added
 * [[398](https://github.com/microsoft/vscode-azurevirtualmachines/pull/398)] Added create icon to ribbon command
