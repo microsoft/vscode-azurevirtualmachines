@@ -35,7 +35,7 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
         addressPrefix: '10.1.0.0/24',
         size,
         includeExtendedLocations: true,
-        ...(await createActivityContext())
+        ...(await createActivityContext(true))
     });
 
     const computeProvider: string = 'Microsoft.Compute';

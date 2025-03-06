@@ -5,15 +5,17 @@
 
 import { type NetworkManagementClient, type PublicIPAddress } from '@azure/arm-network';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
+import { AzureWizardActivityOutputExecuteStep } from '../AzureWizardActivityOutputExecuteStep';
 import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
-export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
+export class PublicIpCreateStep extends AzureWizardActivityOutputExecuteStep<IVirtualMachineWizardContext> {
     public priority: number = 210;
+    stepName: string = 'publicIpCreateStep';
 
     public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
@@ -34,9 +36,8 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
         // when creating a VM on the portal, this is the suffix that is added to the public IP address
         const ipName: string = nonNullProp(context, 'newVirtualMachineName') + '-ip';
 
-        const creatingIp: string = localize('creatingIp', `Creating new public IP addresss "${ipName}"...`);
-        progress.report({ message: creatingIp });
-        ext.outputChannel.appendLog(creatingIp);
+        progress.report({ message: this.getProgressString(context) });
+        ext.outputChannel.appendLog(this.getProgressString(context));
 
         try {
             await networkClient.publicIPAddresses.beginCreateOrUpdateAndWait(rgName, ipName, publicIpProps);
@@ -48,10 +49,24 @@ export class PublicIpCreateStep extends AzureWizardExecuteStep<IVirtualMachineWi
             }
             throw e;
         }
-        ext.outputChannel.appendLog(localize('creatingIp', `Created new public IP addresss "${ipName}".`));
+        ext.outputChannel.appendLog(this.getSuccessString(context));
     }
 
     public shouldExecute(context: IVirtualMachineWizardContext): boolean {
         return !context.publicIpAddress;
+    }
+
+    protected getSuccessString(context: IVirtualMachineWizardContext): string {
+        const ipName: string = nonNullProp(context, 'newVirtualMachineName') + '-ip';
+        return localize('createdIp', 'Created new public IP addresss "{0}".', ipName);
+    }
+
+    protected getProgressString(context: IVirtualMachineWizardContext): string {
+        const ipName: string = nonNullProp(context, 'newVirtualMachineName') + '-ip';
+        return localize('creatingIp', 'Creating new public IP addresss "{0}"...', ipName);
+    }
+
+    protected getFailString(context: IVirtualMachineWizardContext): string {
+        return this.getSuccessString(context);
     }
 }

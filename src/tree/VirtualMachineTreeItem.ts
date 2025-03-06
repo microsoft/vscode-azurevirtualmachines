@@ -111,7 +111,7 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
 
         const wizardContext: IDeleteChildImplContext = Object.assign(context, {
             node: this as ResolvedVirtualMachineTreeItem,
-            ...(await createActivityContext()),
+            ...(await createActivityContext(true)),
         });
 
         const wizard = new AzureWizard<IDeleteChildImplContext>(wizardContext, {
