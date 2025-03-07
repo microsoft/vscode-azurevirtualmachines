@@ -3,7 +3,8 @@
 ## 0.6.7 - 2025-03-10
 
 ### Changed
-* [[440](https://github.com/microsoft/vscode-azurevirtualmachines/pull/440)] Automatically collect subscription and resource information for telemetry. [How to disable telemetry reporting](https://code.visualstudio.com/docs/supporting/FAQ#_how-to-disable-telemetry-reporting)
+* [[439](https://github.com/microsoft/vscode-azurevirtualmachines/pull/439)] Automatically collect subscription and resource information for telemetry. [How to disable telemetry reporting](https://code.visualstudio.com/docs/supporting/FAQ#_how-to-disable-telemetry-reporting)
+* [[442](https://github.com/microsoft/vscode-azureappservice/pull/442)] Require VS Code version 1.95.0 (October 2024) or greater
 
 ## 0.6.6 - 2024-10-04
 ### Added
