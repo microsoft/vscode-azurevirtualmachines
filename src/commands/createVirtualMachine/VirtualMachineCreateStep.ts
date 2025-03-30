@@ -6,7 +6,7 @@
 import { type ComputeManagementClient, type HardwareProfile, type LinuxConfiguration, type NetworkProfile, type OSProfile, type StorageProfile, type VirtualMachine, type WindowsConfiguration } from '@azure/arm-compute';
 import { type NetworkInterface } from '@azure/arm-network';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, callWithTelemetryAndErrorHandling, nonNullProp, nonNullValueAndProp, type IActionContext } from "@microsoft/vscode-azext-utils";
 import { window, type MessageItem, type Progress } from "vscode";
 import { viewOutput } from '../../constants';
 import { ext } from '../../extensionVariables';
@@ -15,10 +15,18 @@ import { createComputeClient } from '../../utils/azureClients';
 import { createSshKey } from '../../utils/sshUtils';
 import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
-export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
+export class VirtualMachineCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 260;
+    public stepName: string = 'virtualMachineCreateStep';
+    protected getSuccessString = () => this.createdVmSuccess;
+    protected getFailString = (context: T) => localize('createVirtualMachineFail', 'Failed to create virtual machine "{0}".', context.newVirtualMachineName);
+    protected getTreeItemLabel = (context: T) => localize('createVirtualMachineLabel', 'Create virtual machine "{0}"', context.newVirtualMachineName);
 
-    public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    private createdVmSuccess: string = '';
+
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('creatingVm', 'Creating virtual machine...') });
+
         const newLocation = await LocationListStep.getLocation(context, undefined, true);
         const { location, extendedLocation } = LocationListStep.getExtendedLocation(newLocation);
 
@@ -65,32 +73,19 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         }
 
         const virtualMachineProps: VirtualMachine = { location, extendedLocation, hardwareProfile, storageProfile, networkProfile, osProfile };
-
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
 
-        const creatingVm: string = localize('creatingVm', 'Creating new virtual machine "{0}"...', vmName);
-        const creatingVmDetails: string = localize(
-            'creatingVmDetails',
-            'Creating new virtual machine "{0}" with size "{1}" and image "{2}"',
+        context.virtualMachine = await computeClient.virtualMachines.beginCreateOrUpdateAndWait(rgName, vmName, virtualMachineProps);
+
+        this.createdVmSuccess = localize(
+            'createVirtualMachineSuccess',
+            'Successfully created virtual machine "{0}" with size "{1}" and image "{2}"',
             vmName,
             nonNullProp(hardwareProfile, 'vmSize').replace(/_/g, ' '), // sizes are written with underscores as spaces
             `${nonNullProp(storageProfile, 'imageReference').offer} ${nonNullProp(storageProfile, 'imageReference').sku}`);
 
-        const createdVm: string = localize('creatingVm', 'Created new virtual machine "{0}".', vmName);
-
-        ext.outputChannel.appendLog(creatingVmDetails);
-        progress.report({ message: creatingVm });
-        context.virtualMachine = await computeClient.virtualMachines.beginCreateOrUpdateAndWait(rgName, vmName, virtualMachineProps);
-
-        context.activityResult = {
-            id: nonNullProp(context.virtualMachine, 'id'),
-            name: nonNullProp(context.virtualMachine, 'name'),
-            type: nonNullProp(context.virtualMachine, 'type'),
-        };
-
-        ext.outputChannel.appendLog(createdVm);
-
         // Note: intentionally not waiting for the result of this before returning
+        const createdVm: string = localize('createdVm', 'Created new virtual machine "{0}".', vmName);
         void window.showInformationMessage(createdVm, viewOutput).then(async (result: MessageItem | undefined) => {
             await callWithTelemetryAndErrorHandling('postCreateVM', async (c: IActionContext) => {
                 c.telemetry.properties.dialogResult = result?.title;
@@ -101,7 +96,7 @@ export class VirtualMachineCreateStep extends AzureWizardExecuteStep<IVirtualMac
         });
     }
 
-    public shouldExecute(context: IVirtualMachineWizardContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.virtualMachine && !!context.newVirtualMachineName;
     }
 }

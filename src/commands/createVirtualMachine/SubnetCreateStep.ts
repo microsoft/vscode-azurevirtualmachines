@@ -4,37 +4,35 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type NetworkManagementClient, type Subnet } from '@azure/arm-network';
-import { AzureWizardExecuteStep, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
+import { AzureWizardExecuteStepWithActivityOutput, nonNullProp, nonNullValueAndProp } from "@microsoft/vscode-azext-utils";
 import { type Progress } from "vscode";
-import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { createNetworkClient } from '../../utils/azureClients';
 import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
-export class SubnetCreateStep extends AzureWizardExecuteStep<IVirtualMachineWizardContext> {
+const defaultSubnet: string = 'default';
+
+export class SubnetCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 240;
+    public stepName: string = 'subnetCreateStep';
+    protected getSuccessString = () => localize('createSubnetSuccess', 'Successfully created subnet "{0}".', defaultSubnet);
+    protected getFailString = () => localize('createSubnetFail', 'Failed to create subnet "{0}".', defaultSubnet);
+    protected getTreeItemLabel = () => localize('createSubnetLabel', 'Create subnet "{0}"', defaultSubnet);
 
-    public async execute(context: IVirtualMachineWizardContext, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+    public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
+        progress.report({ message: localize('creatingSubnet', `Creating new subnet...`) });
+
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
-
         const rgName: string = nonNullValueAndProp(context.resourceGroup, 'name');
         const vnetName: string = nonNullValueAndProp(context.virtualNetwork, 'name');
-        // this is the name the portal uses
-        const subnetName: string = 'default';
+        const subnetProps: Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: defaultSubnet, networkSecurityGroup: context.networkSecurityGroup };
 
-        const creatingSubnet: string = localize('creatingSubnet', `Creating new subnet "${subnetName}"...`);
-        const subnetProps: Subnet = { addressPrefix: nonNullProp(context, 'addressPrefix'), name: subnetName, networkSecurityGroup: context.networkSecurityGroup };
-
-        progress.report({ message: creatingSubnet });
-        ext.outputChannel.appendLog(creatingSubnet);
-
-        await networkClient.subnets.beginCreateOrUpdateAndWait(rgName, vnetName, subnetName, subnetProps);
+        await networkClient.subnets.beginCreateOrUpdateAndWait(rgName, vnetName, defaultSubnet, subnetProps);
         // workaround for https://github.com/Azure/azure-sdk-for-js/issues/20249
-        context.subnet = await networkClient.subnets.get(rgName, vnetName, subnetName);
-        ext.outputChannel.appendLog(localize('createdSubnet', `Created new subnet "${subnetName}".`));
+        context.subnet = await networkClient.subnets.get(rgName, vnetName, defaultSubnet);
     }
 
-    public shouldExecute(context: IVirtualMachineWizardContext): boolean {
+    public shouldExecute(context: T): boolean {
         return !context.subnet;
     }
 }
