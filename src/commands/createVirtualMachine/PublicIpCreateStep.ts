@@ -14,8 +14,8 @@ import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContex
 export class PublicIpCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 210;
     public stepName: string = 'publicIpCreateStep';
-    protected getSuccessString = (context: T) => localize('createPublicIpSuccess', 'Successfully created public IP address "{0}".', generateIpName(nonNullProp(context, 'newVirtualMachineName')));
-    protected getFailString = (context: T) => localize('createPublicIpFail', 'Failed to create public IP address "{0}".', generateIpName(nonNullProp(context, 'newVirtualMachineName')));
+    protected getOutputLogSuccess = (context: T) => localize('createPublicIpSuccess', 'Successfully created public IP address "{0}".', generateIpName(nonNullProp(context, 'newVirtualMachineName')));
+    protected getOutputLogFail = (context: T) => localize('createPublicIpFail', 'Failed to create public IP address "{0}".', generateIpName(nonNullProp(context, 'newVirtualMachineName')));
     protected getTreeItemLabel = (context: T) => localize('createPublicIpLabel', 'Create public IP address "{0}"', generateIpName(nonNullProp(context, 'newVirtualMachineName')));
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

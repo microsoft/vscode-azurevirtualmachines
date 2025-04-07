@@ -15,8 +15,8 @@ const defaultSubnet: string = 'default';
 export class SubnetCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 240;
     public stepName: string = 'subnetCreateStep';
-    protected getSuccessString = () => localize('createSubnetSuccess', 'Successfully created subnet "{0}".', defaultSubnet);
-    protected getFailString = () => localize('createSubnetFail', 'Failed to create subnet "{0}".', defaultSubnet);
+    protected getOutputLogSuccess = () => localize('createSubnetSuccess', 'Successfully created subnet "{0}".', defaultSubnet);
+    protected getOutputLogFail = () => localize('createSubnetFail', 'Failed to create subnet "{0}".', defaultSubnet);
     protected getTreeItemLabel = () => localize('createSubnetLabel', 'Create subnet "{0}"', defaultSubnet);
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

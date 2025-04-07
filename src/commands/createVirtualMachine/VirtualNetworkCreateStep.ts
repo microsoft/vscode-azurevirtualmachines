@@ -14,8 +14,8 @@ import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContex
 export class VirtualNetworkCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 230;
     public stepName: string = 'virtualNetworkCreateStep';
-    protected getSuccessString = (context: T) => localize('createVirtualNetworkSuccess', 'Successfully created virtual network "{0}".', generateVirtualNetworkName(nonNullProp(context, 'newVirtualMachineName')));
-    protected getFailString = (context: T) => localize('createVirtualNetworkFail', 'Failed to create virtual network "{0}".', generateVirtualNetworkName(nonNullProp(context, 'newVirtualMachineName')));
+    protected getOutputLogSuccess = (context: T) => localize('createVirtualNetworkSuccess', 'Successfully created virtual network "{0}".', generateVirtualNetworkName(nonNullProp(context, 'newVirtualMachineName')));
+    protected getOutputLogFail = (context: T) => localize('createVirtualNetworkFail', 'Failed to create virtual network "{0}".', generateVirtualNetworkName(nonNullProp(context, 'newVirtualMachineName')));
     protected getTreeItemLabel = (context: T) => localize('createVirtualNetworkLabel', 'Create virtual network "{0}"', generateVirtualNetworkName(nonNullProp(context, 'newVirtualMachineName')));
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

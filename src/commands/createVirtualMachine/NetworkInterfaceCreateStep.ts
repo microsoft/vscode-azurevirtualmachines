@@ -14,8 +14,8 @@ import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContex
 export class NetworkInterfaceCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 250;
     public stepName: string = 'networkInterfaceCreateStep';
-    protected getSuccessString = (context: T) => localize('createNetworkInterfaceSuccess', 'Successfully created network interface "{0}".', context.newNetworkInterfaceName || this.formatNetworkInterfaceName(nonNullProp(context, 'newVirtualMachineName')));
-    protected getFailString = (context: T) => localize('createNetworkInterfaceFail', 'Failed to create network interface "{0}".', context.newNetworkInterfaceName || this.formatNetworkInterfaceName(nonNullProp(context, 'newVirtualMachineName')));
+    protected getOutputLogSuccess = (context: T) => localize('createNetworkInterfaceSuccess', 'Successfully created network interface "{0}".', context.newNetworkInterfaceName || this.formatNetworkInterfaceName(nonNullProp(context, 'newVirtualMachineName')));
+    protected getOutputLogFail = (context: T) => localize('createNetworkInterfaceFail', 'Failed to create network interface "{0}".', context.newNetworkInterfaceName || this.formatNetworkInterfaceName(nonNullProp(context, 'newVirtualMachineName')));
     protected getTreeItemLabel = (context: T) => localize('createNetworkInterfaceLabel', 'Create network interface "{0}"', context.newNetworkInterfaceName || this.formatNetworkInterfaceName(nonNullProp(context, 'newVirtualMachineName')));
 
     public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {

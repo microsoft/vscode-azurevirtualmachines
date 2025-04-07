@@ -18,8 +18,8 @@ import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContex
 export class VirtualMachineCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 260;
     public stepName: string = 'virtualMachineCreateStep';
-    protected getSuccessString = () => this.createdVmSuccess;
-    protected getFailString = (context: T) => localize('createVirtualMachineFail', 'Failed to create virtual machine "{0}".', context.newVirtualMachineName);
+    protected getOutputLogSuccess = () => this.createdVmSuccess;
+    protected getOutputLogFail = (context: T) => localize('createVirtualMachineFail', 'Failed to create virtual machine "{0}".', context.newVirtualMachineName);
     protected getTreeItemLabel = (context: T) => localize('createVirtualMachineLabel', 'Create virtual machine "{0}"', context.newVirtualMachineName);
 
     private createdVmSuccess: string = '';

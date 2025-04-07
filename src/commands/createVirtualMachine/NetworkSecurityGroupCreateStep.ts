@@ -14,8 +14,8 @@ import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContex
 export class NetworkSecurityGroupCreateStep<T extends IVirtualMachineWizardContext> extends AzureWizardExecuteStepWithActivityOutput<T> {
     public priority: number = 220;
     public stepName: string = 'networkSecurityGroupCreateStep';
-    protected getSuccessString = (context: T) => localize('createNetworkSecurityGroupSuccess', 'Successfully created network security group "{0}" with inbound ports "{1}" enabled.', generateNsgName(nonNullProp(context, 'newVirtualMachineName')), this.enabledPorts.join(', '));
-    protected getFailString = (context: T) => localize('createNetworkSecurityGroupFail', 'Failed to create network security group "{0}".', generateNsgName(nonNullProp(context, 'newVirtualMachineName')));
+    protected getOutputLogSuccess = (context: T) => localize('createNetworkSecurityGroupSuccess', 'Successfully created network security group "{0}" with inbound ports "{1}" enabled.', generateNsgName(nonNullProp(context, 'newVirtualMachineName')), this.enabledPorts.join(', '));
+    protected getOutputLogFail = (context: T) => localize('createNetworkSecurityGroupFail', 'Failed to create network security group "{0}".', generateNsgName(nonNullProp(context, 'newVirtualMachineName')));
     protected getTreeItemLabel = (context: T) => localize('createNetworkSecurityGroupLabel', 'Create network security group "{0}"', generateNsgName(nonNullProp(context, 'newVirtualMachineName')));
 
     private enabledPorts: string[] = [];
