@@ -38,6 +38,9 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
         includeExtendedLocations: true,
     });
 
+    wizardContext.commandMetadata ??= {};
+    wizardContext.commandMetadata.description = 'This command description was made during April 2023.';  // Example used to test that it was hooked up and copilot could read this
+
     const computeProvider: string = 'Microsoft.Compute';
     LocationListStep.setLocationSubset(wizardContext, getAvailableVMLocations(wizardContext), computeProvider);
 
