@@ -32,10 +32,10 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
 
     const size: VirtualMachineSizeTypes = node.subscription.isCustomCloud ? 'Standard_DS1_v2' : 'Standard_D2s_v3';
     const wizardContext: IVirtualMachineWizardContext = Object.assign(context, node.subscription, {
+        ...await createActivityContext({ withChildren: true }),
         addressPrefix: '10.1.0.0/24',
         size,
         includeExtendedLocations: true,
-        ...(await createActivityContext())
     });
 
     const computeProvider: string = 'Microsoft.Compute';
@@ -63,8 +63,6 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
     executeSteps.push(new VirtualMachineCreateStep());
     executeSteps.push(new VerifyProvidersStep([computeProvider, 'Microsoft.Network']));
 
-    const title: string = 'Create new virtual machine';
-
     if (!context.advancedCreation) {
         // for basic create, default to image Ubuntu 18.04 LTS
         wizardContext.os = 'Linux';
@@ -72,12 +70,15 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
         wizardContext.adminUsername = 'azureuser';
     }
 
-    const wizard: AzureWizard<IVirtualMachineWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
+    const wizard: AzureWizard<IVirtualMachineWizardContext> = new AzureWizard(wizardContext, {
+        title: localize('createVirtualMachineTitle', 'Create virtual machine'),
+        promptSteps,
+        executeSteps,
+    });
 
     await wizard.prompt();
 
     wizardContext.newResourceGroupName = await wizardContext.relatedNameTask;
-
     wizardContext.activityTitle = localize('createVirtualMachine', 'Create virtual machine "{0}"', nonNullProp(wizardContext, 'newVirtualMachineName'));
 
     await wizard.execute();
