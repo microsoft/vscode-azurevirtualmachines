@@ -223,11 +223,12 @@
         "webpack-cli": "^4.6.0"
     },
     "dependencies": {
-        "@azure/arm-compute": "^17.1.0",
+        "@azure/arm-compute": "^22.4.0",
         "@azure/arm-network": "^26.0.0",
         "@azure/arm-network-profile-2020-09-01-hybrid": "^2.1.0",
         "@azure/arm-resources": "^5.0.0",
         "@azure/arm-resources-profile-2020-09-01-hybrid": "^2.1.0",
+        "@azure/core-rest-pipeline": "^1.20.0",
         "@microsoft/vscode-azext-azureutils": "^3.3.1",
         "@microsoft/vscode-azext-utils": "^3.1.1",
         "@microsoft/vscode-azureresources-api": "^2.0.4",

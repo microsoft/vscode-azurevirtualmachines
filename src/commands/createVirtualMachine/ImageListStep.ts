@@ -4,9 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { type ImageReference, type OperatingSystemType, type OperatingSystemTypes, type VirtualMachineSizeTypes } from "@azure/arm-compute";
-import { sendRequestWithTimeout, type AzExtRequestPrepareOptions } from "@microsoft/vscode-azext-azureutils";
-import { AzureWizardPromptStep, type IActionContext, type IAzureQuickPickItem } from "@microsoft/vscode-azext-utils";
+import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
+import { createGenericClient, sendRequestWithTimeout, uiUtils, type AzExtPipelineResponse, type AzExtRequestPrepareOptions } from "@microsoft/vscode-azext-azureutils";
+import { AzureWizardPromptStep, type IAzureQuickPickItem, type ISubscriptionActionContext } from "@microsoft/vscode-azext-utils";
 import { localize } from '../../localize';
+import { createComputeClient } from "../../utils/azureClients";
 import { createRequestUrl } from "../../utils/requestUtils";
 import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContext';
 
@@ -36,7 +38,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return !context.image && !context.imageTask;
     }
 
-    public async getDefaultImageReference(context: IActionContext): Promise<ImageReference> {
+    public async getDefaultImageReference(context: ISubscriptionActionContext): Promise<ImageReference> {
         const images = await this.getFeaturedImages(context);
         // if we can't find Ubuntu Server 18.04 LTS for some reason, just default to the first image
         const defaultImage = images.find(i => /UbuntuServer1804LTS18_04/.test(i.legacyPlanId)) || images[0];
@@ -45,33 +47,66 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return await this.getImageReference(context, plan);
     }
 
-    public async getQuickPicks(context: IActionContext, os?: OperatingSystemType):
+    public async getQuickPicks(context: ISubscriptionActionContext, os?: OperatingSystemType):
         Promise<IAzureQuickPickItem<FeaturedImage | ImageReference>[]> {
         const featuredImages: IAzureQuickPickItem<FeaturedImage | ImageReference>[] = (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
         return featuredImages.concat(this.getExtraImageQuickPicks(os));
     }
 
-    private async getFeaturedImages(context: IActionContext, os: OperatingSystemType = 'Linux'): Promise<FeaturedImage[]> {
-        /*
-        ** the url the portal uses to get the featured images is the following so model request off that
-        ** https://catalogapi.azure.com/catalog/curationgrouplisting?api-version=2018-08-01-beta&
-        ** group=Marketplace.FeaturedItems&returnedProperties=operatingSystem.family,id,image,freeTierEligible,legacyPlanId
-        */
+    private async getFeaturedImages(context: ISubscriptionActionContext, _os: OperatingSystemType = 'Linux'): Promise<FeaturedImage[]> {
+        const apiVersion: string = '2023-05-01-preview';
+        const uniqueProductIds: string[] = ["'canonical.ubuntu-24_04-lts'", "'canonical.0001-com-ubuntu-server-jammy'", "'suse.sles-15-sp5-basic'", "'redhat.rhel-20190605'", "'oracle.oracle-linux'", "'debian.debian-12'", "'microsoftwindowsserver.windowsserver'", "'microsoftwindowsdesktop.windows-11'", "'almalinux.almalinux-x86_64'"];
+        // const imageProps: string = ['uniqueProductId', 'publisherId', 'displayName', 'operatingsystems'];
+        const imageProps: string[] = [];
+        // const planProps: string[] = ['vmSecurityTypes', 'uniquePlanId', 'vmArchitectureType', 'displayName'];
+        const planProps: string[] = [];
 
+        const authToken = (await context.credentials.getToken() as { token?: string }).token;
         const options: AzExtRequestPrepareOptions = {
+            url: `https://catalogapi.azure.com/products?api-version=${apiVersion}&storefront=azure&language=en&$filter=uniqueProductId in (${uniqueProductIds.join(',')})&$select=${imageProps.join(',')}&$expand=plans($select=${planProps.join(',')})`,
             method: 'GET',
-            url: createRequestUrl('https://catalogapi.azure.com/catalog/curationgrouplisting', {
-                ...apiVersionQueryParam,
-                "group": 'Marketplace.FeaturedItems',
-                "returnedProperties": 'operatingSystem.family,id,image,freeTierEligible,legacyPlanId',
+            headers: createHttpHeaders({
+                'Authorization': `Bearer ${authToken}`,
+                'x-api-key': '', // public api key
             }),
         };
 
-        const images = <FeaturedImage[]>(await sendRequestWithTimeout(context, options, 5 * 1000, undefined)).parsedBody;
-        return images.filter(i => i.operatingSystem.family === os);
+        const client = await createGenericClient(context, undefined);
+        // We don't care about storing the response here because the manual response returned is different from the SDK formatting that our code expects.
+        // The stored site should come from the SDK instead.
+        const response = await client.sendRequest(createPipelineRequest(options)) as AzExtPipelineResponse;
+
+        const topImageIdsPublic = [
+            'canonical.ubuntu-24_04-ltsserver',
+            'canonical.0001-com-ubuntu-server-jammy22_04-lts-gen2',
+            'canonical.ubuntu-24_04-ltsubuntu-pro',
+            'suse.sles-15-sp5-basicgen2',
+            'oracle.oracle-linuxol810-lvm-gen2',
+            'redhat.rhel-2019060594_gen2',
+            'redhat.rhel-20190605810-gen2',
+            'almalinux.almalinux-x86_649-gen2',
+            'debian.debian-1212-gen2',
+            'microsoftwindowsserver.windowsserver2025-datacenter-azure-edition',
+            'microsoftwindowsserver.windowsserver2022-datacenter-azure-edition-hotpatch',
+            'microsoftwindowsserver.windowsserver2022-datacenter-azure-edition',
+            'Microsoft.WindowsServer2019Datacenter2019-datacenter-gensecond',
+            'microsoftwindowsdesktop.windows-11win11-24h2-pro',
+        ];
+
+        // Todo: Add additional for mooncake and fairfax (however, may need API keys)
+
+        const images: FeaturedImageV2[] = (response.parsedBody as { items?: FeaturedImageV2[] })?.items ?? [];
+        console.log(images);
+
+        const sdkClient = await createComputeClient(context);
+        const image = await uiUtils.listAllIterator(sdkClient.communityGalleryImages.list('westus', 'Azure'))
+        console.log(image)
+
+        // Filter only the images that match the os, then return
+        return images as FeaturedImage[];
     }
 
-    private async getPlanFromLegacyPlanId(context: IActionContext, featuredImage: FeaturedImage): Promise<PlanFromLegacyPlanId> {
+    private async getPlanFromLegacyPlanId(context: ISubscriptionActionContext, featuredImage: FeaturedImage): Promise<PlanFromLegacyPlanId> {
         const getOfferOptions: AzExtRequestPrepareOptions = {
             method: 'GET',
             url: createRequestUrl(`https://euap.catalogapi.azure.com/view/offers/${featuredImage.legacyPlanId}`, apiVersionQueryParam),
@@ -87,7 +122,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return plan;
     }
 
-    private async getImageReference(context: IActionContext, plan: PlanFromLegacyPlanId): Promise<ImageReference> {
+    private async getImageReference(context: ISubscriptionActionContext, plan: PlanFromLegacyPlanId): Promise<ImageReference> {
         const uiDefUri: string | undefined = plan.artifacts.find(art => art.name === 'createuidefinition')?.uri
         if (!uiDefUri) {
             throw new Error(localize('noUiDefUri', 'Could not find image reference from featured offer.'))
@@ -128,6 +163,15 @@ export type FeaturedImage = {
     legacyPlanId: string,
     operatingSystem: { family: OperatingSystemTypes }
 };
+
+export type FeaturedImageV2 = {
+    displayName?: string;
+    publisherId?: string;
+    plans?: {
+        displayName?: string;
+        vmArchitectureType?: 'X64Gen2' | string;
+    }[]
+}
 
 /*
 ** The following response types have many more properties, but these are the ones we care about.

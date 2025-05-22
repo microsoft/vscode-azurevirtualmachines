@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OperatingSystemType } from "@azure/arm-compute";
-import { createTestActionContext, runWithTestActionContext } from "@microsoft/vscode-azext-dev";
+import { createTestActionContext, runWithTestActionContext, TestActionContext } from "@microsoft/vscode-azext-dev";
 import * as assert from "assert";
-import { createVirtualMachine, createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
+import { createSubscriptionContext, createVirtualMachine, createVirtualMachineAdvanced, ext, getRandomHexString, ImageListStep, ISubscriptionActionContext, subscriptionExperience } from "../../extension.bundle";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
@@ -98,7 +98,12 @@ async function testCreateVirtualMachine(os: string, image: string, passwordInput
 
 async function createVmTestsByOs(os: OperatingSystemType, passwordInputs: IPasswordInput[]): Promise<Promise<void>[]> {
     const parallelTests: Promise<void>[] = [];
-    const context = await createTestActionContext();
+    const testActionContext: TestActionContext = await createTestActionContext();
+    const context: ISubscriptionActionContext = {
+        ...testActionContext,
+        ...createSubscriptionContext(await subscriptionExperience(testActionContext, ext.rgApi.appResourceTree)),
+    };
+
     const images = await new ImageListStep().getQuickPicks(context, os);
 
     let count = 0;
