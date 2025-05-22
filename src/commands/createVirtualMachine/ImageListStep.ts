@@ -38,8 +38,8 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
 
     public async getDefaultImageReference(context: IActionContext): Promise<ImageReference> {
         const images = await this.getFeaturedImages(context);
-        // if we can't find Ubuntu Server 18.04 LTS for some reason, just default to the first image
-        const defaultImage = images.find(i => /UbuntuServer1804LTS18_04/.test(i.legacyPlanId)) || images[0];
+        // if we can't find Ubuntu Server 24.04 LTS for some reason, just default to the first image
+        const defaultImage = images.find(i => /ubuntu-24_04-ltsserver/.test(i.legacyPlanId)) || images[0];
 
         const plan = await this.getPlanFromLegacyPlanId(context, defaultImage);
         return await this.getImageReference(context, plan);
@@ -47,8 +47,7 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
 
     public async getQuickPicks(context: IActionContext, os?: OperatingSystemType):
         Promise<IAzureQuickPickItem<FeaturedImage | ImageReference>[]> {
-        const featuredImages: IAzureQuickPickItem<FeaturedImage | ImageReference>[] = (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
-        return featuredImages.concat(this.getExtraImageQuickPicks(os));
+        return (await this.getFeaturedImages(context, os)).map((fi) => { return { label: fi.displayName, data: fi }; });
     }
 
     private async getFeaturedImages(context: IActionContext, os: OperatingSystemType = 'Linux'): Promise<FeaturedImage[]> {
@@ -100,30 +99,11 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         const createdUiDefintion = <UiDefinition>(await sendRequestWithTimeout(context, getUiDefOptions, 5 * 1000, undefined)).parsedBody;
         return createdUiDefintion.parameters.imageReference;
     }
-
-    private getExtraImageQuickPicks(os?: OperatingSystemType): IAzureQuickPickItem<ImageReference>[] {
-        if (os === 'Windows') {
-            return [];
-        } else {
-            // defaults to Linux
-            return [
-                {
-                    label: 'Data Science Virtual Machine - Ubuntu 18.04 - Gen1',
-                    data: {
-                        publisher: 'microsoft-dsvm',
-                        offer: 'ubuntu-1804',
-                        sku: '1804',
-                        version: 'latest'
-                    }
-                }
-            ];
-        }
-    }
 }
 
 export type FeaturedImage = {
     displayName: string,
-    freeTierEligible: boolean,
+    freeTierEligible?: boolean,
     id: string,
     legacyPlanId: string,
     operatingSystem: { family: OperatingSystemTypes }
