@@ -9,7 +9,7 @@
 * [[449](https://github.com/microsoft/vscode-azurevirtualmachines/pull/449)] Upgrade to latest version of the activity log (v2). Now shows live progress on each activity child with timers.
 
 ## 0.6.8 - 2025-05-01
-## Fixed
+### Fixed
 * [[451]](https://github.com/microsoft/vscode-azurevirtualmachines/pull/451) Incomplete telemetry data capture in specific scenarios.
 
 ## 0.6.7 - 2025-03-10
