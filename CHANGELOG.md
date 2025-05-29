@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.6.9 - 2025-05-0x
+## 0.6.9 - 2025-05-29
 ### Added
 * [[449](https://github.com/microsoft/vscode-azurevirtualmachines/pull/449)] Add activity children for creating virtual machines
 
