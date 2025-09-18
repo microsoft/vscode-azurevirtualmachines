@@ -228,9 +228,9 @@
         "@azure/arm-network-profile-2020-09-01-hybrid": "^2.1.0",
         "@azure/arm-resources": "^5.0.0",
         "@azure/arm-resources-profile-2020-09-01-hybrid": "^2.1.0",
-        "@microsoft/vscode-azext-azureutils": "^3.5.1",
-        "@microsoft/vscode-azext-utils": "^3.4.1",
-        "@microsoft/vscode-azureresources-api": "^2.6.0",
+        "@microsoft/vscode-azext-azureutils": "^3.5.2",
+        "@microsoft/vscode-azext-utils": "^3.4.2",
+        "@microsoft/vscode-azureresources-api": "^2.6.2",
         "fs-extra": "^8.1.0",
         "open": "^8.0.4",
         "semver": "^7.5.2",
@@ -240,8 +240,5 @@
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"
-    ],
-    "enabledApiProposals": [
-        "authenticationChallenges"
     ]
 }
