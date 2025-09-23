@@ -240,8 +240,5 @@
     },
     "extensionDependencies": [
         "ms-azuretools.vscode-azureresourcegroups"
-    ],
-    "enabledApiProposals": [
-        "authenticationChallenges"
     ]
 }
