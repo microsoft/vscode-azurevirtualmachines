@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.6.10 - 2025-09-25
+### Added
+* [[464](https://github.com/microsoft/vscode-azurevirtualmachines/pull/464)] Changes were made to support the upcoming multi-factor authentication requirements for Azure
+
 ## 0.6.9 - 2025-05-29
 ### Added
 * [[449](https://github.com/microsoft/vscode-azurevirtualmachines/pull/449)] Add activity children for creating virtual machines
