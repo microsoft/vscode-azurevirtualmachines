@@ -4,12 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
+import { Uri } from 'vscode';
 import { ext } from '../extensionVariables';
 
 export namespace treeUtils {
     export interface IThemedIconPath {
-        light: string;
-        dark: string;
+        light: Uri;
+        dark: Uri;
     }
 
     export function getIconPath(iconName: string): string {
@@ -18,8 +19,8 @@ export namespace treeUtils {
 
     export function getThemedIconPath(iconName: string): IThemedIconPath {
         return {
-            light: path.join(getResourcesPath(), 'light', `${iconName}.svg`),
-            dark: path.join(getResourcesPath(), 'dark', `${iconName}.svg`)
+            light: Uri.file(path.join(getResourcesPath(), 'light', `${iconName}.svg`)),
+            dark: Uri.file(path.join(getResourcesPath(), 'dark', `${iconName}.svg`))
         };
     }
 
