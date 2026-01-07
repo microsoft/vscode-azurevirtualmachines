@@ -36,6 +36,12 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         return !context.image && !context.imageTask;
     }
 
+    public undo(context: IVirtualMachineWizardContext): void {
+        // Clear the OS selection to allow navigation back to the OSListStep
+        // This ensures the "Back" button works correctly after ValidateWindowsNameStep
+        context.os = undefined;
+    }
+
     public async getDefaultImageReference(context: IActionContext): Promise<ImageReference> {
         const images = await this.getFeaturedImages(context);
         // if we can't find Ubuntu Server 24.04 LTS for some reason, just default to the first image
