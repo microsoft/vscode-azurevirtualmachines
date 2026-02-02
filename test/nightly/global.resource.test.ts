@@ -4,10 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ComputeManagementClient } from '@azure/arm-compute';
-import { ResourceManagementClient } from '@azure/arm-resources';
 import { createTestActionContext, TestAzureAccount } from '@microsoft/vscode-azext-dev';
 import * as vscode from 'vscode';
-import { createAzureClient, createComputeClient, ISubscriptionContext } from '../../extension.bundle';
+import { createComputeClient, ISubscriptionContext } from '../../extension.bundle';
 import { longRunningTestsEnabled } from '../global.test';
 
 export let testAccount: TestAzureAccount;
