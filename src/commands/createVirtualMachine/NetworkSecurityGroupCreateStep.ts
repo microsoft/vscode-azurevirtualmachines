@@ -24,7 +24,7 @@ export class NetworkSecurityGroupCreateStep<T extends IVirtualMachineWizardConte
         progress.report({ message: localize('creatingNsg', 'Creating network security group...') });
 
         const networkClient: NetworkManagementClient = await createNetworkClient(context);
-        const location: string = (await LocationListStep.getLocation(context)).name
+        const location: string = (await LocationListStep.getLocation(context)).name;
         const nsgName: string = generateNsgName(nonNullProp(context, 'newVirtualMachineName'));
         const securityRules: SecurityRule[] = context.os !== 'Windows' ? [
             { name: 'SSH', protocol: 'Tcp', sourcePortRange: '*', destinationPortRange: '22', sourceAddressPrefix: '*', destinationAddressPrefix: '*', access: 'Allow', priority: 340, direction: 'Inbound' },

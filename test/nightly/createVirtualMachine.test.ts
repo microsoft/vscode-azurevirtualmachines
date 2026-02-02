@@ -33,7 +33,7 @@ suite("Create virtual machine", function (this: Mocha.Suite) {
         standardPasswordInput = {
             title: "standard password",
             input: [password, password]
-        }
+        };
     });
 
     test('Basic Create', async () => {
@@ -48,7 +48,7 @@ suite("Create virtual machine", function (this: Mocha.Suite) {
         await runWithTestActionContext("CreateVirtualMachine", async (context) => {
             await context.ui.runWithInputs(testInputs, async () => {
                 const vmNode = await createVirtualMachine(context);
-                await verifyVmCreated(vmNode.resourceGroup, resourceName)
+                await verifyVmCreated(vmNode.resourceGroup, resourceName);
             });
         });
     });
