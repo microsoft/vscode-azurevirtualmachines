@@ -12,6 +12,7 @@ import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContex
 
 export const apiVersion = '2018-08-01-beta';
 const apiVersionQueryParam = {
+    /* eslint-disable-next-line @typescript-eslint/naming-convention */
     'api-version': apiVersion,
 };
 

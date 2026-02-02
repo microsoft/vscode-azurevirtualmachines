@@ -114,7 +114,7 @@ async function sshKeygenExists(): Promise<boolean> {
     try {
         // throws an error if it can't find cmd in PATH env
         await which('ssh-keygen');
-    } catch (err) {
+    } catch (_err) {
         return false;
     }
 
