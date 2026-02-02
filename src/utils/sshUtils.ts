@@ -9,7 +9,7 @@ import { callWithMaskHandling, nonNullValueAndProp, type IActionContext } from '
 import * as fse from 'fs-extra';
 import { join } from 'path';
 import * as SSHConfig from 'ssh-config';
-import * as which from 'which';
+import which from 'which';
 import { type IVirtualMachineWizardContext } from '../commands/createVirtualMachine/IVirtualMachineWizardContext';
 import { sshFsPath } from '../constants';
 import { ext } from '../extensionVariables';
