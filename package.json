@@ -190,8 +190,6 @@
         "lint": "eslint --max-warnings 0"
     },
     "devDependencies": {
-        "@microsoft/eslint-config-azuretools": "^0.2.2",
-        "@microsoft/vscode-azext-dev": "^2.1.2",
         "@microsoft/vscode-azext-eng": "^1.0.0-alpha.11",
         "@types/fs-extra": "^8.1.1",
         "@types/node": "22.x",
