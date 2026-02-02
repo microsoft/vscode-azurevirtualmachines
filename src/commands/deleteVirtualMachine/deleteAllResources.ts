@@ -23,7 +23,11 @@ export async function deleteAllResources(context: IActionContext, subscription: 
     const serialResources: ResourceToDelete[] = [];
     const parallelResources: ResourceToDelete[] = [];
     for (const resource of resourcesToDelete) {
-        orderedLabels.includes(resource.resourceType) ? serialResources.push(resource) : parallelResources.push(resource);
+        if (orderedLabels.includes(resource.resourceType)) {
+            serialResources.push(resource);
+        } else {
+            parallelResources.push(resource);
+        }
     }
 
     serialResources.sort((a, b) => orderedLabels.indexOf(a.resourceType) - orderedLabels.indexOf(b.resourceType));
