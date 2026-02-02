@@ -65,7 +65,7 @@ export class VirtualMachineTreeItem implements ResolvedVirtualMachine {
         return {
             data: this.virtualMachine,
             label: this.name,
-        }
+        };
     }
 
     public static linuxContextValue: string = 'linuxVirtualMachine';
