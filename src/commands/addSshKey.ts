@@ -36,6 +36,7 @@ export async function addSshKey(context: IActionContext, node?: ResolvedVirtualM
 
     const sshPublicKey: Uri = (await context.ui.showOpenDialog({
         defaultUri: Uri.file(sshFsPath),
+        /* eslint-disable-next-line @typescript-eslint/naming-convention */
         filters: { 'SSH Public Key': ['pub'] }
     }))[0];
 

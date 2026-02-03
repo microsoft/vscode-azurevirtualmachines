@@ -187,7 +187,8 @@
         "build:esbuild": "node esbuild.mjs",
         "build:check": "tsc --noEmit",
         "package": "vsce package --githubBranch main",
-        "lint": "eslint --max-warnings 0"
+        "lint": "eslint --max-warnings 0",
+        "test": "vscode-test"
     },
     "devDependencies": {
         "@microsoft/vscode-azext-eng": "^1.0.0-alpha.11",

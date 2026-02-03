@@ -72,14 +72,14 @@ export async function getResourcesAssociatedToVm(context: IActionContext, node: 
                                     deleteMethod: async (): Promise<void> => { await networkClient.networkSecurityGroups.beginDeleteAndWait(nsgRg, nsgName); }
                                 });
                             }
-                        } catch (err) {
+                        } catch (_err) {
                             // ignore error
                         }
                     }
 
                 }
             }
-        } catch (err) {
+        } catch (_err) {
             // ignore error
         }
     }

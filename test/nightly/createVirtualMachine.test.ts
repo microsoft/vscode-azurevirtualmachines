@@ -4,9 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OperatingSystemType } from "@azure/arm-compute";
-import { createTestActionContext, runWithTestActionContext } from "@microsoft/vscode-azext-dev";
 import * as assert from "assert";
-import { createVirtualMachine, createVirtualMachineAdvanced, getRandomHexString, ImageListStep } from "../../extension.bundle";
+import { createTestActionContext, runWithTestActionContext } from "node_modules/@microsoft/vscode-azext-utils";
+import { ImageListStep } from "../../src/commands/createVirtualMachine/ImageListStep";
+import { createVirtualMachine, createVirtualMachineAdvanced } from "../../src/commands/createVirtualMachine/createVirtualMachine";
+import { getRandomHexString } from "../../src/utils/randomUtils";
 import { longRunningTestsEnabled } from "../global.test";
 import { getRotatingLocation } from "./getRotatingValue";
 import { computeClient, resourceGroupsToDelete } from "./global.resource.test";
