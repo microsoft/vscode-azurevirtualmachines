@@ -19,4 +19,4 @@ export const sshFsPath: string = join(os.homedir(), '.ssh');
 
 export const vmFilter = {
     type: 'Microsoft.Compute/virtualMachines'
-}
+};

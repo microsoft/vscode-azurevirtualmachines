@@ -70,7 +70,7 @@ export async function createVirtualMachine(context: IActionContext & Partial<ICr
         wizardContext.adminUsername = 'azureuser';
     }
 
-    const wizard: AzureWizard<IVirtualMachineWizardContext> = new AzureWizard(wizardContext, {
+    const wizard = new AzureWizard<IVirtualMachineWizardContext>(wizardContext, {
         title: localize('createVirtualMachineTitle', 'Create virtual machine'),
         promptSteps,
         executeSteps,

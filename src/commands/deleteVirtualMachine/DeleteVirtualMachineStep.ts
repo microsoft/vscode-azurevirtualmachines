@@ -46,7 +46,7 @@ export class DeleteVirtualMachineStep extends AzureWizardExecuteStep<IDeleteChil
             context.telemetry.properties.failedResources = failedResources.length.toString();
             // if the vm failed to delete or was not being deleted, we want to throw an error to make sure that the node is not removed from the tree
             if (failedResources.some(r => r.resourceType === virtualMachineLabel) || !context.deleteVm) {
-                // tslint:disable-next-line: no-floating-promises
+               
                 const viewOutputAzureButton: AzExtErrorButton = { title: viewOutput.title, callback: async (): Promise<void> => ext.outputChannel.show() };
                 context.errorHandling.buttons = [viewOutputAzureButton];
                 throw new Error(messageDeleteWithErrors);

@@ -12,8 +12,9 @@ import { type IVirtualMachineWizardContext } from './IVirtualMachineWizardContex
 
 export const apiVersion = '2018-08-01-beta';
 const apiVersionQueryParam = {
+    /* eslint-disable-next-line @typescript-eslint/naming-convention */
     'api-version': apiVersion,
-}
+};
 
 export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardContext> {
     public async prompt(context: IVirtualMachineWizardContext): Promise<void> {
@@ -80,16 +81,16 @@ export class ImageListStep extends AzureWizardPromptStep<IVirtualMachineWizardCo
         const plan: PlanFromLegacyPlanId | undefined = offer.plans.find(plan => featuredImage.id === plan.id);
 
         if (!plan) {
-            throw new Error(localize('noPlan', 'Could not find plan from featured offer.'))
+            throw new Error(localize('noPlan', 'Could not find plan from featured offer.'));
         }
 
         return plan;
     }
 
     private async getImageReference(context: IActionContext, plan: PlanFromLegacyPlanId): Promise<ImageReference> {
-        const uiDefUri: string | undefined = plan.artifacts.find(art => art.name === 'createuidefinition')?.uri
+        const uiDefUri: string | undefined = plan.artifacts.find(art => art.name === 'createuidefinition')?.uri;
         if (!uiDefUri) {
-            throw new Error(localize('noUiDefUri', 'Could not find image reference from featured offer.'))
+            throw new Error(localize('noUiDefUri', 'Could not find image reference from featured offer.'));
         }
         const getUiDefOptions: AzExtRequestPrepareOptions = {
             method: 'GET',
