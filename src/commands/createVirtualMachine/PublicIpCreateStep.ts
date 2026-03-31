@@ -42,7 +42,7 @@ export class PublicIpCreateStep<T extends IVirtualMachineWizardContext> extends 
             context.publicIpAddress = await networkClient.publicIPAddresses.get(rgName, ipName);
         } catch (e) {
             if (extendedLocation) {
-                throw new Error(localize('mayNotBeSupportedInEdgeZones', 'Failed to create Virtual Machine. This image may not be supported in Edge Zones.'));
+                throw new Error(localize('mayNotBeSupportedInEdgeZones', 'Failed to create Virtual Machine. This image may not be supported in Edge Zones.'), { cause: e });
             }
             throw e;
         }
