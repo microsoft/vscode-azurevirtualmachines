@@ -24,6 +24,12 @@ export class OSListStep extends AzureWizardPromptStep<IVirtualMachineWizardConte
         return context.os === undefined;
     }
 
+    public undo(context: IVirtualMachineWizardContext): void {
+        // Clear the OS selection to allow re-prompting when navigating back
+        // This ensures the "Back" button works correctly after ValidateWindowsNameStep
+        context.os = undefined;
+    }
+
     public async getSubWizard(context: IVirtualMachineWizardContext): Promise<IWizardOptions<IVirtualMachineWizardContext> | undefined> {
         if (context.os === 'Windows') {
             return { promptSteps: [new ValidateWindowsNameStep()] };
