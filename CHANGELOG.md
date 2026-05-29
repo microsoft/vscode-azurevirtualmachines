@@ -1,5 +1,21 @@
 # Change Log
 
+## 0.6.11 - 2026-05-28
+
+### Changed
+* [[493](https://github.com/microsoft/vscode-azurevirtualmachines/pull/493)] Remove Shields.io badges from README
+* [[472](https://github.com/microsoft/vscode-azurevirtualmachines/pull/472)] Update **Privacy Statement** link
+
+### Fixed
+* [[501](https://github.com/microsoft/vscode-azurevirtualmachines/pull/501)] Apply compatibility fixes to extension in preparation for upcoming VS Code stable release
+
+### Engineering
+* [[478](https://github.com/microsoft/vscode-azurevirtualmachines/pull/478)] Migrate build tooling to **esbuild**
+* [[495](https://github.com/microsoft/vscode-azurevirtualmachines/pull/495)] Migrate AzDO CI/release definitions to azdo-pipelines v2 templates
+
+### Security
+* Bump 18 dependencies across build, test, and tooling infrastructure
+  
 ## 0.6.10 - 2025-09-25
 ### Added
 * [[464](https://github.com/microsoft/vscode-azurevirtualmachines/pull/464)] Changes were made to support the upcoming multi-factor authentication requirements for Azure
