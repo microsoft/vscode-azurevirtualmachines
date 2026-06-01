@@ -15,8 +15,7 @@
 
 ### Security
 * Bump 18 dependencies across build, test, and tooling infrastructure
-
-
+  
 ## 0.6.10 - 2025-09-25
 ### Added
 * [[464](https://github.com/microsoft/vscode-azurevirtualmachines/pull/464)] Changes were made to support the upcoming multi-factor authentication requirements for Azure
