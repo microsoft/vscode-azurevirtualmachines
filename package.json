@@ -199,9 +199,10 @@
         "@vscode/test-cli": "*",
         "@vscode/test-electron": "*",
         "@vscode/vsce": "*",
+        "esbuild": "*",
         "esbuild-plugin-copy": "*",
         "fs-extra": "^8.1.0",
-        "tsx": "*"
+        "tsx": "4.22.4"
     },
     "dependencies": {
         "@azure/arm-compute": "^17.1.0",
