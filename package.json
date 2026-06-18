@@ -191,7 +191,7 @@
         "test": "vscode-test"
     },
     "devDependencies": {
-        "@microsoft/vscode-azext-eng": "^1.0.0-alpha.11",
+        "@microsoft/vscode-azext-eng": "1.1.0-alpha.1",
         "@types/fs-extra": "^8.1.1",
         "@types/node": "22.x",
         "@types/vscode": "1.104.0",
@@ -199,9 +199,9 @@
         "@vscode/test-cli": "*",
         "@vscode/test-electron": "*",
         "@vscode/vsce": "*",
-        "esbuild": "*",
         "esbuild-plugin-copy": "*",
-        "fs-extra": "^8.1.0"
+        "fs-extra": "^8.1.0",
+        "tsx": "*"
     },
     "dependencies": {
         "@azure/arm-compute": "^17.1.0",
