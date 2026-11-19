@@ -191,7 +191,7 @@
         "test": "vscode-test"
     },
     "devDependencies": {
-        "@microsoft/vscode-azext-eng": "1.1.0-alpha.1",
+        "@microsoft/vscode-azext-eng": "1.2.0",
         "@types/fs-extra": "^8.1.1",
         "@types/node": "22.x",
         "@types/vscode": "1.104.0",

@@ -6,14 +6,17 @@
         "lib": [
             "es2022"
         ],
+        "types": [
+            "node",
+            "mocha"
+        ],
         "sourceMap": true,
         "strict": true,
         "rootDir": ".",
-        "baseUrl": "./",
         "paths": {
             "*": [
-                "node_modules/@types/*",
-                "*"
+                "./node_modules/@types/*",
+                "./*"
             ]
         }
     },
